@@ -1,4 +1,4 @@
-import { coupleNames, escapeHtml as e, formatDate, initials } from '../utils.js';
+import { assetUrl, coupleNames, escapeHtml as e, formatDate, initials } from '../utils.js';
 import { flourish } from './artwork.js';
 import { icon } from './shared.js';
 
@@ -11,7 +11,7 @@ export function envelope(w) {
       <div class="envelope-stage">
         <div class="envelope-paper">
           <img
-            src="${e(w.envelope.image)}"
+            src="${e(assetUrl(w.envelope.image))}"
             alt="An ivory wedding envelope with embossed flowers and an antique gold border"
             width="1024"
             height="1536"

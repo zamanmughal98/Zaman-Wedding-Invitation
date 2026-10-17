@@ -9,7 +9,7 @@ export const wedding = {
     title: 'Bride & Groom · Wedding Invitation',
     description:
       'Together with our families, we invite you to celebrate a beautiful new beginning.',
-    url: 'https://ivory-garden-wedding.zamanmughal98.chatgpt.site',
+    url: 'https://zamanmughal98.github.io/Zaman-Wedding-Invitation/',
     previewImage: '/assets/images/ivory-envelope.png',
     language: 'en',
     locale: 'en-GB',

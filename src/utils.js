@@ -8,13 +8,26 @@ export function escapeHtml(value = '') {
 
 export function safeUrl(value, protocols = ['https:', 'http:']) {
   if (!value || typeof value !== 'string') return '';
-  if (value.startsWith('/') && !value.startsWith('//') && !value.includes('\\')) return value;
+  if (
+    (value.startsWith('/') || value.startsWith('./')) &&
+    !value.startsWith('//') &&
+    !value.includes('\\') &&
+    !/[\u0000-\u001f\u007f]/.test(value)
+  )
+    return value;
   try {
     const url = new URL(value);
     return protocols.includes(url.protocol) ? url.href : '';
   } catch {
     return '';
   }
+}
+
+// Local media belongs to this project, including when hosted below /repository/.
+// Existing '/assets/...' configuration continues to work without being rewritten.
+export function assetUrl(value) {
+  const url = safeUrl(value);
+  return url.startsWith('/') ? `.${url}` : url;
 }
 
 export function formatDate(value, site, options = {}) {

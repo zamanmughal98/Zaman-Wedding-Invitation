@@ -1,29 +1,29 @@
 import { wedding } from '../config/wedding.js';
 import { renderInvitation } from './render.js';
-import { escapeHtml } from './utils.js';
+import { assetUrl, escapeHtml } from './utils.js';
 
-export function prepareDocument(template) {
+export function prepareDocument(template, { siteUrl = wedding.site.url } = {}) {
   const e = escapeHtml;
-  const absoluteImage = new URL(wedding.site.previewImage, wedding.site.url).href;
+  const pageUrl = new URL(siteUrl);
+  if (!pageUrl.pathname.endsWith('/')) pageUrl.pathname += '/';
+  const absoluteImage = new URL(assetUrl(wedding.site.previewImage), pageUrl).href;
+  const metadata = {
+    description: wedding.site.description,
+    'og:title': wedding.site.title,
+    'og:description': wedding.site.description,
+    'og:url': pageUrl.href,
+    'og:image': absoluteImage,
+  };
   return template
     .replace('<!-- invitation -->', renderInvitation(wedding))
     .replace(/<title>.*?<\/title>/, `<title>${e(wedding.site.title)}</title>`)
-    .replace(
-      /(<meta name="description" content=")[^"]*/,
-      (_, prefix) => prefix + e(wedding.site.description),
-    )
-    .replace(
-      /(<meta property="og:title" content=")[^"]*/,
-      (_, prefix) => prefix + e(wedding.site.title),
-    )
-    .replace(
-      /(<meta property="og:description" content=")[^"]*/,
-      (_, prefix) => prefix + e(wedding.site.description),
-    )
-    .replace(
-      /(<meta property="og:url" content=")[^"]*/,
-      (_, prefix) => prefix + e(wedding.site.url),
-    )
-    .replace(/(<meta property="og:image" content=")[^"]*/, (_, prefix) => prefix + e(absoluteImage))
+    .replace(/<meta\b[^>]*>/gi, (tag) => {
+      const key = tag.match(/\b(?:name|property)\s*=\s*["']([^"']+)["']/i)?.[1];
+      if (!Object.hasOwn(metadata, key)) return tag;
+      return tag.replace(
+        /\bcontent\s*=\s*(["'])[\s\S]*?\1/i,
+        () => `content="${e(metadata[key])}"`,
+      );
+    })
     .replace(/<html lang="[^"]*"/, `<html lang="${e(wedding.site.language)}"`);
 }

@@ -91,6 +91,21 @@ The envelope remembers an opening for the current tab session and can be replaye
 
 `npm run build` writes a static website into `dist/`. Deploy that folder on any static host. `.openai/hosting.json` contains the identity for the private Sites preview. Local QA files live in ignored `.preview/`; the source PDF is excluded from the static build.
 
-`site.url` controls absolute share URLs; rebuild after changing it or the title/description. `site.previewImage` currently uses the original envelope artwork. A dedicated personal sharing image can be supplied later. Set `site.preview: false` after replacing all sample details.
+### GitHub Pages
+
+The repository includes `.github/workflows/pages.yml`. It checks the invitation, builds `dist/`, and publishes that folder when changes reach `main`. Pull requests to `main` run the same checks without publishing.
+
+1. Push the changes and merge them into `main`.
+2. Open the repository's **Settings → Pages → Build and deployment**.
+3. Set **Source** to **GitHub Actions**.
+4. Open **Actions → Build and deploy wedding invitation** and run it on `main`, or push a new commit to `main`.
+
+The public URL is **https://zamanmughal98.github.io/Zaman-Wedding-Invitation/**.
+
+Publish `dist/` rather than the raw repository when using a custom deployment. GitHub Pages does not run `server.js`. The generated HTML already contains the invitation, so it remains readable without JavaScript.
+
+Stylesheets and JavaScript entry points use relative paths. `assetUrl()` in `src/utils.js` keeps configured photos, the envelope, and music inside the project folder, including existing `/assets/...` values. The same files work on a project page, an origin-root site, or a custom domain; there is no repository prefix to repeat throughout the components. Remote `https://...` image URLs keep their original destination.
+
+`site.url` controls absolute share URLs for local builds. The Pages workflow supplies `SITE_URL` from the actual Pages configuration, so deployed share previews also work with a custom domain. Rebuild after changing the title, description, or preview image. `site.previewImage` currently uses the original envelope artwork. Set `site.preview: false` after replacing all sample details.
 
 Artwork provenance and the generation prompt are in `assets/images/README.md`.

@@ -1,9 +1,9 @@
-import { coupleNames, escapeHtml as e, formatDate, initials, safeUrl } from '../utils.js';
+import { assetUrl, coupleNames, escapeHtml as e, formatDate, initials } from '../utils.js';
 import { botanical, flourish, scene } from './artwork.js';
 import { heading, icon } from './shared.js';
 
 export function hero(w) {
-  const picture = safeUrl(w.invitation.heroPhoto);
+  const picture = assetUrl(w.invitation.heroPhoto);
   return /* HTML */ `
     <section class="hero section" id="home" aria-labelledby="hero-title">
       <div class="hero-topline">

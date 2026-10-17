@@ -20,7 +20,10 @@ for (const event of wedding.events) {
     );
   if (!/^[a-z][a-z0-9-]*$/.test(event.id)) throw new Error(`Invalid event id: ${event.id}`);
 }
-if (!hasOffset(wedding.invitation.date) || !Number.isFinite(new Date(wedding.invitation.date).getTime()))
+if (
+  !hasOffset(wedding.invitation.date) ||
+  !Number.isFinite(new Date(wedding.invitation.date).getTime())
+)
   throw new Error('Invalid wedding date.');
 if (new Set(wedding.sections.map((section) => section.id)).size !== wedding.sections.length)
   throw new Error('Section ids must be unique.');
@@ -44,8 +47,11 @@ for (const entry of publicFiles)
   });
 await writeFile(
   path.join(destination, 'index.html'),
-  prepareDocument(await readFile(path.join(root, 'index.html'), 'utf8')),
+  prepareDocument(await readFile(path.join(root, 'index.html'), 'utf8'), {
+    siteUrl: process.env.SITE_URL || wedding.site.url,
+  }),
 );
+await writeFile(path.join(destination, '.nojekyll'), '');
 const photos = [
   wedding.invitation.heroPhoto,
   wedding.couple.bride.photo,
