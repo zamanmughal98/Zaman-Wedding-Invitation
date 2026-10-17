@@ -1,11 +1,17 @@
 # Codebuff workspace metadata
 .freebuff/
-.pdf
+
+# Ignore all PDF files
+*.pdf
+
 # OS junk
 .DS_Store
 Thumbs.db
 
-# Local preview, dependencies, and generated deployment output
+# Ignore references folder
+references/
+
+# Local preview, dependencies, and build output
 .preview/
 node_modules/
 dist/
