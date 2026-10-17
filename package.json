@@ -1,0 +1,14 @@
+{
+  "name": "ivory-garden-wedding",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A configurable Indo-Pak wedding invitation, built with native web modules.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build": "node scripts/build.mjs",
+    "test": "node --test --experimental-test-isolation=none"
+  },
+  "engines": { "node": ">=22" }
+}

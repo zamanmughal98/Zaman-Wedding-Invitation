@@ -1,0 +1,11 @@
+# Codebuff workspace metadata
+.freebuff/
+.pdf
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local preview, dependencies, and generated deployment output
+.preview/
+node_modules/
+dist/

@@ -1,0 +1,24 @@
+/* THEME: edit these tokens to recolour the entire invitation. */
+:root {
+  color-scheme: light;
+  --ivory: #faf6ef;
+  --cream: #f2ead9;
+  --ink: #2e3b33;
+  --ink-soft: #5c6b60;
+  --gold: #b08d57;
+  --gold-soft: #c9ab7c;
+  --blush: #e6cfc0;
+  --white: #fffdf9;
+  --green: #2e3b33;
+  --rose: #8a5a57;
+  --line: color-mix(in srgb, var(--gold) 34%, transparent);
+  --paper: var(--ivory);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --script: 'Great Vibes', 'Brush Script MT', cursive;
+  --sans: 'Jost', 'Segoe UI', Arial, sans-serif;
+  --arabic: 'Noto Naskh Arabic', Georgia, serif;
+  --page-width: 760px;
+  --section-space: clamp(64px, 10vw, 100px);
+  --radius: 3px;
+  --shadow: 0 18px 54px -30px rgb(46 59 51 / 27%);
+}
