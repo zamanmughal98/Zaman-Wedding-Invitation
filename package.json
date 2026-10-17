@@ -1,5 +1,5 @@
 {
-  "name": "ivory-garden-wedding",
+  "name": "zaman-nimra-wedding",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,5 +10,7 @@
     "build": "node scripts/build.mjs",
     "test": "node --test --experimental-test-isolation=none"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }

@@ -1,14 +1,40 @@
-import { downloadFile, escapeHtml as e, readStored, safeUrl, writeStored } from '../utils.js';
-import { toast } from './interactions.js';
+import { assetUrl, downloadFile, escapeHtml as e, readStored, writeStored } from '../utils.js';
+import { emailAppUrl, whatsappUrl } from '../submissions.js';
+
+function clearValidity(form) {
+  form.addEventListener('input', (event) => event.target.setCustomValidity?.(''));
+}
+function requiredText(form, names) {
+  for (const name of names) {
+    if (!form.elements[name].value.trim())
+      form.elements[name].setCustomValidity('Please fill in this field.');
+  }
+  return form.reportValidity();
+}
+function setStatus(element, message, error = false) {
+  element.textContent = message;
+  element.classList.toggle('is-error', error);
+}
 
 export function initRsvp(w) {
   const form = document.getElementById('rsvp-form');
   if (!form) return;
-  const key = `${w.id}:rsvp`;
+  const key = w.id + ':rsvp';
   const status = document.getElementById('rsvp-status');
   const attendingFields = form.querySelector('[data-attending-fields]');
   const saved = readStored(key);
-  let response = null;
+  let response = saved && typeof saved.name === 'string' ? saved : null;
+  const actions = document.querySelector('.response-actions');
+  if (response) {
+    for (const name of ['name', 'contact', 'message', 'attendance', 'guests']) {
+      if (response[name] !== undefined) form.elements[name].value = response[name];
+    }
+    if (Array.isArray(response.events))
+      form.querySelectorAll('[name="events"]').forEach((input) => {
+        input.checked = response.events.includes(input.value);
+      });
+    actions.hidden = false;
+  }
   function attendance() {
     const no = form.elements.attendance.value === 'no';
     attendingFields.hidden = no;
@@ -16,96 +42,57 @@ export function initRsvp(w) {
       input.disabled = no;
     });
   }
-  if (saved && typeof saved === 'object' && typeof saved.name === 'string') {
-    for (const name of ['name', 'contact', 'message', 'attendance', 'guests']) {
-      if (saved[name] !== undefined && form.elements[name]) form.elements[name].value = saved[name];
-    }
-    if (Array.isArray(saved.events))
-      form.querySelectorAll('[name="events"]').forEach((input) => {
-        input.checked = saved.events.includes(input.value);
-      });
-  }
   form
     .querySelectorAll('[name="attendance"]')
     .forEach((input) => input.addEventListener('change', attendance));
-  form.elements.name.addEventListener('input', () => form.elements.name.setCustomValidity(''));
+  clearValidity(form);
   attendance();
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    status.classList.remove('is-error');
-    if (!form.elements.name.value.trim()) {
-      form.elements.name.setCustomValidity('Please enter your name.');
-      form.reportValidity();
-      return;
-    }
-    if (!form.reportValidity()) return;
+
+  function collect() {
+    if (!requiredText(form, ['name'])) return null;
     const data = new FormData(form);
+    if (data.get('_honey')) return null;
     const accepts = data.get('attendance') === 'yes';
     const events = accepts
       ? data.getAll('events').filter((id) => w.events.some((item) => item.id === id))
       : [];
     if (accepts && !events.length && w.events.length) {
-      status.textContent = 'Please choose at least one celebration.';
-      status.classList.add('is-error');
-      return;
+      setStatus(status, 'Please choose at least one celebration.', true);
+      return null;
     }
-    const draft = {
-      name: data.get('name').trim(),
-      contact: (data.get('contact') || '').trim(),
+    response = {
+      name: data.get('name').trim().slice(0, 100),
+      contact: (data.get('contact') || '').trim().slice(0, 150),
       attendance: accepts ? 'yes' : 'no',
       guests: accepts
         ? Math.max(1, Math.min(w.rsvp.maxGuests, Number(data.get('guests')) || 1))
         : 0,
       events,
-      message: (data.get('message') || '').trim(),
+      message: (data.get('message') || '').trim().slice(0, 1000),
       updatedAt: new Date().toISOString(),
     };
-    const submit = form.querySelector('[type="submit"]');
-    submit.disabled = true;
-    try {
-      if (w.rsvp.endpoint) {
-        const endpoint = safeUrl(w.rsvp.endpoint);
-        if (!endpoint)
-          throw new Error('The response service is not configured yet. Please contact the family.');
-        status.textContent = 'Sending your response…';
-        const result = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ weddingId: w.id, ...draft }),
-          signal: AbortSignal.timeout(12000),
-        });
-        if (!result.ok)
-          throw new Error(
-            'Your response could not be sent. Please try again or contact the family.',
-          );
-        status.textContent = accepts
-          ? 'Your response has been sent. We look forward to celebrating with you!'
-          : 'Your response has been sent. Thank you for your love and duas.';
-      } else {
-        const stored = writeStored(key, draft);
-        status.textContent = stored
-          ? 'Your response is saved on this device. You can download it below. Please contact the family to confirm.'
-          : 'Your browser could not save the draft. Download a copy below and contact the family to confirm.';
-      }
-      response = draft;
-      document.querySelector('.response-actions').hidden = false;
-      const whatsapp = document.querySelector('[data-whatsapp-rsvp]');
-      if (whatsapp) {
-        const names = events.map((id) => w.events.find((item) => item.id === id)?.name).join(', ');
-        const text = `${draft.name}: ${accepts ? `Joyfully accepting for ${draft.guests} guest(s). Celebrations: ${names}.` : 'Unable to attend, with love and duas.'} ${draft.message}`;
-        whatsapp.href = `https://wa.me/${w.rsvp.contactPhone.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`;
-      }
-    } catch (error) {
-      status.classList.add('is-error');
-      status.textContent =
-        error.name === 'TimeoutError'
-          ? 'The connection took too long. Please try again.'
-          : error instanceof TypeError
-            ? 'Unable to connect. Please try again or contact the family.'
-            : error.message;
-    } finally {
-      submit.disabled = false;
+    writeStored(key, response);
+    actions.hidden = false;
+    return response;
+  }
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const draft = collect();
+    if (!draft) return;
+    window.location.href = emailAppUrl(w, 'rsvp', draft);
+    setStatus(
+      status,
+      'Your email app will open with your response. Tap Send there to confirm, or use WhatsApp below.',
+    );
+  });
+  form.querySelector('[data-whatsapp-rsvp]')?.addEventListener('click', (event) => {
+    const draft = collect();
+    if (!draft) {
+      event.preventDefault();
+      return;
     }
+    event.currentTarget.href = whatsappUrl(w, 'rsvp', draft);
+    setStatus(status, 'Your message is ready in WhatsApp. Tap Send there to confirm.');
   });
   document.querySelector('[data-download-rsvp]')?.addEventListener('click', () => {
     if (response)
@@ -117,55 +104,75 @@ export function initRsvp(w) {
   });
 }
 
-export function initWishes(w) {
+export async function initWishes(w) {
   const dialog = document.getElementById('wish-dialog');
   if (!dialog) return;
-  const key = `${w.id}:wishes`;
-  const stored = readStored(key, []);
-  let wishes = Array.isArray(stored)
-    ? stored
-        .filter((item) => item && typeof item.name === 'string' && typeof item.message === 'string')
-        .slice(0, 30)
-    : [];
   const list = document.querySelector('[data-wishes-list]');
   const empty = document.querySelector('[data-wishes-empty]');
-  function render() {
-    list.innerHTML = wishes
+  const form = document.getElementById('wish-form');
+  const status = form.querySelector('.form-status');
+  const key = w.id + ':wish-draft';
+  const saved = readStored(key);
+  if (saved && typeof saved.name === 'string' && typeof saved.message === 'string') {
+    form.elements.name.value = saved.name;
+    form.elements.message.value = saved.message;
+  }
+  document.querySelector('[data-open-wish]').addEventListener('click', () => dialog.showModal());
+  clearValidity(form);
+  function collect() {
+    if (!requiredText(form, ['name', 'message'])) return null;
+    if (form.elements._honey.value) return null;
+    const entry = {
+      name: form.elements.name.value.trim().slice(0, 100),
+      message: form.elements.message.value.trim().slice(0, w.wishes.maxLength),
+      updatedAt: new Date().toISOString(),
+    };
+    writeStored(key, entry);
+    return entry;
+  }
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const entry = collect();
+    if (!entry) return;
+    window.location.href = emailAppUrl(w, 'wish', entry);
+    setStatus(
+      status,
+      'Your email app will open with your wish. Tap Send there to share it for family approval.',
+    );
+  });
+  form.querySelector('[data-whatsapp-wish]')?.addEventListener('click', (event) => {
+    const entry = collect();
+    if (!entry) {
+      event.preventDefault();
+      return;
+    }
+    event.currentTarget.href = whatsappUrl(w, 'wish', entry);
+    setStatus(
+      status,
+      'Your wish is ready in WhatsApp. Tap Send there to share it for family approval.',
+    );
+  });
+  try {
+    const response = await fetch(assetUrl(w.wishes.publishedFile), { cache: 'no-cache' });
+    if (!response.ok) throw new Error('Wishes unavailable');
+    const entries = await response.json();
+    if (!Array.isArray(entries)) throw new Error('Invalid wishes');
+    const approved = entries.filter(
+      (item) =>
+        item &&
+        typeof item.name === 'string' &&
+        typeof item.message === 'string' &&
+        item.name.trim() &&
+        item.message.trim(),
+    );
+    list.innerHTML = approved
       .map(
         (wish) =>
           `<article class="wish-card"><blockquote>“${e(wish.message.slice(0, w.wishes.maxLength))}”</blockquote><p>— ${e(wish.name.slice(0, 100))}</p></article>`,
       )
       .join('');
-    empty.hidden = wishes.length > 0;
+    empty.hidden = approved.length > 0;
+  } catch {
+    empty.textContent = 'The wishes wall could not load. You can still send us a wish.';
   }
-  document.querySelector('[data-open-wish]').addEventListener('click', () => dialog.showModal());
-  const form = document.getElementById('wish-form');
-  form.addEventListener('input', (event) => event.target.setCustomValidity?.(''));
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    for (const name of ['name', 'message']) {
-      if (!form.elements[name].value.trim()) {
-        form.elements[name].setCustomValidity('Please fill in this field.');
-        form.reportValidity();
-        return;
-      }
-    }
-    const data = new FormData(form);
-    const entry = {
-      name: data.get('name').trim().slice(0, 100),
-      message: data.get('message').trim().slice(0, w.wishes.maxLength),
-    };
-    const next = [entry, ...wishes].slice(0, 30);
-    if (!writeStored(key, next)) {
-      form.querySelector('.form-status').textContent =
-        'Your browser could not save this wish. Please try again with storage enabled.';
-      return;
-    }
-    wishes = next;
-    render();
-    form.reset();
-    dialog.close();
-    toast('A little love, saved on this device. Thank you!');
-  });
-  render();
 }

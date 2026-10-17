@@ -1,24 +1,27 @@
-/* THEME: edit these tokens to recolour the entire invitation. */
+/* Printed-card palette. Change these tokens to recolour every section. */
 :root {
   color-scheme: light;
-  --ivory: #faf6ef;
-  --cream: #f2ead9;
-  --ink: #2e3b33;
-  --ink-soft: #5c6b60;
-  --gold: #b08d57;
-  --gold-soft: #c9ab7c;
-  --blush: #e6cfc0;
-  --white: #fffdf9;
-  --green: #2e3b33;
-  --rose: #8a5a57;
-  --line: color-mix(in srgb, var(--gold) 34%, transparent);
+  --ivory: #f8f4ed;
+  --cream: #e8dcc9;
+  --ink: #4c3228;
+  --ink-soft: #5b3e31;
+  --gold: #927661;
+  --gold-soft: #baa58d;
+  --blush: #e3d3c3;
+  --white: #fffdf8;
+  --green: var(--ink);
+  --rose: #806458;
+  --brown: #4c3228;
+  --sand: #d4c1a6;
+  --beige: #e8dcc9;
+  --line: color-mix(in srgb, var(--ink) 20%, transparent);
   --paper: var(--ivory);
   --serif: 'Cormorant Garamond', Georgia, serif;
   --script: 'Great Vibes', 'Brush Script MT', cursive;
   --sans: 'Jost', 'Segoe UI', Arial, sans-serif;
   --arabic: 'Noto Naskh Arabic', Georgia, serif;
   --page-width: 760px;
-  --section-space: clamp(64px, 10vw, 100px);
+  --section-space: clamp(50px, 8vw, 76px);
   --radius: 3px;
-  --shadow: 0 18px 54px -30px rgb(46 59 51 / 27%);
+  --shadow: 0 12px 34px -28px rgb(76 50 40 / 18%);
 }

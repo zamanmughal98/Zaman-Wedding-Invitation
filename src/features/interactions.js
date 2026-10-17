@@ -19,10 +19,10 @@ export function initCountdown(w) {
   if (!container) return;
   let timer;
   function tick() {
-    const parts = countdownParts(w.invitation.date);
+    const parts = countdownParts(w.countdown.targetDate || w.invitation.date);
     for (const [key, value] of Object.entries(parts))
       container.querySelector(`[data-time="${key}"]`).textContent = String(value).padStart(2, '0');
-    if (Date.now() >= new Date(w.invitation.date).getTime()) {
+    if (Date.now() >= new Date(w.countdown.targetDate || w.invitation.date).getTime()) {
       document.querySelector('#countdown h2').textContent = w.countdown.completed;
       clearInterval(timer);
     }
@@ -30,7 +30,8 @@ export function initCountdown(w) {
   function start() {
     clearInterval(timer);
     tick();
-    if (Date.now() < new Date(w.invitation.date).getTime()) timer = setInterval(tick, 1000);
+    if (Date.now() < new Date(w.countdown.targetDate || w.invitation.date).getTime())
+      timer = setInterval(tick, 1000);
   }
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) clearInterval(timer);
@@ -203,10 +204,12 @@ export function initSharedInteractions(w) {
       const event = w.events.find((item) => item.id === button.dataset.copyAddress);
       if (!event) return;
       try {
-        await navigator.clipboard.writeText(event.address);
+        await navigator.clipboard.writeText(
+          [event.venue, event.address].filter(Boolean).join(', '),
+        );
         toast('The address is copied. See you there!');
       } catch {
-        toast(`Address: ${event.address}`);
+        toast(`Address: ${[event.venue, event.address].filter(Boolean).join(', ')}`);
       }
     }),
   );

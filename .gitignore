@@ -1,17 +1,24 @@
-# Codebuff workspace metadata
+# Local tool and preview metadata
 .freebuff/
+.openai/
+.preview/
 
-# Ignore all PDF files
+# Source reference documents
 *.pdf
-
-# OS junk
-.DS_Store
-Thumbs.db
-
-# Ignore references folder
 references/
 
-# Local preview, dependencies, and build output
-.preview/
+# Dependencies and generated builds
 node_modules/
 dist/
+
+# Local credentials and Google Apps Script tooling
+.env
+.env.*
+!.env.example
+.clasp.json
+.clasprc.json
+
+# OS junk and local logs
+.DS_Store
+Thumbs.db
+*.log

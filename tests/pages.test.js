@@ -30,6 +30,7 @@ async function staticHost(prefix) {
           '.html': 'text/html',
           '.svg': 'image/svg+xml',
           '.png': 'image/png',
+          '.json': 'application/json',
         }[path.extname(file)] || 'application/octet-stream';
       response.writeHead(200, { 'Content-Type': type });
       response.end(bytes);
@@ -75,6 +76,9 @@ for (const prefix of ['/', '/Zaman-Wedding-Invitation/']) {
       for (const [, reference] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
         if (!reference.startsWith('#') && !/^https?:/.test(reference)) await load(reference);
       }
+      await load(assetUrl(wedding.wishes.publishedFile));
+      assert.ok([...seen].some((url) => url.endsWith('/data/wishes.json')));
+      assert.ok([...seen].some((url) => url.endsWith('/styles/stationery.css')));
       assert.ok([...seen].some((url) => url.endsWith('/styles/theme.css')));
       assert.ok([...seen].some((url) => url.endsWith('/config/wedding.js')));
       assert.ok([...seen].some((url) => url.endsWith('/src/features/music.js')));
@@ -99,7 +103,11 @@ test('configured photos and music stay inside the project without breaking absol
   const content = structuredClone(wedding);
   content.invitation.heroPhoto = '/assets/photos/hero.webp';
   content.couple.bride.photo = '/assets/photos/bride.webp';
-  content.gallery.photos[0].src = '/assets/photos/gallery.webp';
+  content.gallery.photos.push({
+    src: '/assets/photos/gallery.webp',
+    alt: 'Test image',
+    caption: '',
+  });
   const html = renderInvitation(content);
   assert.doesNotMatch(html, /src="\/assets\//);
   assert.match(html, /src="\.\/assets\/photos\/hero.webp"/);

@@ -31,8 +31,9 @@ export function assetUrl(value) {
 }
 
 export function formatDate(value, site, options = {}) {
+  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
   return new Intl.DateTimeFormat(site.locale, {
-    timeZone: site.timeZone,
+    timeZone: dateOnly ? 'UTC' : site.timeZone,
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -50,11 +51,21 @@ export function formatTime(value, site) {
 }
 
 export function initials(wedding, separator = ' & ') {
-  return `${wedding.couple.bride.initial}${separator}${wedding.couple.groom.initial}`;
+  return wedding.couple.groom.initial + separator + wedding.couple.bride.initial;
 }
 
 export function coupleNames(wedding, separator = ' & ') {
-  return `${wedding.couple.bride.name}${separator}${wedding.couple.groom.name}`;
+  return wedding.couple.groom.name + separator + wedding.couple.bride.name;
+}
+
+export function eventDate(event) {
+  return event.date || event.start;
+}
+
+export function eventTime(event, site) {
+  return event.start
+    ? formatTime(event.start, site)
+    : event.timeLabel || 'Evening · Time to follow';
 }
 
 export function countdownParts(target, now = Date.now()) {
@@ -86,7 +97,7 @@ export function writeStored(key, value) {
 
 export function calendarFile(event, wedding) {
   const escape = (value) =>
-    String(value)
+    String(value || '')
       .replace(/\\/g, '\\\\')
       .replace(/\r?\n/g, '\\n')
       .replace(/,/g, '\\,')
@@ -99,20 +110,34 @@ export function calendarFile(event, wedding) {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Ivory Garden//Wedding Invitation//EN',
+    'PRODID:-//Wedding Invitation//Zaman and Nimra//EN',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     `UID:${escape(wedding.id)}-${escape(event.id)}@wedding-invitation`,
     `DTSTAMP:${stamp(new Date())}`,
-    `DTSTART:${stamp(event.start)}`,
-    `DTEND:${stamp(event.end)}`,
-    `SUMMARY:${escape(`${coupleNames(wedding)} · ${event.name}`)}`,
-    `DESCRIPTION:${escape(event.description)}`,
+  ];
+  if (event.start) {
+    lines.push('DTSTART:' + stamp(event.start));
+    if (event.end) lines.push('DTEND:' + stamp(event.end));
+  } else {
+    const day = eventDate(event);
+    const next = new Date(day + 'T00:00:00Z');
+    next.setUTCDate(next.getUTCDate() + 1);
+    lines.push(
+      'DTSTART;VALUE=DATE:' + day.replace(/-/g, ''),
+      'DTEND;VALUE=DATE:' + next.toISOString().slice(0, 10).replace(/-/g, ''),
+    );
+  }
+  const description = [event.description, !event.start ? event.timeLabel : '']
+    .filter(Boolean)
+    .join('\n');
+  lines.push(
+    `SUMMARY:${escape(coupleNames(wedding) + ' · ' + event.name)}`,
+    `DESCRIPTION:${escape(description)}`,
     `LOCATION:${escape([event.venue, event.address].filter(Boolean).join(', '))}`,
     'END:VEVENT',
     'END:VCALENDAR',
-  ];
-  // RFC 5545 folds at 75 UTF-8 octets, not at 75 JavaScript characters.
+  );
   const fold = (line) => {
     let result = '',
       width = 0;

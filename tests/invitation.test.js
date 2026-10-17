@@ -28,14 +28,15 @@ test('the countdown stops at zero after the ceremony', () => {
 
 test('calendar downloads preserve the actual event time and safely fold Unicode', () => {
   const event = {
-    ...wedding.events[1],
+    ...wedding.events.find((event) => event.id === 'walima'),
+    end: '2026-11-15T21:00:00+05:00',
     description: 'نکاح کی تقریب '.repeat(18) + '\nWith love; always, together',
     venue: 'A hall, with gardens',
     address: 'Street; 12',
   };
   const calendar = calendarFile(event, wedding);
-  assert.match(calendar, /DTSTART:20270612T110000Z/);
-  assert.match(calendar, /DTEND:20270612T123000Z/);
+  assert.match(calendar, /DTSTART:20261115T140000Z/);
+  assert.match(calendar, /DTEND:20261115T160000Z/);
   assert.match(calendar.replace(/\r\n /g, ''), /With love\\; always\\, together/);
   assert.match(calendar, /LOCATION:A hall\\, with gardens\\, Street\\; 12/);
   for (const line of calendar.split('\r\n')) assert.ok(Buffer.byteLength(line, 'utf8') <= 75);
@@ -60,7 +61,7 @@ test('sections and their navigation can be removed through configuration', () =>
 test('editable text is escaped, and unsafe image or link protocols are rejected', () => {
   const content = structuredClone(wedding);
   content.couple.bride.name = '<img src=x onerror=alert(1)>';
-  content.gallery.photos[0].src = 'javascript:alert(1)';
+  content.gallery.photos.push({ src: 'javascript:alert(1)', alt: 'Test image', caption: '' });
   const html = renderInvitation(content);
   assert.doesNotMatch(html, /<img src=x|src="javascript:/);
   assert.match(html, /&lt;img src=x/);
@@ -77,7 +78,7 @@ test('the preview serves rendered content and assets, and excludes project docum
     assert.equal(page.status, 200);
     const html = await page.text();
     assert.match(html, /id="hero-title"/);
-    assert.match(html, /id="event-nikah"/);
+    assert.match(html, /id="event-nikah-barat"/);
     assert.doesNotMatch(html, /<!-- invitation -->/);
     const module = await fetch(origin + '/config/wedding.js');
     assert.match(module.headers.get('content-type'), /javascript/);
@@ -88,6 +89,8 @@ test('the preview serves rendered content and assets, and excludes project docum
       '/.git/config',
       '/DOC-20260928-WA0014.pdf',
       '/server.js',
+      '/backend/google-wishes/Code.gs',
+      '/backend/google-wishes/Index.html',
       '/README.md',
       '/assets/photos/README.md',
       '/%ZZ',
