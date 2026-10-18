@@ -2,7 +2,7 @@
 
 A small, dependency-free Indo-Pak wedding invitation, personalised from the printed reception card. The design uses warm beige, cream, and brown ink (#4c3228 and #5b3e31), with restrained botanical details.
 
-The confirmed functions run from **12 to 15 November 2026**. The reception is on **15 November at 7:00 PM**, at **Royal Vista Event Complex, Attock City**. Unconfirmed times and venues remain empty in the configuration and display as details to follow.
+The confirmed functions run from **12 to 15 November 2026**. The reception is on **15 November at 7:00 PM**, at **Royal Vista Event Complex, Attock City**. All four venues are confirmed in the configuration. Exact start times for the first three evenings are still to follow.
 
 ## Run and check
 
@@ -24,6 +24,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Show, hide, or reorder sections | wedding.sections in the config |
 | Navigation links | wedding.navigation in the config |
 | Colours, fonts, spacing | styles/theme.css |
+| Individual event card colours | events[].tone in config; --event-* tokens in styles/theme.css |
 | Printed-card layout and mobile adjustments | styles/stationery.css |
 | Shared base styles | style.css |
 | Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
