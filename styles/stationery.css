@@ -6,19 +6,47 @@
   box-shadow: none;
   border-inline-color: var(--line);
 }
+/* Each section reads as a separate piece of stationery. */
+.section:not(.hero) {
+  --section-surface: var(--section-paper);
+  padding-block: var(--section-space);
+  background: var(--section-surface);
+}
+.section:not(.hero):nth-of-type(even) {
+  --section-surface: var(--section-parchment);
+}
+.section + .section {
+  border-top: 1px solid var(--section-rule);
+}
 .section + .section::before {
-  width: 48px;
-  left: calc(50% - 24px);
+  top: -6px;
+  width: 11px;
+  height: 11px;
+  left: calc(50% - 5.5px);
+  background: var(--section-surface, var(--section-paper));
+  border: 1px solid var(--section-rule);
+  transform: rotate(45deg);
 }
 .section-heading {
-  margin-bottom: 28px;
+  margin-bottom: 38px;
+}
+.section-heading > .eyebrow {
+  display: inline-block;
+  max-width: 100%;
+  padding: 7px 15px;
+  border-block: 1px solid var(--line);
+  line-height: 1.9;
 }
 .section-heading h2 {
-  font-size: clamp(34px, 5.6vw, 45px);
+  max-width: 19ch;
+  margin: 17px auto 0;
+  font-size: clamp(40px, 6.3vw, 53px);
+  line-height: 1.24;
 }
 .section-subtitle {
   max-width: 390px;
-  font-size: 17px;
+  font-size: 18px;
+  line-height: 1.75;
 }
 .eyebrow {
   color: var(--ink-soft);
@@ -271,7 +299,7 @@
   margin-top: 16px;
 }
 .event-list {
-  gap: 25px;
+  gap: 32px;
 }
 .event-card {
   --event-paper: var(--event-beige);
@@ -295,12 +323,23 @@
 .event-card.tone-sand {
   --event-paper: var(--event-sand);
 }
+.event-card:is(.tone-olive, .tone-green, .tone-red, .tone-brown) {
+  --event-ink: var(--event-light-ink);
+  --event-muted: var(--event-light-muted);
+  --event-accent: var(--event-light-accent);
+  --event-line: color-mix(in srgb, var(--cream) 38%, transparent);
+}
+.event-card.tone-olive {
+  --event-paper: var(--event-olive);
+}
+.event-card.tone-green {
+  --event-paper: var(--event-green);
+}
+.event-card.tone-red {
+  --event-paper: var(--event-red);
+}
 .event-card.tone-brown {
   --event-paper: var(--event-brown);
-  --event-ink: var(--ivory);
-  --event-muted: var(--cream);
-  --event-accent: var(--sand);
-  --event-line: color-mix(in srgb, var(--cream) 28%, transparent);
 }
 .event-card.tone-ivory {
   --event-paper: var(--event-ivory);
@@ -363,7 +402,7 @@
   width: 125px;
   height: 215px;
   color: var(--event-accent);
-  opacity: 0.14;
+  opacity: 0.1;
   transform: rotate(5deg);
 }
 .event-actions {
@@ -387,7 +426,14 @@
   color: var(--event-muted);
 }
 @media print {
-  .event-card.tone-brown {
+  .section:not(.hero) {
+    padding-block: 30px;
+    background: white;
+  }
+  .section + .section::before {
+    display: none;
+  }
+  .event-card:is(.tone-olive, .tone-green, .tone-red, .tone-brown) {
     --event-paper: white;
     --event-ink: var(--ink);
     --event-muted: var(--ink-soft);
@@ -676,9 +722,6 @@
 }
 
 /* The Google form and its approval flow stay unchanged inside this frame. */
-.wishes-section {
-  background: color-mix(in srgb, var(--cream) 20%, var(--ivory));
-}
 .wishes-section .section-heading {
   margin-bottom: 32px;
 }

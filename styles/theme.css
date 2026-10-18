@@ -14,7 +14,17 @@
   --brown: #4c3228;
   --sand: #d4c1a6;
   --beige: #e8dcc9;
-  /* Event stationery: choose an event's tone in config/wedding.js. */
+  /* Section surfaces and dividers keep the invitation in its printed-card palette. */
+  --section-paper: var(--ivory);
+  --section-parchment: color-mix(in srgb, var(--cream) 85%, var(--ivory));
+  --section-rule: color-mix(in srgb, var(--ink) 32%, var(--cream));
+  /* Event stationery: olive Mehndi, green Mehndi, red Barat, brown Walima. */
+  --event-olive: #5d633b;
+  --event-green: #244b3b;
+  --event-red: #793c43;
+  --event-light-ink: var(--ivory);
+  --event-light-muted: #efe5d6;
+  --event-light-accent: #f1dfbe;
   --event-beige: color-mix(in srgb, var(--blush) 65%, var(--white));
   --event-sand: color-mix(in srgb, var(--sand) 68%, var(--white));
   --event-brown: var(--ink);
@@ -26,7 +36,7 @@
   --sans: 'Jost', 'Segoe UI', Arial, sans-serif;
   --arabic: 'Noto Naskh Arabic', Georgia, serif;
   --page-width: 760px;
-  --section-space: clamp(50px, 8vw, 76px);
+  --section-space: clamp(64px, 9vw, 88px);
   --radius: 3px;
   --shadow: 0 12px 34px -28px rgb(76 50 40 / 18%);
 }

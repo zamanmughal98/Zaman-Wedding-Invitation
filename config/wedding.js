@@ -163,7 +163,7 @@ export const wedding = {
       address: 'Near University of Education, Attock Campus, Attock City',
       mapsUrl: null,
       dressCode: '',
-      tone: 'beige',
+      tone: 'olive',
       illustration: 'botanical',
     },
     {
@@ -180,7 +180,7 @@ export const wedding = {
       address: 'Attock City',
       mapsUrl: null,
       dressCode: '',
-      tone: 'sand',
+      tone: 'green',
       illustration: 'botanical',
     },
     {
@@ -197,7 +197,7 @@ export const wedding = {
       address: 'Attock Cantt',
       mapsUrl: null,
       dressCode: '',
-      tone: 'brown',
+      tone: 'red',
       illustration: 'botanical',
     },
     {
@@ -215,7 +215,7 @@ export const wedding = {
       address: 'Attock City',
       mapsUrl: null,
       dressCode: '',
-      tone: 'ivory',
+      tone: 'brown',
       illustration: 'botanical',
     },
   ],

@@ -18,7 +18,7 @@ Still to confirm: exact start times for the first three functions, any end times
 
 The first three functions show evening/time to follow. Their calendar downloads include the confirmed venues and save the dates without inventing a start time. The countdown uses the confirmed Walima start. No fictional times, venue names, biographies, or story milestones are supplied.
 
-The four event cards share a fine double border and consistent typography. Nimra's Mehndi uses rose beige (tone: beige), Zaman's Mehndi warm sand (tone: sand), Nikah & Barat chocolate brown with cream lettering (tone: brown), and Walima ivory (tone: ivory). Set event.tone in config/wedding.js; the four paper colours live in styles/theme.css and derive from the main theme palette.
+The four event cards share a fine double border and cream lettering. Nimra's Mehndi uses olive green (tone: olive), Zaman's Mehndi dark green (tone: green), Nikah & Barat muted red (tone: red), and Walima chocolate brown (tone: brown). Set event.tone in config/wedding.js; the paper and text colours live in styles/theme.css. Surrounding sections alternate ivory and parchment, with a full-width divider, diamond detail, bordered heading label, and more space around each heading. Section surface, rule, and spacing tokens also live in styles/theme.css.
 
 The animation is an optional asset: set invitation.heroVideo and optionally heroVideoPoster in config/wedding.js. A personal photo remains an alternative through heroPhoto. The opening envelope is preserved.
 

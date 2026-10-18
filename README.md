@@ -25,6 +25,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Navigation links | wedding.navigation in the config |
 | Colours, fonts, spacing | styles/theme.css |
 | Individual event card colours | events[].tone in config; --event-* tokens in styles/theme.css |
+| Section backgrounds and dividers | --section-paper, --section-parchment, --section-rule in styles/theme.css |
 | Printed-card layout and mobile adjustments | styles/stationery.css |
 | Shared base styles | style.css |
 | Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
@@ -35,6 +36,8 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Browser interactions | src/features/ |
 
 Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. Attendance replies are also disabled for this close-family invitation; the RSVP link has been removed from navigation. The gallery has an empty state until photographs are added.
+
+Event card tones are olive for Nimra's Mehndi, green for Zaman's Mehndi, red for Nikah & Barat, and brown for Walima. The surrounding sections alternate ivory and parchment, with bordered heading labels and a divider between sections.
 
 See [confirmed details and pending information](docs/wedding-content.md).
 
