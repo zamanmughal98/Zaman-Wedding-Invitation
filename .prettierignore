@@ -1,4 +1,5 @@
 .preview/
+.local/
 dist/
 assets/images/
 *.pdf

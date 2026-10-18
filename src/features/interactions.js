@@ -217,6 +217,11 @@ export function initSharedInteractions(w) {
     'error',
     (event) => {
       const image = event.target;
+      if (image instanceof HTMLImageElement && image.hasAttribute('data-portrait-photo')) {
+        // Keep the matching monogram visible if a personal photo cannot load.
+        image.remove();
+        return;
+      }
       if (image instanceof HTMLImageElement && image.hasAttribute('data-photo-fallback')) {
         const placeholder = document.createElement('div');
         placeholder.className = 'illustrated-photo';
@@ -233,7 +238,9 @@ export function initSharedInteractions(w) {
     true,
   );
   // Some cached image errors precede the event listener.
-  document.querySelectorAll('img[data-photo-fallback], img.hero-photo').forEach((image) => {
-    if (image.complete && !image.naturalWidth) image.dispatchEvent(new Event('error'));
-  });
+  document
+    .querySelectorAll('img[data-photo-fallback], img[data-portrait-photo], img.hero-photo')
+    .forEach((image) => {
+      if (image.complete && !image.naturalWidth) image.dispatchEvent(new Event('error'));
+    });
 }

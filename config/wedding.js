@@ -58,6 +58,10 @@ export const wedding = {
     },
     {
       id: 'rsvp',
+      enabled: false,
+    },
+    {
+      id: 'photo-uploads',
       enabled: true,
     },
     {
@@ -75,12 +79,12 @@ export const wedding = {
       label: 'Celebrations',
     },
     {
-      section: 'wishes',
-      label: 'Wishes',
+      section: 'photo-uploads',
+      label: 'Photos',
     },
     {
-      section: 'rsvp',
-      label: 'RSVP',
+      section: 'wishes',
+      label: 'Wishes',
     },
   ],
   couple: {
@@ -88,9 +92,11 @@ export const wedding = {
       name: 'Nimra',
       fullName: 'Nimra Shafiq',
       initial: 'N',
-      parents: '',
+      parents: 'Daughter of Mr. & Mrs. Shafiq',
       bio: '',
+      // Add your childhood photograph here when it is ready.
       photo: null,
+      photoAlt: 'Nimra as a child',
       photoPosition: 'center 30%',
       social: null,
     },
@@ -100,7 +106,9 @@ export const wedding = {
       initial: 'Z',
       parents: 'Son of Mr. & Mrs. Ishfaq Mughal',
       bio: '',
+      // Add your childhood photograph here when it is ready.
       photo: null,
+      photoAlt: 'Zaman as a child',
       photoPosition: 'center 30%',
       social: null,
     },
@@ -112,7 +120,7 @@ export const wedding = {
     together: 'Together with their families',
     hosts: 'Mr. & Mrs. Ishfaq Mughal',
     hostMessage:
-      'Request the honour of your presence at the wedding celebrations of their beloved son',
+      'Request the honour of your presence at the wedding celebrations of their beloved',
     arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
     transliteration: 'In the name of Allah, the Most Gracious, the Most Merciful',
     verse: 'And We created you in pairs',
@@ -132,7 +140,6 @@ export const wedding = {
   envelope: {
     enabled: true,
     image: '/assets/images/ivory-envelope.png',
-    rememberForSession: true,
   },
   countdown: {
     eyebrow: 'An evening to look forward to',
@@ -217,7 +224,7 @@ export const wedding = {
       label: 'With love & blessings',
       name: 'Mr. & Mrs. Ishfaq Mughal',
       message:
-        'Welcoming you to the wedding celebrations of their beloved son, Zaman Mughal, and Nimra Shafiq.',
+        'Welcoming you to the wedding celebrations of their beloved, Zaman Mughal, and Nimra Shafiq.',
       members: [],
     },
   ],
@@ -254,8 +261,16 @@ export const wedding = {
     maxLength: 500,
     publishedFile: '/data/wishes.json',
     // Paste only the public /exec deployment URL; the moderator key stays in your email.
-    googleScriptUrl: 'https://script.google.com/macros/s/AKfycbzleNjgh9fz45xKNPbJ6tBSVrOiSzY6qvIBoujXUCcOMSmQlZu9wsAqKOuD96isMxvG/exec',
+    googleScriptUrl:
+      'https://script.google.com/macros/s/AKfycbzleNjgh9fz45xKNPbJ6tBSVrOiSzY6qvIBoujXUCcOMSmQlZu9wsAqKOuD96isMxvG/exec',
     message: 'Leave a dua, a memory, or a little love for the journey ahead.',
+  },
+  photos: {
+    title: 'Share your moments',
+    message: 'Help us keep the memories you capture, shared privately with our family.',
+    // A separate photo uploader; keep the working wishes deployment unchanged.
+    googleScriptUrl:
+      'https://script.google.com/macros/s/AKfycbxLrHpj5Y1xFS0rkubZsn61IdLMO3QFdaFh-xdy4u-Jb9OKUx6VdeFqq8FUPrSUBNu8/exec',
   },
   music: {
     enabled: true,

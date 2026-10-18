@@ -29,7 +29,7 @@ test('the invitation renders confirmed names and four functions, without a false
   for (const name of ['Zaman Mughal', 'Nimra Shafiq', 'Royal Vista Event Complex'])
     assert.ok(html.includes(name));
   for (const event of wedding.events) assert.ok(html.includes('id="event-' + event.id + '"'));
-  assert.doesNotMatch(html, /1970|2027|Sample Guest|id="story"/);
+  assert.doesNotMatch(html, /1970|2027|Sample Guest|id="story"|id="rsvp"|href="#rsvp"/);
   assert.doesNotMatch(html, /Kindly respond by/);
 });
 

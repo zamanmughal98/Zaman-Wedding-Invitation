@@ -2,6 +2,8 @@ import { assetUrl, escapeHtml as e, safeUrl } from '../utils.js';
 import { flourish, scene } from './artwork.js';
 
 const paths = {
+  camera: '<path d="M4 7h4l2-3h4l2 3h4v13H4Z"/><circle cx="12" cy="13" r="4"/>',
+  lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   pin: '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
   calendar:

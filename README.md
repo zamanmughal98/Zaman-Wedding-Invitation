@@ -28,11 +28,12 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Shared base styles | style.css |
 | Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
 | Manual wishes fallback / backup format | data/wishes.json |
+| Private guest photo collection | photos.googleScriptUrl |
 | Photos, animation, music | Add files to assets/, then reference them in config |
 | Section HTML | src/components/ |
 | Browser interactions | src/features/ |
 
-Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. The gallery has an empty state until photographs are added.
+Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. Attendance replies are also disabled for this close-family invitation; the RSVP link has been removed from navigation. The gallery has an empty state until photographs are added.
 
 See [confirmed details and pending information](docs/wedding-content.md).
 
@@ -71,7 +72,7 @@ heroPhoto: null,
 
 Add the corresponding files to assets/videos/ and assets/photos/. The video is muted, loops inline, and has a play/pause button. It respects reduced motion and pauses when the tab is hidden. Keep the video short and compressed for mobile connections. A poster is useful while it loads.
 
-For a still image instead, leave heroVideo null and set heroPhoto. Its crop uses heroPhotoPosition. Individual portraits use couple.groom.photo and couple.bride.photo. Gallery entries use src, alt, caption, and position. Keep personal images out of the repository until you are happy for site visitors to see them.
+For a still image instead, leave heroVideo null and set heroPhoto. Its crop uses heroPhotoPosition. The matching portrait cards are ready for childhood photographs. Set couple.groom.photo and couple.bride.photo, use photoPosition to adjust the crop, and photoAlt to describe each image. Both full names use two matching lines so the cards stay aligned. Missing photos retain the initials. Gallery entries use src, alt, caption, and position. Keep personal images out of the repository until you are happy for site visitors to see them.
 
 The initial envelope experience is retained. All local media paths work below the GitHub repository prefix.
 
@@ -89,7 +90,7 @@ Add mapsUrl only when the correct venue link is known. The venue section is opti
 
 Replies use **zamanbinishfaq+wedding@gmail.com**. WhatsApp uses the printed family contact **923490095926 (Zaighum Mughal)**. Change either in the config.
 
-The current email option opens the guest's email app with a prepared message. WhatsApp similarly opens a prepared message. The guest must tap Send in that app; opening a link does not prove delivery. RSVP drafts remain available on the guest's browser and can be downloaded as JSON.
+The attendance section is hidden. Its optional component remains available if needed later. Email and WhatsApp are retained only as the manual wishes fallback; the guest must tap Send in the app that opens.
 
 For wishes, the prepared Google Sheets + Apps Script app adds private phone moderation. Guests submit directly, then you receive an email and use your private link to Approve, Reject, or Hide. Approved wishes appear automatically; no laptop or redeploy is needed for individual decisions. Google stores only the submitted names and wishes for this workflow.
 
@@ -99,11 +100,21 @@ When that URL is empty, email/WhatsApp and the manually approved data/wishes.jso
 
 See [response setup](docs/response-setup.md) and [JSON backup details](data/README.md).
 
+## Guest photo collection
+
+A Share your moments section is ready for private guest photos. Its separate Apps Script uploader supports original photo files, a saved device queue where browser storage permits, chunked transfers, pause/continue, retries, and an optional screen-awake control. Guests can upload without viewing other guests' photos. You grant viewing access separately in Drive.
+
+The photo uploader is connected through photos.googleScriptUrl. New photos are grouped by celebration, then guest name. Each selection keeps its chosen name and celebration. Completed rows clear when guests add another selection; only pending photos are processed. Local records help prevent repeat submissions for the same name, celebration, and photo in that browser.
+
+The Google photo service runs separately from GitHub Pages. Its source, manifest, generator, and backend checks are retained in ignored .local/google-photos/ for owner maintenance; they are not part of the GitHub push. See [photo service maintenance](docs/google-photos-setup.md). The existing wishes service is unchanged.
+
+Locking the phone or closing the browser can suspend uploads. Guests return to continue and may need to reselect files if browser storage is unavailable or cleared. Completed uploads remain in Drive.
+
 ## Sound and accessibility
 
 Music is off until an explicit tap. Add music.src for an MP3, or use the optional quiet ambient chimes. Disable it with music.enabled: false.
 
-The envelope remembers its opening for the tab session and can be replayed from the footer. Direct section links skip it. Native scrolling, keyboard-accessible dialogs, an alternative date-reveal button, visible focus states, reduced motion, and print styles are included.
+The envelope appears on every page refresh and can also be replayed from the footer. Opening a direct section link skips it initially; refreshing that page shows the envelope again. Native scrolling, keyboard-accessible dialogs, an alternative date-reveal button, visible focus states, reduced motion, and print styles are included.
 
 ## GitHub Pages
 

@@ -137,19 +137,31 @@ export function wishes(w) {
   if (widget)
     return /* HTML */ `
       <section class="section wishes-section" id="wishes">
-        ${heading('Little notes. A lot of love.', 'A wall of warm wishes', w.wishes.message)}
-        <iframe
-          class="wishes-widget"
-          src="${e(widget)}"
-          title="Approved wedding wishes and a form to leave a wish"
-          loading="lazy"
-          referrerpolicy="no-referrer"
-        ></iframe>
-        <p class="local-note">
-          <a class="text-link" href="${e(widget)}" target="_blank" rel="noopener noreferrer">
-            Open the wishes wall in a new tab ${icon('arrow')}
-          </a>
-        </p>
+        ${heading('With love & duas', 'A wall of warm wishes', w.wishes.message)}
+        <div class="wishes-keepsake">
+          <div class="wishes-keepsake-heading">
+            <span class="wishes-emblem" aria-hidden="true">${icon('heart')}</span>
+            <div>
+              <p class="eyebrow">A little love to keep</p>
+              <p class="wishes-keepsake-title">Words we’ll treasure.</p>
+            </div>
+          </div>
+          <div class="wishes-widget-frame">
+            <iframe
+              class="wishes-widget"
+              src="${e(widget)}"
+              title="Approved wedding wishes and a form to leave a wish"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+          </div>
+          <div class="wishes-keepsake-footer">
+            <p>Your words become part of our story.</p>
+            <a class="text-link" href="${e(widget)}" target="_blank" rel="noopener noreferrer">
+              Open the guestbook ${icon('arrow')}
+            </a>
+          </div>
+        </div>
       </section>
     `;
   return /* HTML */ `
