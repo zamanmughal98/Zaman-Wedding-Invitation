@@ -4,6 +4,10 @@
     <base target="_top" />
     <meta charset="utf-8" />
     <meta name="referrer" content="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&amp;family=Great+Vibes&amp;family=Jost:wght@400;500&amp;display=swap"
+    />
     <style>
       :root {
         --ink: #4c3228;
@@ -216,11 +220,141 @@
           padding: 28px;
         }
       }
+      /* Public guestbook only. Moderation layout and all service behaviour are preserved. */
+      body.guestbook {
+        min-height: 100vh;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        --paper: #e9dcc7;
+        --card: #e3ceb0;
+        --line: #c4ac8e;
+        --wash: #efe2cd;
+        background: linear-gradient(145deg, #efe2cd, var(--paper) 55%, #e5d2b7);
+        background-repeat: no-repeat;
+      }
+      .guestbook :is(.eyebrow, .note, .label, button, input, textarea, .byline) {
+        font-family: 'Jost', Arial, sans-serif;
+      }
+      .guestbook main {
+        padding: 18px 12px 24px;
+      }
+      .guestbook .public-list {
+        padding: 3px;
+        scrollbar-color: #a48768 var(--paper);
+        scrollbar-width: thin;
+      }
+      .guestbook .public-list:focus-visible {
+        outline: 2px solid var(--soft);
+        outline-offset: 2px;
+      }
+      .guestbook .wish {
+        position: relative;
+        padding: 30px 23px 22px;
+        border-left: 3px solid #987555;
+        background: linear-gradient(145deg, var(--wash), var(--card));
+        box-shadow: 0 8px 18px -18px #4c3228;
+      }
+      .guestbook .wish::before {
+        content: '“';
+        position: absolute;
+        top: 0;
+        right: 16px;
+        color: #ad8a64;
+        font:
+          52px/1 Georgia,
+          serif;
+        pointer-events: none;
+      }
+      .guestbook .wish blockquote {
+        position: relative;
+        font-size: 18px;
+        line-height: 1.7;
+        margin-bottom: 18px;
+      }
+      .guestbook .wish .byline {
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        color: var(--soft);
+      }
+      .guestbook .toolbar {
+        gap: 12px;
+      }
+      .guestbook .toolbar .note {
+        max-width: 22ch;
+      }
+      .guestbook button.secondary {
+        background: var(--wash);
+        border-color: #ab8d6e;
+        font-size: 11px;
+      }
+      .guestbook .form-panel {
+        position: relative;
+        padding: 23px 20px;
+        background: var(--wash);
+        border-top: 3px solid #987555;
+      }
+      .guestbook .form-panel h2 {
+        font-family: 'Great Vibes', 'Brush Script MT', cursive;
+        font-size: 38px;
+        line-height: 1.3;
+        margin-bottom: 22px;
+      }
+      .guestbook .form-panel h2::after {
+        content: '✧';
+        display: block;
+        width: 92px;
+        margin-top: 8px;
+        color: #987555;
+        font:
+          18px/1.2 Georgia,
+          serif;
+        text-align: center;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 8px;
+      }
+      .guestbook .label {
+        font-size: 11px;
+        letter-spacing: 0.07em;
+      }
+      .guestbook input,
+      .guestbook textarea {
+        appearance: none;
+        background: #e4ceb0;
+        border-color: #b89a78;
+        border-radius: 2px;
+        box-shadow: inset 0 1px 4px rgb(76 50 40 / 9%);
+      }
+      .guestbook input:focus,
+      .guestbook textarea:focus {
+        background: #ead7bc;
+      }
+      .guestbook input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px #e4ceb0 inset;
+        -webkit-text-fill-color: var(--ink);
+      }
+      .guestbook .form-panel > .note {
+        margin: 18px 0 0;
+      }
+      @media (min-width: 600px) {
+        .guestbook main {
+          padding: 26px 28px;
+        }
+        .guestbook .form-panel {
+          padding: 28px;
+        }
+      }
     </style>
   </head>
   <body>
     <main id="public-view" hidden>
-      <div class="public-list" id="public-list" aria-label="Approved wedding wishes"></div>
+      <div
+        class="public-list"
+        id="public-list"
+        role="region"
+        tabindex="0"
+        aria-label="Approved wedding wishes"
+      ></div>
       <p class="note" id="public-empty">Your duas and warm wishes mean so much to us.</p>
       <div class="toolbar">
         <span class="note">Shared after family approval</span>
@@ -371,6 +505,7 @@
         }
       }
       function initGuest() {
+        document.body.classList.add('guestbook');
         byId('public-view').hidden = false;
         const form = byId('guest-form');
         const draftKey = 'zaman-nimra-wish-draft-v1';

@@ -4,4 +4,4 @@ Prompt: Front-facing portrait 2:3 closed wedding envelope, textured ivory cotton
 
 `zaman-nimra-monogram.png` is the transparent PNG logo supplied by the couple. Set `site.logo` in `config/wedding.js` to replace it across the header, envelope seal, footer, browser-tab icon, and optional RSVP seal. Set it to `null` to use text initials and the generic fallback tab icon. Its original colours and transparency are preserved.
 
-All architectural and botanical SVG illustrations are original code in `src/components/artwork.js`. They inherit theme colours.
+Architectural and botanical illustrations are original SVG code in `src/components/artwork.js`. Section ornaments and the fine paper grain are in `assets/ornaments/`; their colours and strength are controlled from the theme.

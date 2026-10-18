@@ -16,10 +16,19 @@
   --beige: #e8dcc9;
   /* Section surfaces and dividers keep the invitation in its printed-card palette. */
   --section-paper: var(--ivory);
-  --section-parchment: color-mix(in srgb, var(--cream) 85%, var(--ivory));
-  --section-linen: color-mix(in srgb, var(--sand) 28%, var(--ivory));
-  --section-wash: color-mix(in srgb, var(--sand) 32%, transparent);
-  --section-arch-line: color-mix(in srgb, var(--ink) 14%, transparent);
+  --section-parchment: color-mix(in srgb, var(--sand) 55%, var(--ivory));
+  --section-linen: color-mix(in srgb, var(--cream) 55%, var(--ivory));
+  --section-keepsake: color-mix(in srgb, var(--sand) 70%, var(--cream));
+  --section-wash: color-mix(in srgb, var(--sand) 38%, transparent);
+  --section-ornament: color-mix(in srgb, var(--gold) 28%, transparent);
+  --guestbook-paper: #e9dcc7;
+  --guestbook-card: #e3ceb0;
+  --guestbook-form: #efe2cd;
+  --guestbook-line: #c4ac8e;
+  --panel-paper: #ead7bc;
+  --panel-light: #f0e3cf;
+  --field-paper: #e4ceb0;
+  --field-edge: #b89a78;
   --section-rule: color-mix(in srgb, var(--ink) 32%, var(--cream));
   /* Event stationery: olive Mehndi, green Mehndi, red Barat, brown Walima. */
   --event-olive: #5d633b;

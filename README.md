@@ -28,6 +28,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Section backgrounds, accents, and spacing | --section-* tokens in styles/theme.css; treatment mapping in styles/stationery.css |
 | Shared logo (header, envelope, footer, browser tab, optional RSVP seal) | site.logo in config; image in assets/images/ |
 | Printed-card layout and mobile adjustments | styles/stationery.css |
+| Panel and input backgrounds | --panel-* and --field-* tokens in styles/theme.css |
 | Shared base styles | style.css |
 | Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
 | Manual wishes fallback / backup format | data/wishes.json |
@@ -38,7 +39,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 
 Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. Attendance replies are also disabled for this close-family invitation; the RSVP link has been removed from navigation. The gallery has an empty state until photographs are added.
 
-Event card tones are olive for Nimra's Mehndi, green for Zaman's Mehndi, red for Nikah & Barat, and brown for Walima. Surrounding sections use warm ivory, parchment, and linen paper washes, with a faint cropped arch on selected sections. The original calligraphic headings, bordered labels, and flourishes are left-aligned. Each section keeps its treatment when reordered.
+Event card tones are olive for Nimra's Mehndi, green for Zaman's Mehndi, red for Nikah & Barat, and brown for Walima. Each card has an engraved corner frame, paper texture, a decorative crest, and a subtle Urdu watermark. Surrounding sections use textured ivory, linen, and deeper parchment with pointed arch and folded-corner details. The guestbook uses warm parchment cards and a beige form; its embedded public styles are in backend/google-wishes/Index.html. The original calligraphic headings, bordered labels, and flourishes are left-aligned. Each section keeps its treatment when reordered.
 
 See [confirmed details and pending information](docs/wedding-content.md).
 

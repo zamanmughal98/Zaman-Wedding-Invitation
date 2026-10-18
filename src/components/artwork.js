@@ -42,6 +42,17 @@ export function scene(kind = 'palace', className = '') {
   `;
 }
 
+export function eventFlourish() {
+  return `<svg class="event-crest" viewBox="0 0 260 42" fill="none" aria-hidden="true">
+    <g stroke="currentColor" stroke-width=".9" stroke-linecap="round">
+      <path d="M8 21H65C78 21 81 9 94 9C107 9 110 21 122 21M252 21H195C182 21 179 9 166 9C153 9 150 21 138 21M35 27H65C80 27 84 15 94 15M225 27H195C180 27 176 15 166 15"/>
+      <path d="M113 21C123 21 130 12 130 4C130 12 137 21 147 21C137 21 130 30 130 38C130 30 123 21 113 21Z"/>
+      <path d="M94 9C94 22 109 21 109 21M166 9C166 22 151 21 151 21"/>
+    </g>
+    <path d="M130 13L136 21L130 29L124 21Z" fill="currentColor"/>
+  </svg>`;
+}
+
 export function flourish() {
   return '<div class="flourish" aria-hidden="true"><span></span><svg viewBox="0 0 24 24"><path d="M12 1C12 8 16 12 23 12C16 12 12 16 12 23C12 16 8 12 1 12C8 12 12 8 12 1Z" fill="currentColor"/></svg><span></span></div>';
 }

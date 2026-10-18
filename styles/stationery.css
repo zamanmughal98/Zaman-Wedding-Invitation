@@ -1,12 +1,14 @@
 /* Layout inspired by the printed card. Colours remain in theme.css. */
 .ambient-background {
-  background: var(--cream);
+  background:
+    url('../assets/ornaments/paper-grain.svg'),
+    radial-gradient(ellipse at 0 18%, var(--sand), transparent 56%), var(--cream);
 }
 .page-shell {
-  box-shadow: none;
+  box-shadow: 0 18px 80px rgb(76 50 40 / 8%);
   border-inline-color: var(--line);
 }
-/* Warm paper washes and cropped arches; no repeating section prints. */
+/* Tactile paper tones and isolated architectural details, without tiled motifs. */
 .section:not(.hero) {
   --section-surface: var(--section-paper);
   --section-wash-origin: 100% 0%;
@@ -14,11 +16,14 @@
   overflow: clip;
   padding-block: var(--section-space);
   background-color: var(--section-surface);
-  background-image: radial-gradient(
-    ellipse at var(--section-wash-origin),
-    var(--section-wash),
-    transparent 68%
-  );
+  background-image:
+    url('../assets/ornaments/paper-grain.svg'),
+    radial-gradient(ellipse at var(--section-wash-origin), var(--section-wash), transparent 72%),
+    linear-gradient(135deg, rgb(255 253 248 / 35%), transparent 62%);
+  background-size:
+    180px 180px,
+    100% 100%,
+    100% 100%;
 }
 .section:is(.countdown-section, .families-section, .dress-section) {
   --section-surface: var(--section-parchment);
@@ -27,25 +32,36 @@
 .section:is(.save-date-section, .celebrations-section, .venue-section, .photo-uploads-section) {
   --section-surface: var(--section-linen);
 }
-.section:is(.save-date-section, .gallery-section) {
-  background-image: none;
+.section.wishes-section {
+  --section-surface: var(--section-keepsake);
+  --section-wash-origin: 0% 0%;
 }
-/* A single architectural detail sits behind the content, clipped at the edge. */
-.section:is(.countdown-section, .couple-section, .wishes-section)::after {
+/* The ornament is a mask, so its colour follows the theme. */
+.section:not(.hero)::after {
   content: '';
   position: absolute;
   z-index: -1;
-  top: 18px;
-  right: -55px;
-  width: clamp(220px, 30vw, 260px);
-  height: clamp(300px, 45vw, 360px);
-  border: 1px solid var(--section-arch-line);
-  border-radius: 50% 50% 0 0;
-  outline: 1px solid var(--section-arch-line);
-  outline-offset: 13px;
-  transform: rotate(-12deg);
-  mask-image: linear-gradient(#000 20%, transparent 92%);
+  top: 16px;
+  right: -58px;
+  width: clamp(225px, 33vw, 285px);
+  height: clamp(350px, 51vw, 445px);
+  background: var(--section-ornament);
+  mask: url('../assets/ornaments/pavilion-arch.svg') center / contain no-repeat;
   pointer-events: none;
+}
+.section:is(.save-date-section, .venue-section, .dress-section, .photo-uploads-section)::after {
+  top: auto;
+  right: auto;
+  bottom: -28px;
+  left: -32px;
+  width: clamp(160px, 26vw, 210px);
+  height: clamp(160px, 26vw, 210px);
+  mask-image: url('../assets/ornaments/folded-corner.svg');
+}
+.section.gallery-section::after {
+  mask-image: url('../assets/ornaments/folded-corner.svg');
+  width: 180px;
+  height: 180px;
 }
 .section + .section {
   border-top: 1px solid var(--section-rule);
@@ -387,10 +403,62 @@
 .event-card::before {
   content: '';
   position: absolute;
-  inset: 8px;
-  border: 1px solid var(--event-line);
+  inset: 7px;
+  background: var(--event-accent);
+  opacity: 0.55;
+  mask: url('../assets/ornaments/event-frame.svg') center / 100% 100% no-repeat;
   pointer-events: none;
 }
+.event-card::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  bottom: -15px;
+  right: -65px;
+  width: 230px;
+  height: 320px;
+  background: var(--event-accent);
+  opacity: 0.04;
+  mask: url('../assets/ornaments/pavilion-arch.svg') center / contain no-repeat;
+  pointer-events: none;
+}
+.event-card:is(.tone-olive, .tone-brown)::after {
+  bottom: -28px;
+  right: auto;
+  left: -25px;
+  width: 190px;
+  height: 190px;
+  mask-image: url('../assets/ornaments/folded-corner.svg');
+}
+.event-card:is(.tone-olive, .tone-green, .tone-red, .tone-brown) {
+  background-image:
+    url('../assets/ornaments/paper-grain.svg'),
+    linear-gradient(145deg, rgb(0 0 0 / 10%), rgb(0 0 0 / 16%));
+  background-size:
+    180px 180px,
+    100% 100%;
+}
+.event-watermark {
+  position: absolute;
+  z-index: 0;
+  right: 20px;
+  bottom: 98px;
+  max-width: calc(100% - 40px);
+  font: 92px/1.7 var(--arabic);
+  color: var(--event-accent);
+  opacity: 0.025;
+  transform: rotate(-12deg);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.event-crest {
+  width: min(210px, 72%);
+  height: 34px;
+  margin: 0 auto 18px;
+  color: var(--event-accent);
+  opacity: 0.9;
+}
+
 .event-card.tone-sand {
   --event-paper: var(--event-sand);
 }
@@ -420,14 +488,16 @@
 }
 .event-content {
   position: relative;
+  z-index: 1;
   padding: 21px 31px 18px;
 }
 .event-topline {
+  padding-inline: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 36px;
-  margin-bottom: 11px;
+  margin-bottom: 4px;
 }
 .event-topline .event-number,
 .event-topline .event-urdu {
@@ -466,16 +536,6 @@
   display: block;
   font-size: 16px;
 }
-.event-botanical {
-  position: absolute;
-  top: 52px;
-  right: -45px;
-  width: 125px;
-  height: 215px;
-  color: var(--event-accent);
-  opacity: 0.1;
-  transform: rotate(5deg);
-}
 .event-actions {
   border-color: var(--event-line);
   margin-top: 20px;
@@ -501,6 +561,7 @@
     padding-block: 30px;
     background: white;
   }
+  .ambient-background,
   .section:not(.hero)::after,
   .section + .section::before {
     display: none;
@@ -590,6 +651,8 @@
 }
 .wish-card {
   text-align: left;
+  border-color: var(--guestbook-line);
+  background: linear-gradient(135deg, var(--guestbook-form), var(--guestbook-card));
   box-shadow: none;
 }
 .wish-card p {
@@ -719,10 +782,6 @@
   .event-details dt {
     font-size: 8px;
   }
-  .event-botanical {
-    width: 95px;
-    right: -39px;
-  }
   .rsvp-card {
     padding: 25px 20px;
   }
@@ -793,14 +852,15 @@
   font: inherit;
 }
 
-/* The Google form and its approval flow stay unchanged inside this frame. */
+/* A parchment guestbook; the embedded public UI has matching colours in Index.html. */
 .wishes-section .section-heading {
   margin-bottom: 32px;
 }
 .wishes-keepsake {
   overflow: hidden;
-  border: 1px solid var(--line);
-  background: var(--ivory);
+  border: 1px solid var(--guestbook-line);
+  background: var(--guestbook-paper);
+  box-shadow: 0 14px 32px -24px rgb(76 50 40 / 35%);
   text-align: left;
 }
 .wishes-keepsake-heading {
@@ -808,8 +868,8 @@
   align-items: center;
   gap: 16px;
   padding: 24px 28px;
-  border-bottom: 1px solid var(--line);
-  background: var(--white);
+  border-bottom: 1px solid var(--guestbook-line);
+  background: var(--guestbook-card);
 }
 .wishes-emblem {
   display: grid;
@@ -819,7 +879,8 @@
   height: 44px;
   border: 1px solid var(--line);
   border-radius: 50%;
-  color: var(--ink-soft);
+  color: var(--ivory);
+  background: var(--ink);
 }
 .wishes-emblem .icon {
   width: 20px;
@@ -836,13 +897,24 @@
 }
 .wishes-widget-frame {
   padding: 4px;
+  background: var(--guestbook-paper);
 }
 .wishes-widget {
   display: block;
   width: 100%;
-  height: 800px;
+  height: 930px;
   border: 0;
-  background: var(--ivory);
+  background: var(--guestbook-paper);
+}
+@media (max-width: 370px) {
+  .wishes-widget {
+    height: 980px;
+  }
+}
+@media (max-width: 340px) {
+  .wishes-widget {
+    height: 1040px;
+  }
 }
 .wishes-keepsake-footer {
   display: flex;
@@ -851,7 +923,8 @@
   flex-wrap: wrap;
   gap: 12px 20px;
   padding: 19px 28px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--guestbook-line);
+  background: var(--guestbook-card);
 }
 .wishes-keepsake-footer p {
   color: var(--ink-soft);
@@ -959,5 +1032,95 @@
   }
   .photo-upload-copy {
     font-size: 17px;
+  }
+}
+
+/* Layered linen panels and writing surfaces throughout the invitation. */
+.hero-arch,
+.envelope-letter,
+.scratch-card,
+.rsvp-card,
+.wish-dialog {
+  background-color: var(--panel-light);
+  background-image:
+    url('../assets/ornaments/paper-grain.svg'),
+    linear-gradient(145deg, var(--panel-light), var(--panel-paper));
+}
+:is(.person, .photo-upload-card, .venue-card, .family-card, .gallery-empty) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--guestbook-line);
+  background-color: var(--panel-paper);
+  background-image:
+    url('../assets/ornaments/paper-grain.svg'),
+    linear-gradient(145deg, var(--panel-light), var(--panel-paper));
+}
+:is(.person, .photo-upload-card, .venue-card, .family-card, .gallery-empty)::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  right: -14px;
+  bottom: -14px;
+  width: 116px;
+  height: 116px;
+  background: var(--section-ornament);
+  mask: url('../assets/ornaments/folded-corner.svg') center / contain no-repeat;
+  transform: rotate(180deg);
+  pointer-events: none;
+}
+.gallery-empty {
+  padding: 30px 24px;
+}
+.person .portrait-arch {
+  background-image: url('../assets/ornaments/paper-grain.svg');
+}
+.photo-upload-emblem {
+  background: var(--panel-paper);
+  border-color: var(--guestbook-line);
+}
+.field :is(input, textarea, select) {
+  background: var(--field-paper);
+  border-color: var(--field-edge);
+  box-shadow: inset 0 1px 4px rgb(76 50 40 / 8%);
+}
+.field :is(input, textarea, select):focus {
+  background: var(--panel-paper);
+  outline: 2px solid var(--ink-soft);
+  outline-offset: 3px;
+}
+.site-footer {
+  background:
+    url('../assets/ornaments/paper-grain.svg'), linear-gradient(145deg, var(--cream), var(--sand));
+}
+.footer-contacts {
+  padding: 26px 20px 20px;
+  border-block: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel-paper) 65%, transparent);
+}
+@media print {
+  .event-card:is(.tone-olive, .tone-green, .tone-red, .tone-brown) {
+    background: white;
+  }
+  .event-card::before {
+    mask: none;
+    background: none;
+    opacity: 1;
+    border: 1px solid var(--event-line);
+  }
+  .event-card::after,
+  .event-watermark,
+  .event-crest,
+  :is(.person, .photo-upload-card, .venue-card, .family-card, .gallery-empty)::before {
+    display: none;
+  }
+  .hero-arch,
+  .scratch-card,
+  .person,
+  .photo-upload-card,
+  .venue-card,
+  .family-card,
+  .gallery-empty {
+    background: white;
   }
 }
