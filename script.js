@@ -24,4 +24,4 @@ initRsvp(wedding);
 initWishes(wedding);
 initMusic(wedding);
 initCoupleMedia();
-initEnvelope(wedding);
+initEnvelope();

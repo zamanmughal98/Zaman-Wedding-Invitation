@@ -1,13 +1,6 @@
-export function initEnvelope(w) {
+export function initEnvelope() {
   const dialog = document.getElementById('envelope-dialog');
   if (!dialog) return;
-  const key = `${w.id}:opened`;
-  let opened = false;
-  try {
-    opened = w.envelope.rememberForSession && sessionStorage.getItem(key) === 'true';
-  } catch {
-    /* Storage is optional. */
-  }
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let closing = false;
   const letter = dialog.querySelector('.envelope-letter');
@@ -25,11 +18,6 @@ export function initEnvelope(w) {
   function enter() {
     if (closing || !dialog.open) return;
     closing = true;
-    try {
-      sessionStorage.setItem(key, 'true');
-    } catch {
-      /* The invite works without storage. */
-    }
     dialog.classList.add('is-leaving');
     setTimeout(
       () => {
@@ -62,5 +50,7 @@ export function initEnvelope(w) {
     window.scrollTo({ top: 0, behavior: 'instant' });
     show();
   });
-  if (!opened && !window.location.hash) show();
+  // Refreshing restarts the envelope even when a section anchor remains in the URL.
+  const isReload = window.performance.getEntriesByType('navigation')[0]?.type === 'reload';
+  if (isReload || !window.location.hash) show();
 }

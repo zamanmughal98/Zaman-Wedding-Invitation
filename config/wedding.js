@@ -132,7 +132,6 @@ export const wedding = {
   envelope: {
     enabled: true,
     image: '/assets/images/ivory-envelope.png',
-    rememberForSession: true,
   },
   countdown: {
     eyebrow: 'An evening to look forward to',

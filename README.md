@@ -103,7 +103,7 @@ See [response setup](docs/response-setup.md) and [JSON backup details](data/READ
 
 Music is off until an explicit tap. Add music.src for an MP3, or use the optional quiet ambient chimes. Disable it with music.enabled: false.
 
-The envelope remembers its opening for the tab session and can be replayed from the footer. Direct section links skip it. Native scrolling, keyboard-accessible dialogs, an alternative date-reveal button, visible focus states, reduced motion, and print styles are included.
+The envelope appears on every page refresh and can also be replayed from the footer. Opening a direct section link skips it initially; refreshing that page shows the envelope again. Native scrolling, keyboard-accessible dialogs, an alternative date-reveal button, visible focus states, reduced motion, and print styles are included.
 
 ## GitHub Pages
 
