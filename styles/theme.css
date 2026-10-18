@@ -14,6 +14,11 @@
   --brown: #4c3228;
   --sand: #d4c1a6;
   --beige: #e8dcc9;
+  /* Event stationery: choose an event's tone in config/wedding.js. */
+  --event-beige: color-mix(in srgb, var(--blush) 65%, var(--white));
+  --event-sand: color-mix(in srgb, var(--sand) 68%, var(--white));
+  --event-brown: var(--ink);
+  --event-ivory: var(--white);
   --line: color-mix(in srgb, var(--ink) 20%, transparent);
   --paper: var(--ivory);
   --serif: 'Cormorant Garamond', Georgia, serif;
