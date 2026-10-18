@@ -9,6 +9,7 @@ import {
   initSharedInteractions,
 } from './src/features/interactions.js';
 import { initRsvp, initWishes } from './src/features/responses.js';
+import { initCoupleMedia } from './src/features/media.js';
 import { initMusic } from './src/features/music.js';
 
 // The local server and production build pre-render the same components.
@@ -22,4 +23,5 @@ initSharedInteractions(wedding);
 initRsvp(wedding);
 initWishes(wedding);
 initMusic(wedding);
+initCoupleMedia();
 initEnvelope(wedding);

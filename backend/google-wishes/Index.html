@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <base target="_top" />
+    <meta charset="utf-8" />
+    <meta name="referrer" content="no-referrer" />
+    <style>
+      :root {
+        --ink: #4c3228;
+        --soft: #5b3e31;
+        --paper: #f8f4ed;
+        --card: #fffdf8;
+        --line: #d8cbbb;
+        --wash: #e8dcc9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          18px/1.6 Georgia,
+          serif;
+      }
+      main {
+        max-width: 760px;
+        margin: auto;
+        padding: 16px 10px 28px;
+      }
+      h1,
+      h2,
+      p {
+        margin: 0 0 16px;
+      }
+      h1 {
+        font-size: 34px;
+        font-weight: 400;
+        line-height: 1.25;
+      }
+      h2 {
+        font-size: 25px;
+        font-weight: 400;
+      }
+      .eyebrow,
+      .note,
+      .label,
+      button,
+      input,
+      textarea,
+      .tabs {
+        font-family: Arial, sans-serif;
+      }
+      .eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .note {
+        font-size: 12px;
+        color: var(--soft);
+        line-height: 1.7;
+      }
+      button {
+        min-height: 44px;
+        padding: 12px 18px;
+        font-size: 12px;
+        cursor: pointer;
+        border: 1px solid var(--ink);
+        color: var(--paper);
+        background: var(--ink);
+      }
+      button.secondary {
+        color: var(--ink);
+        background: transparent;
+        border-color: var(--line);
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 3px;
+      }
+      .toolbar,
+      .actions,
+      .tabs {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .toolbar {
+        justify-content: space-between;
+      }
+      .wish {
+        border: 1px solid var(--line);
+        background: var(--card);
+        padding: 20px;
+        margin-bottom: 14px;
+        overflow-wrap: anywhere;
+      }
+      .wish.focused {
+        border: 2px solid var(--ink);
+      }
+      .wish blockquote {
+        margin: 0 0 15px;
+        white-space: pre-wrap;
+      }
+      .wish .byline {
+        font:
+          12px/1.6 Arial,
+          sans-serif;
+        margin: 0;
+      }
+      .wish .date {
+        font:
+          11px/1.6 Arial,
+          sans-serif;
+        color: var(--soft);
+        margin-top: 8px;
+      }
+      .wish .actions {
+        margin: 18px 0 0;
+      }
+      .public-list {
+        max-height: 265px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 2px;
+        margin-bottom: 22px;
+      }
+      .public-list:empty {
+        display: none;
+      }
+      .form-panel {
+        padding: 22px;
+        border: 1px solid var(--line);
+        background: var(--card);
+      }
+      .field {
+        display: block;
+        margin-bottom: 18px;
+      }
+      .label {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 7px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        border-radius: 0;
+        color: var(--ink);
+        padding: 12px;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+      .form-panel button {
+        width: 100%;
+      }
+      .status {
+        font:
+          13px/1.7 Arial,
+          sans-serif;
+        overflow-wrap: anywhere;
+        margin: 14px 0;
+      }
+      .status:empty {
+        display: none;
+      }
+      .is-error {
+        color: #863f31;
+      }
+      .honey {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+      .tabs button {
+        flex: 1;
+        min-width: 90px;
+      }
+      .tabs button[aria-pressed='true'] {
+        border-color: var(--ink);
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .admin-header {
+        padding: 18px 0 20px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 24px;
+      }
+      @media (min-width: 600px) {
+        main {
+          padding: 32px;
+        }
+        .form-panel {
+          padding: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="public-view" hidden>
+      <div class="public-list" id="public-list" aria-label="Approved wedding wishes"></div>
+      <p class="note" id="public-empty">Your duas and warm wishes mean so much to us.</p>
+      <div class="toolbar">
+        <span class="note">Shared after family approval</span>
+        <button type="button" class="secondary" id="refresh-public">Refresh wishes</button>
+      </div>
+      <p class="status" id="public-status" role="status"></p>
+      <div class="form-panel">
+        <h2>Leave a warm wish</h2>
+        <form id="guest-form">
+          <label class="honey" aria-hidden="true">
+            Leave empty
+            <input name="website" tabindex="-1" autocomplete="off" />
+          </label>
+          <label class="field">
+            <span class="label">Your name</span>
+            <input name="name" autocomplete="name" maxlength="100" required />
+          </label>
+          <label class="field">
+            <span class="label">Your wish or dua</span>
+            <textarea name="message" rows="4" maxlength="500" required></textarea>
+          </label>
+          <button type="submit">Send for approval</button>
+          <p class="status" id="guest-status" role="status"></p>
+        </form>
+        <p class="note">
+          Your name and wish are saved with Google and shared here only after the family approves
+          them.
+        </p>
+      </div>
+    </main>
+    <main id="admin-view" hidden>
+      <header class="admin-header">
+        <p class="eyebrow">Zaman & Nimra · Private family page</p>
+        <h1>Wedding wishes</h1>
+        <p class="note">
+          Approve a wish to show it on the invitation. Reject or hide a wish to keep it private.
+        </p>
+      </header>
+      <form id="access-form" hidden>
+        <label class="field">
+          <span class="label">Private access key from your moderation link</span>
+          <input name="key" type="password" autocomplete="off" required />
+        </label>
+        <button type="submit">Open moderation</button>
+      </form>
+      <p class="status" id="admin-status" role="status"></p>
+      <section id="admin-content" hidden>
+        <div class="toolbar">
+          <button type="button" class="secondary" id="refresh-admin">Refresh</button>
+          <button type="button" class="secondary" id="download-json">Download approved JSON</button>
+        </div>
+        <nav class="tabs" aria-label="Wish status">
+          <button type="button" class="secondary" data-filter="pending" aria-pressed="true">
+            Pending
+          </button>
+          <button type="button" class="secondary" data-filter="approved" aria-pressed="false">
+            Approved
+          </button>
+          <button type="button" class="secondary" data-filter="private" aria-pressed="false">
+            Hidden / rejected
+          </button>
+        </nav>
+        <p class="note" id="admin-empty" hidden>No wishes in this view.</p>
+        <div id="admin-list"></div>
+        <p class="note">
+          Keep your moderation link private. Save the email link on your phone so you can return
+          without a laptop.
+        </p>
+      </section>
+    </main>
+    <script>
+      const PAGE = <?!= pageConfig ?>;
+      const byId = (id) => document.getElementById(id);
+      let moderatorKey = '';
+      let focusId = '';
+      let records = [];
+      let filter = 'pending';
+      let publicRequest = 0;
+      let adminRequest = 0;
+
+      function rpc(method, ...args) {
+        return new Promise((resolve, reject) => {
+          const timeout = setTimeout(
+            () => reject(new Error('The connection took too long. Please retry.')),
+            20000,
+          );
+          const success = (value) => {
+            clearTimeout(timeout);
+            resolve(value);
+          };
+          const failure = (error) => {
+            clearTimeout(timeout);
+            reject(error);
+          };
+          google.script.run
+            .withSuccessHandler(success)
+            .withFailureHandler(failure)
+            [method](...args);
+        });
+      }
+      function status(id, message, error = false) {
+        const element = byId(id);
+        element.textContent = message;
+        element.classList.toggle('is-error', error);
+      }
+      function card(entry) {
+        const article = document.createElement('article');
+        article.className = 'wish';
+        const message = document.createElement('blockquote');
+        message.textContent = entry.message;
+        const name = document.createElement('p');
+        name.className = 'byline';
+        name.textContent = '— ' + entry.name;
+        article.append(message, name);
+        return article;
+      }
+      function newRequestId() {
+        if (crypto.randomUUID) return crypto.randomUUID();
+        const bytes = crypto.getRandomValues(new Uint8Array(16));
+        const hex = Array.from(bytes, (value) => value.toString(16).padStart(2, '0')).join('');
+        return (
+          hex.slice(0, 8) +
+          '-' +
+          hex.slice(8, 12) +
+          '-' +
+          hex.slice(12, 16) +
+          '-' +
+          hex.slice(16, 20) +
+          '-' +
+          hex.slice(20)
+        );
+      }
+      async function loadPublic() {
+        const request = ++publicRequest;
+        try {
+          const wishes = await rpc('getPublicWishes');
+          if (request !== publicRequest) return;
+          byId('public-list').replaceChildren(...wishes.map(card));
+          byId('public-empty').hidden = wishes.length > 0;
+          status('public-status', '');
+        } catch {
+          if (request === publicRequest) {
+            // Clear a stale copy rather than keep displaying a wish that may have been hidden.
+            byId('public-list').replaceChildren();
+            byId('public-empty').hidden = true;
+            status('public-status', 'Wishes could not load. Tap Refresh to try again.', true);
+          }
+        }
+      }
+      function initGuest() {
+        byId('public-view').hidden = false;
+        const form = byId('guest-form');
+        const draftKey = 'zaman-nimra-wish-draft-v1';
+        let requestId = newRequestId();
+        try {
+          const draft = JSON.parse(localStorage.getItem(draftKey));
+          if (draft && typeof draft.name === 'string' && typeof draft.message === 'string') {
+            form.elements.name.value = draft.name;
+            form.elements.message.value = draft.message;
+            if (/^[a-f0-9-]{36}$/i.test(draft.requestId)) requestId = draft.requestId;
+          }
+        } catch {
+          /* The form also works when browser storage is blocked. */
+        }
+        function saveDraft() {
+          try {
+            localStorage.setItem(
+              draftKey,
+              JSON.stringify({
+                requestId,
+                name: form.elements.name.value,
+                message: form.elements.message.value,
+              }),
+            );
+          } catch {
+            /* Retain the visible form if persistent storage is unavailable. */
+          }
+        }
+        form.addEventListener('input', (event) => {
+          event.target.setCustomValidity?.('');
+          requestId = newRequestId();
+          saveDraft();
+        });
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          for (const name of ['name', 'message']) {
+            if (!form.elements[name].value.trim())
+              form.elements[name].setCustomValidity('Please fill in this field.');
+          }
+          if (!form.reportValidity()) return;
+          saveDraft();
+          const button = form.querySelector('[type="submit"]');
+          button.disabled = true;
+          form.setAttribute('aria-busy', 'true');
+          status('guest-status', 'Sending your wish…');
+          try {
+            const result = await rpc('submitWish', {
+              requestId,
+              name: form.elements.name.value.trim(),
+              message: form.elements.message.value.trim(),
+              website: form.elements.website.value,
+            });
+            if (!result?.accepted) throw new Error('Your wish could not be saved. Please retry.');
+            form.reset();
+            requestId = newRequestId();
+            try {
+              localStorage.removeItem(draftKey);
+            } catch {}
+            status('guest-status', 'Thank you. Your wish has been saved for family approval.');
+          } catch (error) {
+            status(
+              'guest-status',
+              (error.message || 'Unable to connect.') + ' Your wish is still in the form.',
+              true,
+            );
+          } finally {
+            button.disabled = false;
+            form.removeAttribute('aria-busy');
+          }
+        });
+        byId('refresh-public').addEventListener('click', loadPublic);
+        loadPublic();
+      }
+      function renderAdmin() {
+        const counts = {
+          pending: records.filter((entry) => entry.status === 'pending').length,
+          approved: records.filter((entry) => entry.status === 'approved').length,
+          private: records.filter((entry) => ['hidden', 'rejected'].includes(entry.status)).length,
+        };
+        const labels = { pending: 'Pending', approved: 'Approved', private: 'Hidden / rejected' };
+        document.querySelectorAll('[data-filter]').forEach((button) => {
+          button.textContent =
+            labels[button.dataset.filter] + ' (' + counts[button.dataset.filter] + ')';
+          button.setAttribute('aria-pressed', String(filter === button.dataset.filter));
+        });
+        const visible = records.filter((entry) =>
+          filter === 'private'
+            ? ['hidden', 'rejected'].includes(entry.status)
+            : entry.status === filter,
+        );
+        byId('admin-empty').hidden = visible.length > 0;
+        byId('admin-list').replaceChildren(
+          ...visible.map((entry) => {
+            const article = card(entry);
+            article.dataset.id = entry.id;
+            if (entry.id === focusId) article.classList.add('focused');
+            const meta = document.createElement('p');
+            meta.className = 'date';
+            meta.textContent =
+              entry.status +
+              ' · ' +
+              new Date(entry.createdAt).toLocaleString('en-GB', { timeZone: 'Asia/Karachi' });
+            article.append(meta);
+            if (entry.notification === 'unavailable') {
+              const note = document.createElement('p');
+              note.className = 'note';
+              note.textContent = 'Email alert unavailable. This wish is safely in your queue.';
+              article.append(note);
+            }
+            const actions = document.createElement('div');
+            actions.className = 'actions';
+            const choices =
+              entry.status === 'approved'
+                ? [['hide', 'Hide from website']]
+                : [
+                    ['approve', 'Approve'],
+                    ...(entry.status === 'pending' ? [['reject', 'Reject']] : []),
+                  ];
+            choices.forEach(([action, label]) => {
+              const button = document.createElement('button');
+              button.type = 'button';
+              button.textContent = label;
+              button.dataset.action = action;
+              button.className = action === 'approve' ? '' : 'secondary';
+              button.addEventListener('click', async () => {
+                actions.querySelectorAll('button').forEach((item) => {
+                  item.disabled = true;
+                });
+                status('admin-status', 'Saving your decision…');
+                try {
+                  await rpc('moderateWish', moderatorKey, entry.id, action, entry.revision);
+                  await loadAdmin();
+                  status(
+                    'admin-status',
+                    action === 'approve'
+                      ? 'Approved. It will appear on the invitation automatically.'
+                      : 'Kept private. It will not appear on the invitation.',
+                  );
+                } catch (error) {
+                  status(
+                    'admin-status',
+                    error.message || 'The change could not be saved. Refresh and retry.',
+                    true,
+                  );
+                } finally {
+                  actions.querySelectorAll('button').forEach((item) => {
+                    item.disabled = false;
+                  });
+                }
+              });
+              actions.append(button);
+            });
+            article.append(actions);
+            return article;
+          }),
+        );
+      }
+      async function loadAdmin() {
+        const request = ++adminRequest;
+        try {
+          const entries = await rpc('listModeration', moderatorKey);
+          if (request !== adminRequest) return;
+          records = entries;
+          if (focusId) {
+            const focused = records.find((entry) => entry.id === focusId);
+            if (focused)
+              filter = ['hidden', 'rejected'].includes(focused.status) ? 'private' : focused.status;
+          }
+          byId('access-form').hidden = true;
+          byId('admin-content').hidden = false;
+          renderAdmin();
+          if (focusId) {
+            Array.from(document.querySelectorAll('[data-id]'))
+              .find((item) => item.dataset.id === focusId)
+              ?.scrollIntoView({ block: 'center' });
+            focusId = '';
+          }
+          status('admin-status', '');
+        } catch (error) {
+          if (request !== adminRequest) return;
+          records = [];
+          byId('admin-list').replaceChildren();
+          byId('admin-content').hidden = true;
+          byId('access-form').hidden = false;
+          status(
+            'admin-status',
+            error.message || 'Unable to open moderation. Use the private email link.',
+            true,
+          );
+          throw error;
+        }
+      }
+      function initAdmin() {
+        byId('admin-view').hidden = false;
+        document.querySelectorAll('[data-filter]').forEach((button) =>
+          button.addEventListener('click', () => {
+            filter = button.dataset.filter;
+            renderAdmin();
+          }),
+        );
+        byId('refresh-admin').addEventListener('click', () => loadAdmin().catch(() => {}));
+        byId('access-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          moderatorKey = event.currentTarget.elements.key.value.trim();
+          event.currentTarget.elements.key.value = '';
+          loadAdmin().catch(() => {});
+        });
+        byId('download-json').addEventListener('click', () => {
+          const approved = records
+            .filter((entry) => entry.status === 'approved')
+            .map(({ name, message }) => ({ name, message }));
+          const url = URL.createObjectURL(
+            new Blob([JSON.stringify(approved, null, 2) + '\n'], { type: 'application/json' }),
+          );
+          const link = Object.assign(document.createElement('a'), {
+            href: url,
+            download: 'approved-wishes.json',
+          });
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        });
+        google.script.url.getLocation((location) => {
+          const params = new URLSearchParams(location.hash.replace(/^#/, ''));
+          moderatorKey = params.get('key') || '';
+          focusId = params.get('wish') || '';
+          if (moderatorKey) loadAdmin().catch(() => {});
+          else byId('access-form').hidden = false;
+        });
+      }
+      if (PAGE.admin) initAdmin();
+      else initGuest();
+      setInterval(() => {
+        if (!document.hidden && !PAGE.admin) loadPublic();
+      }, 30000);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && !PAGE.admin) loadPublic();
+      });
+    </script>
+  </body>
+</html>

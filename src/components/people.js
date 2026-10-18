@@ -22,8 +22,8 @@ export function couple(w) {
                 </div>
                 <p class="eyebrow">${role}</p>
                 <h3>${e(person.fullName)}</h3>
-                <p class="person-parents">${e(person.parents)}</p>
-                <p class="person-bio">${e(person.bio)}</p>
+                ${person.parents ? `<p class="person-parents">${e(person.parents)}</p>` : ''}
+                ${person.bio ? `<p class="person-bio">${e(person.bio)}</p>` : ''}
                 ${social ? `<a class="text-link" href="${e(social)}" target="_blank" rel="noopener noreferrer">A little more about ${e(person.name)}</a>` : ''}
               </article>
             `;
@@ -31,7 +31,7 @@ export function couple(w) {
           .join('')}
       </div>
       ${flourish()}
-      <p class="couple-quote reveal">“${e(w.couple.quote)}”</p>
+      ${w.couple.quote ? `<p class="couple-quote reveal">“${e(w.couple.quote)}”</p>` : ''}
     </section>
   `;
 }

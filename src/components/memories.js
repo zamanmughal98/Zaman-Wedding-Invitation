@@ -24,6 +24,9 @@ export function story(w) {
 }
 
 export function gallery(w) {
+  if (!w.gallery.photos.length)
+    return `<section class="section gallery-section" id="gallery">${heading('Glimpses of forever', w.gallery.title, w.gallery.subtitle)}<p class="gallery-empty">Our photographs will find their place here.</p></section>`;
+
   return /* HTML */ `
     <section class="section gallery-section" id="gallery">
       ${heading('Glimpses of forever', w.gallery.title, w.gallery.subtitle)}

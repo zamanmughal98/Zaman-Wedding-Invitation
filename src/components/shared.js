@@ -1,4 +1,4 @@
-import { escapeHtml as e, safeUrl } from '../utils.js';
+import { assetUrl, escapeHtml as e, safeUrl } from '../utils.js';
 import { flourish, scene } from './artwork.js';
 
 const paths = {
@@ -43,7 +43,7 @@ export function heading(eyebrow, title, subtitle = '') {
 }
 
 export function photo({ src, alt, position = 'center', illustration = 'palace' }, className = '') {
-  const url = safeUrl(src);
+  const url = assetUrl(src);
   return url
     ? `<img class="${className}" src="${e(url)}" alt="${e(alt)}" loading="lazy" decoding="async" style="object-position:${e(position)}" data-photo-fallback="${e(illustration)}" />`
     : `<div class="illustrated-photo ${className}">${scene(illustration)}</div>`;

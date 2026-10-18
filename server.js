@@ -7,6 +7,9 @@ import { prepareDocument } from './src/document.js';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const types = {
   '.html': 'text/html; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.svg': 'image/svg+xml',
@@ -34,7 +37,7 @@ export function createPreviewServer() {
       const extension = path.extname(file).toLowerCase();
       const permitted =
         ['index.html', 'style.css', 'script.js'].includes(relative) ||
-        /^(src|config|styles|assets)\//.test(relative);
+        /^(src|config|styles|assets|data)\//.test(relative);
       if (
         !permitted ||
         !file.startsWith(root + path.sep) ||

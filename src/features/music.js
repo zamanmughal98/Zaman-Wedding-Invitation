@@ -1,4 +1,4 @@
-import { safeUrl } from '../utils.js';
+import { assetUrl } from '../utils.js';
 import { icon } from '../components/shared.js';
 import { toast } from './interactions.js';
 
@@ -13,7 +13,10 @@ export function initMusic(w) {
     playing = false;
   const oscillators = new Set();
   const configuredVolume = Number(w.music.volume);
-  const volume = Math.max(0, Math.min(0.5, Number.isFinite(configuredVolume) ? configuredVolume : 0.15));
+  const volume = Math.max(
+    0,
+    Math.min(0.5, Number.isFinite(configuredVolume) ? configuredVolume : 0.15),
+  );
   function update() {
     button.innerHTML = icon(playing ? 'sound' : 'mute');
     button.setAttribute('aria-pressed', String(playing));
@@ -42,7 +45,7 @@ export function initMusic(w) {
     });
   }
   async function start() {
-    const src = safeUrl(w.music.src);
+    const src = assetUrl(w.music.src);
     if (src) {
       audio ||= new Audio(src);
       audio.loop = true;

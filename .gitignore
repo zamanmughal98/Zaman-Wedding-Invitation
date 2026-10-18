@@ -1,11 +1,24 @@
-# Codebuff workspace metadata
+# Local tool and preview metadata
 .freebuff/
-.pdf
-# OS junk
-.DS_Store
-Thumbs.db
-
-# Local preview, dependencies, and generated deployment output
+.openai/
 .preview/
+
+# Source reference documents
+*.pdf
+references/
+
+# Dependencies and generated builds
 node_modules/
 dist/
+
+# Local credentials and Google Apps Script tooling
+.env
+.env.*
+!.env.example
+.clasp.json
+.clasprc.json
+
+# OS junk and local logs
+.DS_Store
+Thumbs.db
+*.log

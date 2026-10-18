@@ -1,96 +1,124 @@
-# Ivory Garden · Wedding Invitation
+# Zaman & Nimra - Wedding Invitation
 
-An elegant Indo-Pak invitation based on the experience of [Noor-e-Nikah](https://invitima.com/templates/noor-e-nikah), with the original project's ivory, deep green, antique gold, and blush palette. This implementation has its own code, illustrations, and envelope artwork.
+A small, dependency-free Indo-Pak wedding invitation, personalised from the printed reception card. The design uses warm beige, cream, and brown ink (#4c3228 and #5b3e31), with restrained botanical details.
 
-The names, dates, stories, families, and venues are **sample content**. Replace them before sharing with wedding guests.
+The confirmed functions run from **12 to 15 November 2026**. The reception is on **15 November at 7:00 PM**, at **Royal Vista Event Complex, Attock City**. Unconfirmed times and venues remain empty in the configuration and display as details to follow.
 
-## Run locally
+## Run and check
 
-Requires Node.js 22 or newer. There are no dependencies to install.
-
-```sh
-npm start
-```
-
-Open **http://127.0.0.1:8642**. After editing a file, refresh the page. `npm run dev` also restarts the server when source files change. Use `PORT=...` in your shell to select a different port.
+Requires Node.js 22 or newer. No dependency installation is needed.
 
 ```sh
-npm test          # behaviour, calendar, rendering, and preview-server checks
-npm run build    # produces a complete static website in dist/
+npm start        # http://127.0.0.1:8642
+npm test         # rendering, calendars, responses, and project-page paths
+npm run build    # complete static site in dist/
 ```
 
-## Where to make changes
+Use npm run dev while editing: it restarts the preview server when imported files change. Refresh the browser afterward. With npm start, restart the server after editing content or component modules.
+
+## Make changes in one place
 
 | Change | File |
 | --- | --- |
-| Names, initials, dates, text, event details, contacts | `config/wedding.js` |
-| Hide, show, or reorder sections | `wedding.sections` in the config |
-| Navigation links | `wedding.navigation` in the config |
-| Colours, fonts, page width, spacing | `styles/theme.css` |
-| Layout, responsive rules, component appearance | `style.css` |
-| Photos | Add to `assets/photos/`, then set the path in the config |
-| Background music | Add an MP3 to `assets/`, then set `wedding.music.src` |
-| Section markup | `src/components/` |
-| Interactions | `src/features/` |
+| Names, hosts, dates, venues, contacts, email address | config/wedding.js |
+| Show, hide, or reorder sections | wedding.sections in the config |
+| Navigation links | wedding.navigation in the config |
+| Colours, fonts, spacing | styles/theme.css |
+| Printed-card layout and mobile adjustments | styles/stationery.css |
+| Shared base styles | style.css |
+| Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
+| Manual wishes fallback / backup format | data/wishes.json |
+| Photos, animation, music | Add files to assets/, then reference them in config |
+| Section HTML | src/components/ |
+| Browser interactions | src/features/ |
 
-## Architecture
+Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. The gallery has an empty state until photographs are added.
+
+See [confirmed details and pending information](docs/wedding-content.md).
+
+## Project structure
 
 ```text
-config/wedding.js       content and feature switches
-styles/theme.css       shared theme tokens
-src/components/        functions returning each section's HTML
+config/wedding.js       editable content and section switches
+styles/theme.css       shared theme colours, fonts, and spacing
+styles/stationery.css  personalised printed-card styling
+src/components/        section HTML
 src/render.js          section registry and page assembly
-src/document.js        pre-rendered HTML and share metadata
-src/features/          envelope, scrolling, gallery, date reveal, sound, responses
-src/utils.js           dates, safe HTML, storage, calendar files
-script.js              browser entry point: initialise enabled features
-server.js              local preview; only serves website assets
+src/document.js        prerendering and share metadata
+src/features/          envelope, date reveal, media, sound, replies, wishes
+src/submissions.js     email-app and WhatsApp message links
+src/utils.js           dates, escaping, browser drafts, calendar files
+data/wishes.json       manual approved wishes fallback
+backend/google-wishes/ Google-owned storage and phone moderation (not deployed to Pages)
+script.js              browser entry point
+server.js              read-only local preview
 scripts/build.mjs      dependency-free static build
-assets/                artwork, future photos, and music
+assets/                envelope, future photos, video, and music
 ```
 
-Components render on the preview server and during the static build. The browser adds interactions to the resulting HTML. This keeps the invitation readable without JavaScript and gives link-preview crawlers real content. There is no framework, bundler, or backend to learn.
+The preview server and build render the same components into HTML. The browser adds interactions. This keeps the invitation readable without JavaScript and works on GitHub Pages without a backend.
 
-To add a section, create a component, register it in `src/render.js`, and add its id to `wedding.sections`. To remove a section, set `enabled: false`. Features skip sections that are absent.
+## Add the animation or personal images
 
-## Add personal photographs
+Your friend's animation can be added without changing the page structure:
 
 ```js
-invitation: {
-  heroPhoto: '/assets/photos/couple.webp',
-  heroPhotoPosition: 'center 25%',
-  // Keep the other invitation fields.
-}
+// Fields within invitation in config/wedding.js:
+heroVideo: '/assets/videos/couple.mp4',
+heroVideoPoster: '/assets/photos/couple-poster.webp',
+heroPhoto: null,
 ```
 
-Portraits use `couple.bride.photo` and `couple.groom.photo`. Gallery entries use `src`, descriptive `alt`, `caption`, and `position`. Empty photo slots show theme-aware vector artwork. Missing photo files also fall back safely.
+Add the corresponding files to assets/videos/ and assets/photos/. The video is muted, loops inline, and has a play/pause button. It respects reduced motion and pauses when the tab is hidden. Keep the video short and compressed for mobile connections. A poster is useful while it loads.
 
-Prefer WebP or JPEG under about 400 KB. Keep faces away from cropped edges and adjust `position` as needed.
+For a still image instead, leave heroVideo null and set heroPhoto. Its crop uses heroPhotoPosition. Individual portraits use couple.groom.photo and couple.bride.photo. Gallery entries use src, alt, caption, and position. Keep personal images out of the repository until you are happy for site visitors to see them.
 
-## Dates and ceremonies
+The initial envelope experience is retained. All local media paths work below the GitHub repository prefix.
 
-Use ISO timestamps with an explicit offset, such as `2027-06-12T16:00:00+05:00`. Set `site.timeZone` to the venue's timezone. The countdown measures a single real instant, and calendar files use UTC, so overseas guests receive the correct time.
+## Dates without invented details
 
-Every event has its own id, title, Urdu label, description, start/end, venue/address, map link, dress code, and illustration. Set a real `mapsUrl` to enable directions; until then the page says directions will follow.
+Each event has a date in YYYY-MM-DD form. Leave start and end null until their times are confirmed. timeLabel explains that the function is in the evening.
 
-## RSVP and wishes
+A date-only calendar download saves the day, with the pending evening timing in its description. For confirmed times, use an explicit offset such as 2026-11-15T19:00:00+05:00. The site displays Asia/Karachi venue time, and timed calendar files use UTC so overseas guests get the correct instant. No event end time is invented.
 
-The default invitation is a **preview**. RSVP drafts and wishes are stored in the visitor's browser and are never presented as having reached the family. Guests can download their response. Nothing is shared across devices.
+The countdown targets the confirmed Walima start. The date reveal refers to Nikah & Barat on 14 November.
 
-For real RSVP collection, set `rsvp.endpoint` to an endpoint you control. It receives a JSON POST with `weddingId`, `name`, `contact`, `attendance`, `guests`, `events`, `message`, and `updatedAt`. A 2xx status means accepted; failures retain the form and allow retry. The service must handle validation, rate limiting, and storage. This repository does not include that service.
+Add mapsUrl only when the correct venue link is known. The venue section is optional; the event cards already contain each confirmed address.
 
-Set `rsvp.contactPhone` to international digits to offer a WhatsApp confirmation link. Contact links are only shown for configured numbers. Wishes remain local until a shared service is added; the UI explains this.
+## Email, WhatsApp, and approved wishes
+
+Replies use **zamanbinishfaq+wedding@gmail.com**. WhatsApp uses the printed family contact **923490095926 (Zaighum Mughal)**. Change either in the config.
+
+The current email option opens the guest's email app with a prepared message. WhatsApp similarly opens a prepared message. The guest must tap Send in that app; opening a link does not prove delivery. RSVP drafts remain available on the guest's browser and can be downloaded as JSON.
+
+For wishes, the prepared Google Sheets + Apps Script app adds private phone moderation. Guests submit directly, then you receive an email and use your private link to Approve, Reject, or Hide. Approved wishes appear automatically; no laptop or redeploy is needed for individual decisions. Google stores only the submitted names and wishes for this workflow.
+
+Use your existing Sheet through Extensions > Apps Script; setup adds a Wishes tab while preserving other tabs. Complete the [one-time Google setup](docs/google-wishes-setup.md) and set wishes.googleScriptUrl to your public /exec URL. The public Google deployment URL is configured. Complete the live checks in the guide to verify storage and email delivery. Never put the private moderation link in the repository.
+
+When that URL is empty, email/WhatsApp and the manually approved data/wishes.json wall remain available. The Google wall and manual JSON are separate modes so that an old JSON copy cannot reintroduce a hidden wish.
+
+See [response setup](docs/response-setup.md) and [JSON backup details](data/README.md).
 
 ## Sound and accessibility
 
-Sound is off by default and starts only after an explicit tap. Without an MP3, the music button plays quiet original ambient chimes. It stops when the tab is hidden. Disable it with `music.enabled: false`.
+Music is off until an explicit tap. Add music.src for an MP3, or use the optional quiet ambient chimes. Disable it with music.enabled: false.
 
-The envelope remembers an opening for the current tab session and can be replayed from the footer. Direct links such as `/#celebrations` skip the envelope. Native scrolling, keyboard-accessible dialogs, an alternative reveal button, visible focus states, reduced-motion support, and print styles are included.
+The envelope remembers its opening for the tab session and can be replayed from the footer. Direct section links skip it. Native scrolling, keyboard-accessible dialogs, an alternative date-reveal button, visible focus states, reduced motion, and print styles are included.
 
-## Build and hosting
+## GitHub Pages
 
-`npm run build` writes a static website into `dist/`. Deploy that folder on any static host. `.openai/hosting.json` contains the identity for the private Sites preview. Local QA files live in ignored `.preview/`; the source PDF is excluded from the static build.
+The included .github/workflows/pages.yml tests and builds the site when changes reach main. Pull requests run checks without publishing.
 
-`site.url` controls absolute share URLs; rebuild after changing it or the title/description. `site.previewImage` currently uses the original envelope artwork. A dedicated personal sharing image can be supplied later. Set `site.preview: false` after replacing all sample details.
+1. Push the changes and merge them into main.
+2. In repository Settings > Pages > Build and deployment, set Source to GitHub Actions.
+3. Run the Build and deploy wedding invitation workflow on main, or push a new commit to main.
 
-Artwork provenance and the generation prompt are in `assets/images/README.md`.
+The site URL is **https://zamanmughal98.github.io/Zaman-Wedding-Invitation/**.
+
+Deploy dist/, rather than the raw repository, when using a custom host. GitHub Pages does not run server.js. Styles, modules, media, and the public wishes file use paths that stay inside the project.
+
+The workflow supplies SITE_URL for share metadata. Local builds use site.url. Rebuild after changing the title, description, or preview image.
+
+The source PDF remains a local reference and is not tracked. Preview files, build output, local credentials, and obsolete hosting metadata are ignored. Backend source, setup documentation, and tests belong in the repository, but are excluded from the public dist/ build. Keep moderation keys and Sheet settings in Google Script properties.
+
+Envelope artwork provenance is in assets/images/README.md.
