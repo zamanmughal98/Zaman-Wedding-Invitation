@@ -1,5 +1,5 @@
-import { escapeHtml as e, initials } from './utils.js';
-import { icon } from './components/shared.js';
+import { escapeHtml as e } from './utils.js';
+import { icon, monogram } from './components/shared.js';
 import { envelope } from './components/envelope.js';
 import { hero, countdown, saveTheDate } from './components/hero.js';
 import { celebrations } from './components/celebrations.js';
@@ -39,8 +39,7 @@ export function renderInvitation(w) {
           href="#${e(w.sections.find((section) => section.enabled)?.id || 'main')}"
           aria-label="Back to the invitation"
         >
-          ${e(initials(w, ''))}
-          <span aria-hidden="true">✧</span>
+          ${monogram(w)}
         </a>
         <nav aria-label="Invitation sections">
           ${w.navigation

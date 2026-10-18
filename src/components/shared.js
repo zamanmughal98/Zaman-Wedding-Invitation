@@ -1,4 +1,4 @@
-import { assetUrl, escapeHtml as e, safeUrl } from '../utils.js';
+import { assetUrl, escapeHtml as e, initials, safeUrl } from '../utils.js';
 import { flourish, scene } from './artwork.js';
 
 const paths = {
@@ -33,6 +33,14 @@ export const icon = (name) => /* HTML */ `
     ${paths[name] || paths.arrow}
   </svg>
 `;
+
+// All couple branding shares one image; individual portraits keep their own initials.
+export function monogram(w, className = '') {
+  const logo = assetUrl(w.site.logo);
+  return logo
+    ? `<img class="monogram-image${className ? ' ' + e(className) : ''}" src="${e(logo)}" alt="" width="1254" height="1254" draggable="false" />`
+    : `<span class="monogram-initials" aria-hidden="true">${e(initials(w, ''))}</span>`;
+}
 
 export function heading(eyebrow, title, subtitle = '') {
   return /* HTML */ `

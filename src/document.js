@@ -6,6 +6,7 @@ export function prepareDocument(template, { siteUrl = wedding.site.url } = {}) {
   const e = escapeHtml;
   const pageUrl = new URL(siteUrl);
   if (!pageUrl.pathname.endsWith('/')) pageUrl.pathname += '/';
+  const logo = assetUrl(wedding.site.logo) || './assets/favicon.svg';
   const absoluteImage = new URL(assetUrl(wedding.site.previewImage), pageUrl).href;
   const metadata = {
     description: wedding.site.description,
@@ -16,6 +17,7 @@ export function prepareDocument(template, { siteUrl = wedding.site.url } = {}) {
   };
   return template
     .replace('<!-- invitation -->', renderInvitation(wedding))
+    .replace(/<link\b[^>]*\brel=["']icon["'][^>]*>/i, () => `<link rel="icon" href="${e(logo)}" />`)
     .replace(/<title>.*?<\/title>/, `<title>${e(wedding.site.title)}</title>`)
     .replace(/<meta\b[^>]*>/gi, (tag) => {
       const key = tag.match(/\b(?:name|property)\s*=\s*["']([^"']+)["']/i)?.[1];

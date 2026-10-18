@@ -25,7 +25,8 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Navigation links | wedding.navigation in the config |
 | Colours, fonts, spacing | styles/theme.css |
 | Individual event card colours | events[].tone in config; --event-* tokens in styles/theme.css |
-| Section backgrounds and dividers | --section-paper, --section-parchment, --section-rule in styles/theme.css |
+| Section backgrounds, accents, and spacing | --section-* tokens in styles/theme.css; treatment mapping in styles/stationery.css |
+| Shared logo (header, envelope, footer, browser tab, optional RSVP seal) | site.logo in config; image in assets/images/ |
 | Printed-card layout and mobile adjustments | styles/stationery.css |
 | Shared base styles | style.css |
 | Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
@@ -37,7 +38,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 
 Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. Attendance replies are also disabled for this close-family invitation; the RSVP link has been removed from navigation. The gallery has an empty state until photographs are added.
 
-Event card tones are olive for Nimra's Mehndi, green for Zaman's Mehndi, red for Nikah & Barat, and brown for Walima. The surrounding sections alternate ivory and parchment, with bordered heading labels and a divider between sections.
+Event card tones are olive for Nimra's Mehndi, green for Zaman's Mehndi, red for Nikah & Barat, and brown for Walima. Surrounding sections use warm ivory, parchment, and linen paper washes, with a faint cropped arch on selected sections. The original calligraphic headings, bordered labels, and flourishes are left-aligned. Each section keeps its treatment when reordered.
 
 See [confirmed details and pending information](docs/wedding-content.md).
 

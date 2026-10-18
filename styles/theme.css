@@ -17,6 +17,9 @@
   /* Section surfaces and dividers keep the invitation in its printed-card palette. */
   --section-paper: var(--ivory);
   --section-parchment: color-mix(in srgb, var(--cream) 85%, var(--ivory));
+  --section-linen: color-mix(in srgb, var(--sand) 28%, var(--ivory));
+  --section-wash: color-mix(in srgb, var(--sand) 32%, transparent);
+  --section-arch-line: color-mix(in srgb, var(--ink) 14%, transparent);
   --section-rule: color-mix(in srgb, var(--ink) 32%, var(--cream));
   /* Event stationery: olive Mehndi, green Mehndi, red Barat, brown Walima. */
   --event-olive: #5d633b;

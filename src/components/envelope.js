@@ -1,6 +1,6 @@
-import { assetUrl, coupleNames, escapeHtml as e, formatDate, initials } from '../utils.js';
+import { assetUrl, coupleNames, escapeHtml as e, formatDate } from '../utils.js';
 import { flourish } from './artwork.js';
-import { icon } from './shared.js';
+import { icon, monogram } from './shared.js';
 
 export function envelope(w) {
   if (!w.envelope.enabled) return '';
@@ -19,7 +19,7 @@ export function envelope(w) {
           />
         </div>
         <button class="wax-seal" type="button" data-unseal aria-label="Open the wax seal">
-          <span>${e(initials(w, ''))}</span>
+          ${monogram(w, 'wax-seal-logo')}
         </button>
         <div class="envelope-letter" aria-hidden="true" inert>
           <p class="arabic" lang="ar" dir="rtl">${e(w.invitation.arabic)}</p>
