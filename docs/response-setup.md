@@ -1,25 +1,27 @@
-# Attendance and wishes
+# Wishes and family replies
 
-Recipient: **zamanbinishfaq+wedding@gmail.com**.
+Notification recipient: **zamanbinishfaq+wedding@gmail.com**.
 
 ## Wedding wishes: approval from your phone
 
-The Google Sheets + Apps Script workflow is prepared in backend/google-wishes/. You can attach it to your existing Sheet using Extensions > Apps Script; setup adds a Wishes tab and preserves other tabs. Complete the [one-time Google setup](google-wishes-setup.md) and set wishes.googleScriptUrl to its public /exec URL.
+The Google Sheets + Apps Script workflow lives in backend/google-wishes/. The public deployment URL is configured, and the live submission and approval flow has been tested from a phone.
 
-Guests submit a name and wish directly in the embedded wall. Wishes stay pending until you approve them from the private moderation link emailed to you. Rejecting or hiding a wish keeps it off the public wall. Once connected, individual moderation decisions require no laptop, file changes, or redeploys.
+Guests submit a name and wish directly in the embedded wall. Wishes stay pending until you approve them from the private moderation link emailed to you. Rejecting or hiding a wish keeps it off the public wall. Individual moderation decisions require no laptop, file changes, or redeploys.
 
 Google stores names and wishes in your private Sheet. Notification emails use your own Apps Script account and may be limited by its mail quota. The queue still works if a notification fails. Never share your moderation key or put it in site config.
 
-## Attendance replies
+The website's guestbook frame, heading, and surrounding spacing are styled in styles/stationery.css. These presentation changes do not require Google setup changes. The embedded form and private dashboard remain controlled by the existing Google app.
 
-RSVP email opens the guest's email app with attendance choices, guest count, optional contact details, and message already filled in. The guest taps Send.
+See the [Google setup and recovery guide](google-wishes-setup.md) when maintaining that app.
 
-WhatsApp uses the card's **0349 0095926 (Zaighum Mughal)**, configured as **923490095926** in rsvp.contactPhone. Links prepare a message; the guest taps Send in WhatsApp. Change this number in config/wedding.js if replies should go to someone else.
+## Attendance replies are hidden
 
-The page does not claim delivery when either app opens. Attendance data is not placed on the public wishes wall.
+The attendance section and its navigation link have been removed from the close-family invitation. Its optional component remains available through the section configuration if it is needed again. Guests use the wishes wall without an attendance form.
 
-## Manual JSON fallback
+## Manual wishes fallback
 
-Until the Google URL is configured, wishes can still be sent through email or WhatsApp and published manually in data/wishes.json. See data/README.md for that format.
+When wishes.googleScriptUrl is empty, wishes can be sent through email or WhatsApp and published manually in data/wishes.json. See [the JSON format](../data/README.md).
 
-The GitHub Pages files alone cannot store guest submissions or implement shared approval. The Google app provides that storage and moderation; JSON remains a backup/export option.
+Email opens the guest's email app with a prepared wish. WhatsApp uses the printed card's **0349 0095926 (Zaighum Mughal)**, retained in rsvp.contactPhone as **923490095926**. The guest must tap Send in either app. Opening the app does not prove delivery.
+
+The GitHub Pages files alone cannot store shared submissions. The Google app provides that storage and moderation; JSON remains a backup/export option.

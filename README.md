@@ -32,7 +32,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Section HTML | src/components/ |
 | Browser interactions | src/features/ |
 
-Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. The gallery has an empty state until photographs are added.
+Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. Attendance replies are also disabled for this close-family invitation; the RSVP link has been removed from navigation. The gallery has an empty state until photographs are added.
 
 See [confirmed details and pending information](docs/wedding-content.md).
 
@@ -71,7 +71,7 @@ heroPhoto: null,
 
 Add the corresponding files to assets/videos/ and assets/photos/. The video is muted, loops inline, and has a play/pause button. It respects reduced motion and pauses when the tab is hidden. Keep the video short and compressed for mobile connections. A poster is useful while it loads.
 
-For a still image instead, leave heroVideo null and set heroPhoto. Its crop uses heroPhotoPosition. Individual portraits use couple.groom.photo and couple.bride.photo. Gallery entries use src, alt, caption, and position. Keep personal images out of the repository until you are happy for site visitors to see them.
+For a still image instead, leave heroVideo null and set heroPhoto. Its crop uses heroPhotoPosition. The matching portrait cards are ready for childhood photographs. Set couple.groom.photo and couple.bride.photo, use photoPosition to adjust the crop, and photoAlt to describe each image. Both full names use two matching lines so the cards stay aligned. Missing photos retain the initials. Gallery entries use src, alt, caption, and position. Keep personal images out of the repository until you are happy for site visitors to see them.
 
 The initial envelope experience is retained. All local media paths work below the GitHub repository prefix.
 
@@ -89,7 +89,7 @@ Add mapsUrl only when the correct venue link is known. The venue section is opti
 
 Replies use **zamanbinishfaq+wedding@gmail.com**. WhatsApp uses the printed family contact **923490095926 (Zaighum Mughal)**. Change either in the config.
 
-The current email option opens the guest's email app with a prepared message. WhatsApp similarly opens a prepared message. The guest must tap Send in that app; opening a link does not prove delivery. RSVP drafts remain available on the guest's browser and can be downloaded as JSON.
+The attendance section is hidden. Its optional component remains available if needed later. Email and WhatsApp are retained only as the manual wishes fallback; the guest must tap Send in the app that opens.
 
 For wishes, the prepared Google Sheets + Apps Script app adds private phone moderation. Guests submit directly, then you receive an email and use your private link to Approve, Reject, or Hide. Approved wishes appear automatically; no laptop or redeploy is needed for individual decisions. Google stores only the submitted names and wishes for this workflow.
 

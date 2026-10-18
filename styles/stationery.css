@@ -195,25 +195,80 @@
 .countdown-date {
   color: var(--ink-soft);
 }
+/* Matching keepsake portraits, ready for the childhood photographs. */
 .couple-grid {
-  gap: 30px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
 }
-.portrait-arch {
+.person {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+.person .portrait-arch {
+  width: 100%;
+  max-width: 184px;
+  aspect-ratio: 4 / 5;
+  margin: 0 auto 22px;
   box-shadow: none;
   border-color: var(--line);
   background: var(--cream);
-  max-width: 150px;
+  isolation: isolate;
+}
+.portrait-arch img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.portrait-arch::after {
+  z-index: 2;
 }
 .portrait-initial {
   color: var(--ink-soft);
   font-size: 65px;
 }
-.person h3 {
-  font-size: 33px;
+.portrait-ornament {
+  z-index: 3;
+  width: 22px;
+  height: 22px;
+  left: calc(50% - 11px);
+  right: auto;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ivory);
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.person .eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+.person .person-name {
+  width: 100%;
+  min-height: 2.36em;
+  margin: 12px 0 0;
+  font-size: clamp(33px, 5vw, 43px);
+  line-height: 1.18;
+}
+.person-name span {
+  display: block;
 }
 .person-parents {
-  max-width: 200px;
-  margin-inline: auto;
+  max-width: 18ch;
+  min-height: 3em;
+  margin: 16px auto 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.person-bio {
+  margin-top: 16px;
 }
 .event-list {
   gap: 25px;
@@ -508,8 +563,20 @@
   .family-card h3 {
     font-size: 25px;
   }
-  .person h3 {
-    font-size: 29px;
+  .couple-grid {
+    gap: 16px;
+  }
+  .person {
+    padding: 22px 12px;
+  }
+  .person .portrait-arch {
+    margin-bottom: 20px;
+  }
+  .person .eyebrow {
+    font-size: 8px;
+  }
+  .person-parents {
+    font-size: 14px;
   }
   .footer-names {
     font-size: 46px;
@@ -560,10 +627,108 @@
   font: inherit;
 }
 
+/* The Google form and its approval flow stay unchanged inside this frame. */
+.wishes-section {
+  background: color-mix(in srgb, var(--cream) 20%, var(--ivory));
+}
+.wishes-section .section-heading {
+  margin-bottom: 32px;
+}
+.wishes-keepsake {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--ivory);
+  text-align: left;
+}
+.wishes-keepsake-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--line);
+  background: var(--white);
+}
+.wishes-emblem {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink-soft);
+}
+.wishes-emblem .icon {
+  width: 20px;
+  height: 20px;
+}
+.wishes-keepsake-heading .eyebrow {
+  font-size: 8px;
+  letter-spacing: 0.14em;
+}
+.wishes-keepsake-title {
+  margin-top: 3px;
+  font-size: 27px;
+  line-height: 1.25;
+}
+.wishes-widget-frame {
+  padding: 4px;
+}
 .wishes-widget {
   display: block;
   width: 100%;
   height: 800px;
   border: 0;
   background: var(--ivory);
+}
+.wishes-keepsake-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  padding: 19px 28px;
+  border-top: 1px solid var(--line);
+}
+.wishes-keepsake-footer p {
+  color: var(--ink-soft);
+  font-size: 16px;
+  font-style: italic;
+}
+.wishes-keepsake-footer .text-link {
+  min-height: 44px;
+  font-size: 10px;
+}
+@media (max-width: 600px) {
+  .wishes-keepsake-heading {
+    gap: 12px;
+    padding: 20px 16px;
+  }
+  .wishes-emblem {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+  .wishes-keepsake-title {
+    font-size: 24px;
+  }
+  .wishes-widget-frame {
+    padding: 0;
+  }
+  .wishes-keepsake-footer {
+    justify-content: center;
+    padding: 18px 16px;
+    text-align: center;
+  }
+}
+@media (max-width: 370px) {
+  .couple-grid {
+    gap: 12px;
+  }
+  .person {
+    padding-inline: 10px;
+  }
+  .person-parents {
+    font-size: 13px;
+  }
 }
