@@ -61,6 +61,10 @@ export const wedding = {
       enabled: false,
     },
     {
+      id: 'photo-uploads',
+      enabled: true,
+    },
+    {
       id: 'wishes',
       enabled: true,
     },
@@ -73,6 +77,10 @@ export const wedding = {
     {
       section: 'celebrations',
       label: 'Celebrations',
+    },
+    {
+      section: 'photo-uploads',
+      label: 'Photos',
     },
     {
       section: 'wishes',
@@ -256,6 +264,13 @@ export const wedding = {
     googleScriptUrl:
       'https://script.google.com/macros/s/AKfycbzleNjgh9fz45xKNPbJ6tBSVrOiSzY6qvIBoujXUCcOMSmQlZu9wsAqKOuD96isMxvG/exec',
     message: 'Leave a dua, a memory, or a little love for the journey ahead.',
+  },
+  photos: {
+    title: 'Share your moments',
+    message: 'Help us keep the memories you capture, shared privately with our family.',
+    // A separate photo uploader; keep the working wishes deployment unchanged.
+    googleScriptUrl:
+      'https://script.google.com/macros/s/AKfycbxLrHpj5Y1xFS0rkubZsn61IdLMO3QFdaFh-xdy4u-Jb9OKUx6VdeFqq8FUPrSUBNu8/exec',
   },
   music: {
     enabled: true,

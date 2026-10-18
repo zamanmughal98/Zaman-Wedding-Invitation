@@ -2,6 +2,7 @@
 .freebuff/
 .openai/
 .preview/
+.local/
 
 # Source reference documents
 *.pdf

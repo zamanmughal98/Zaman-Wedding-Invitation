@@ -5,6 +5,7 @@ import { hero, countdown, saveTheDate } from './components/hero.js';
 import { celebrations } from './components/celebrations.js';
 import { couple, families } from './components/people.js';
 import { story, gallery } from './components/memories.js';
+import { photoUploads } from './components/photo-uploads.js';
 import { venue, dressCode, rsvp, wishes, footer } from './components/guest-details.js';
 
 const renderers = {
@@ -20,6 +21,7 @@ const renderers = {
   'dress-code': dressCode,
   rsvp,
   wishes,
+  'photo-uploads': photoUploads,
 };
 
 export function renderInvitation(w) {

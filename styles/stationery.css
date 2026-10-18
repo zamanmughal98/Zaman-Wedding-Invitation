@@ -732,3 +732,69 @@
     font-size: 13px;
   }
 }
+
+/* Private guest photo collection; the uploader opens in its own tab. */
+.photo-upload-card {
+  padding: 38px 28px 27px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+.photo-upload-emblem {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 22px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink-soft);
+}
+.photo-upload-emblem .icon {
+  width: 27px;
+  height: 27px;
+}
+.photo-upload-card h3 {
+  font-size: 34px;
+  margin-top: 12px;
+}
+.photo-upload-copy {
+  max-width: 370px;
+  margin: 18px auto 26px;
+  color: var(--ink-soft);
+  font-size: 18px;
+}
+.photo-upload-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 350px;
+  margin: 25px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 10px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+.photo-upload-privacy .icon {
+  width: 14px;
+  height: 14px;
+}
+.photo-upload-soon {
+  padding: 13px;
+  border: 1px solid var(--line);
+  font-size: 17px;
+  font-style: italic;
+}
+@media (max-width: 600px) {
+  .photo-upload-card {
+    padding: 30px 20px 24px;
+  }
+  .photo-upload-card h3 {
+    font-size: 29px;
+  }
+  .photo-upload-copy {
+    font-size: 17px;
+  }
+}

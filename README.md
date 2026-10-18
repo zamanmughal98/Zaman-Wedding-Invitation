@@ -28,6 +28,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Shared base styles | style.css |
 | Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
 | Manual wishes fallback / backup format | data/wishes.json |
+| Private guest photo collection | photos.googleScriptUrl |
 | Photos, animation, music | Add files to assets/, then reference them in config |
 | Section HTML | src/components/ |
 | Browser interactions | src/features/ |
@@ -98,6 +99,16 @@ Use your existing Sheet through Extensions > Apps Script; setup adds a Wishes ta
 When that URL is empty, email/WhatsApp and the manually approved data/wishes.json wall remain available. The Google wall and manual JSON are separate modes so that an old JSON copy cannot reintroduce a hidden wish.
 
 See [response setup](docs/response-setup.md) and [JSON backup details](data/README.md).
+
+## Guest photo collection
+
+A Share your moments section is ready for private guest photos. Its separate Apps Script uploader supports original photo files, a saved device queue where browser storage permits, chunked transfers, pause/continue, retries, and an optional screen-awake control. Guests can upload without viewing other guests' photos. You grant viewing access separately in Drive.
+
+The photo uploader is connected through photos.googleScriptUrl. New photos are grouped by celebration, then guest name. Each selection keeps its chosen name and celebration. Completed rows clear when guests add another selection; only pending photos are processed. Local records help prevent repeat submissions for the same name, celebration, and photo in that browser.
+
+The Google photo service runs separately from GitHub Pages. Its source, manifest, generator, and backend checks are retained in ignored .local/google-photos/ for owner maintenance; they are not part of the GitHub push. See [photo service maintenance](docs/google-photos-setup.md). The existing wishes service is unchanged.
+
+Locking the phone or closing the browser can suspend uploads. Guests return to continue and may need to reselect files if browser storage is unavailable or cleared. Completed uploads remain in Drive.
 
 ## Sound and accessibility
 
