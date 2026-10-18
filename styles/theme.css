@@ -15,10 +15,13 @@
   --sand: #d4c1a6;
   --beige: #e8dcc9;
   /* Section surfaces and dividers keep the invitation in its printed-card palette. */
-  --section-paper: var(--ivory);
+  --section-paper: var(--panel-light);
   --section-parchment: color-mix(in srgb, var(--sand) 55%, var(--ivory));
   --section-linen: color-mix(in srgb, var(--cream) 55%, var(--ivory));
   --section-keepsake: color-mix(in srgb, var(--sand) 70%, var(--cream));
+  --section-hero: #d9c2a4;
+  --section-celebrations: #e3cdb1;
+  --section-tracery: color-mix(in srgb, var(--ink-soft) 25%, transparent);
   --section-wash: color-mix(in srgb, var(--sand) 38%, transparent);
   --section-ornament: color-mix(in srgb, var(--gold) 28%, transparent);
   --guestbook-paper: #e9dcc7;

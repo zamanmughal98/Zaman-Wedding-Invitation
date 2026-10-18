@@ -10,6 +10,7 @@ export function celebrations(w) {
         ${w.events
           .map(
             (event, index) => `
+      ${index ? `<div class="event-divider" aria-hidden="true">${eventFlourish()}</div>` : ''}
       <article class="event-card tone-${e(event.tone)} reveal" id="event-${e(event.id)}">
         <span class="event-watermark" lang="ur" dir="rtl" aria-hidden="true">${e(event.urdu)}</span>
         <div class="event-content">
