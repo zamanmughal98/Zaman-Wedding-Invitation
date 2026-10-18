@@ -17,8 +17,8 @@ export function photoUploads(w) {
         </p>
         ${
           url
-            ? `<a class="button button-primary" href="${e(url)}" target="_blank" rel="noopener noreferrer">Share your photos ${icon('arrow')}</a>
-             <p class="local-note">Opens a private upload page. Keep it open until your photos finish.</p>`
+            ? `<a class="button button-primary" href="${e(url)}" target="_blank" rel="noopener noreferrer">Share photos &amp; videos ${icon('arrow')}</a>
+             <p class="local-note">Opens a private upload page. Keep it open until your uploads finish.</p>`
             : '<p class="photo-upload-soon">Photo sharing will open here soon.</p>'
         }
         <p class="photo-upload-privacy">

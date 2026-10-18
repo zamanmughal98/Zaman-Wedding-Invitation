@@ -29,7 +29,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Shared base styles | style.css |
 | Phone approval and live wishes | backend/google-wishes/ and wishes.googleScriptUrl |
 | Manual wishes fallback / backup format | data/wishes.json |
-| Private guest photo collection | photos.googleScriptUrl |
+| Private guest photo and video collection | photos.googleScriptUrl |
 | Photos, animation, music | Add files to assets/, then reference them in config |
 | Section HTML | src/components/ |
 | Browser interactions | src/features/ |
@@ -58,7 +58,7 @@ scripts/build.mjs      dependency-free static build
 assets/                envelope, future photos, video, and music
 ```
 
-The preview server and build render the same components into HTML. The browser adds interactions. This keeps the invitation readable without JavaScript and works on GitHub Pages without a backend.
+The preview server and build render the same components into HTML. The browser adds interactions. This keeps the invitation readable without JavaScript. GitHub Pages serves the static invitation; the Google services run separately.
 
 ## Add the animation or personal images
 
@@ -93,23 +93,21 @@ Replies use **zamanbinishfaq+wedding@gmail.com**. WhatsApp uses the printed fami
 
 The attendance section is hidden. Its optional component remains available if needed later. Email and WhatsApp are retained only as the manual wishes fallback; the guest must tap Send in the app that opens.
 
-For wishes, the prepared Google Sheets + Apps Script app adds private phone moderation. Guests submit directly, then you receive an email and use your private link to Approve, Reject, or Hide. Approved wishes appear automatically; no laptop or redeploy is needed for individual decisions. Google stores only the submitted names and wishes for this workflow.
+The wishes service uses Google Sheets + Apps Script for private phone moderation. Guests submit directly, then you receive an email and use your private link to Approve, Reject, or Hide. Approved wishes appear automatically; no laptop or redeploy is needed for individual decisions. Google stores only the submitted names and wishes for this workflow.
 
-Use your existing Sheet through Extensions > Apps Script; setup adds a Wishes tab while preserving other tabs. Complete the [one-time Google setup](docs/google-wishes-setup.md) and set wishes.googleScriptUrl to your public /exec URL. The public Google deployment URL is configured. Complete the live checks in the guide to verify storage and email delivery. Never put the private moderation link in the repository.
+The public wishes deployment URL is configured in wishes.googleScriptUrl. See the [Google wishes guide](docs/google-wishes-setup.md) for setup and maintenance. Keep the private moderation link outside the repository.
 
 When that URL is empty, email/WhatsApp and the manually approved data/wishes.json wall remain available. The Google wall and manual JSON are separate modes so that an old JSON copy cannot reintroduce a hidden wish.
 
 See [response setup](docs/response-setup.md) and [JSON backup details](data/README.md).
 
-## Guest photo collection
+## Guest photos and videos
 
-A Share your moments section is ready for private guest photos. Its separate Apps Script uploader supports original photo files, a saved device queue where browser storage permits, chunked transfers, pause/continue, retries, and an optional screen-awake control. Guests can upload without viewing other guests' photos. You grant viewing access separately in Drive.
+**Share photos & videos** opens the private Google uploader configured by `photos.googleScriptUrl`. Original photos are accepted up to 25 MiB and videos up to 1 GiB (displayed as 1 GB). Files are organised by celebration and guest name. Guests cannot browse other uploads; you grant viewing access separately in Drive.
 
-The photo uploader is connected through photos.googleScriptUrl. New photos are grouped by celebration, then guest name. Each selection keeps its chosen name and celebration. Completed rows clear when guests add another selection; only pending photos are processed. Local records help prevent repeat submissions for the same name, celebration, and photo in that browser.
+The uploader provides pause/continue, retries, and visible error alerts. Keep its page open until uploads finish. Large files save recovery details rather than a full device copy; after a refresh, select the original file again to continue. Use one active uploader tab per browser profile. Separate devices have independent queues and share the Google service's capacity.
 
-The Google photo service runs separately from GitHub Pages. Its source, manifest, generator, and backend checks are retained in ignored .local/google-photos/ for owner maintenance; they are not part of the GitHub push. See [photo service maintenance](docs/google-photos-setup.md). The existing wishes service is unchanged.
-
-Locking the phone or closing the browser can suspend uploads. Guests return to continue and may need to reselect files if browser storage is unavailable or cleared. Completed uploads remain in Drive.
+The photo service is deployed separately from GitHub Pages. Its source and owner tools stay in ignored `.local/google-photos/`; generated deployment files stay in ignored `.preview/google-photos/`. Keep a private backup. See [formats, limits, recovery, and Google deployment steps](docs/google-photos-setup.md).
 
 ## Sound and accessibility
 
@@ -131,6 +129,6 @@ Deploy dist/, rather than the raw repository, when using a custom host. GitHub P
 
 The workflow supplies SITE_URL for share metadata. Local builds use site.url. Rebuild after changing the title, description, or preview image.
 
-The source PDF remains a local reference and is not tracked. Preview files, build output, local credentials, and obsolete hosting metadata are ignored. Backend source, setup documentation, and tests belong in the repository, but are excluded from the public dist/ build. Keep moderation keys and Sheet settings in Google Script properties.
+The source PDF, previews, build output, local credentials, and photo-service source are ignored. The wishes backend, setup documentation, and website tests are tracked but excluded from the public dist/ build. Keep moderation keys and private storage settings in Google Script properties.
 
 Envelope artwork provenance is in assets/images/README.md.
