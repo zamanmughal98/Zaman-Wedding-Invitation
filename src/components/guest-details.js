@@ -1,14 +1,7 @@
 import { wishesWidgetUrl } from '../wishes-service.js';
-import {
-  coupleNames,
-  escapeHtml as e,
-  eventDate,
-  eventTime,
-  formatDate,
-  initials,
-} from '../utils.js';
+import { coupleNames, escapeHtml as e, eventDate, eventTime, formatDate } from '../utils.js';
 import { botanical, flourish } from './artwork.js';
-import { heading, icon, mapLink } from './shared.js';
+import { heading, icon, mapLink, monogram } from './shared.js';
 
 export function venue(w) {
   const event = w.events.find((item) => item.id === w.venue.primaryEventId) || w.events[0];
@@ -54,7 +47,7 @@ export function rsvp(w) {
     <section class="section rsvp-section" id="rsvp">
       ${heading('The honour of your presence', 'Will you celebrate with us?', w.rsvp.message)}
       <div class="rsvp-card reveal">
-        <div class="rsvp-seal" aria-hidden="true">${e(initials(w, ''))}</div>
+        <div class="rsvp-seal" aria-hidden="true">${monogram(w)}</div>
         ${w.rsvp.deadline ? `<p class="rsvp-deadline">Kindly respond by ${e(formatDate(w.rsvp.deadline, w.site))}</p>` : ''}
         <form id="rsvp-form">
           ${honeypot()}
@@ -214,7 +207,8 @@ export function wishes(w) {
 export function footer(w) {
   return /* HTML */ `
     <footer class="site-footer">
-      ${botanical('footer-botanical')}${flourish()}
+      ${botanical('footer-botanical')}
+      <div class="footer-monogram" aria-hidden="true">${monogram(w)}</div>
       <p class="eyebrow">Hope to see you there</p>
       <p class="footer-names">${e(coupleNames(w))}</p>
       <p>${e(w.invitation.closing)}</p>

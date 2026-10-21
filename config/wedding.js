@@ -10,6 +10,7 @@ export const wedding = {
       'Join Zaman Mughal and Nimra Shafiq for their wedding celebrations, 12–15 November 2026. Walima: Sunday, 15 November, 7:00 PM, Royal Vista Event Complex, Attock City.',
     url: 'https://zamanmughal98.github.io/Zaman-Wedding-Invitation/',
     previewImage: '/assets/images/ivory-envelope.png',
+    logo: '/assets/images/zaman-nimra-monogram.png',
     language: 'en',
     locale: 'en-GB',
     timeZone: 'Asia/Karachi',
@@ -119,8 +120,7 @@ export const wedding = {
     eyebrow: 'Celebrating the wedding of',
     together: 'Together with their families',
     hosts: 'Mr. & Mrs. Ishfaq Mughal',
-    hostMessage:
-      'Request the honour of your presence at the wedding celebrations of their beloved',
+    hostMessage: 'Request the honour of your presence at the wedding celebrations of their beloved',
     arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
     transliteration: 'In the name of Allah, the Most Gracious, the Most Merciful',
     verse: 'And We created you in pairs',
@@ -163,7 +163,7 @@ export const wedding = {
       address: 'Near University of Education, Attock Campus, Attock City',
       mapsUrl: null,
       dressCode: '',
-      tone: 'beige',
+      tone: 'olive',
       illustration: 'botanical',
     },
     {
@@ -180,7 +180,7 @@ export const wedding = {
       address: 'Attock City',
       mapsUrl: null,
       dressCode: '',
-      tone: 'sand',
+      tone: 'green',
       illustration: 'botanical',
     },
     {
@@ -197,7 +197,7 @@ export const wedding = {
       address: 'Attock Cantt',
       mapsUrl: null,
       dressCode: '',
-      tone: 'brown',
+      tone: 'red',
       illustration: 'botanical',
     },
     {
@@ -215,7 +215,7 @@ export const wedding = {
       address: 'Attock City',
       mapsUrl: null,
       dressCode: '',
-      tone: 'ivory',
+      tone: 'brown',
       illustration: 'botanical',
     },
   ],

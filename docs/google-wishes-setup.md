@@ -79,7 +79,18 @@ If your private link is exposed, run **renewModeratorLink** in the Apps Script e
 
 If you change backend code later, use **Deploy > Manage deployments > Edit > New version > Deploy** on the existing deployment. Saving editor files alone does not update its live version. Keep the public deployment URL the same.
 
-Themes: the Google widget's colours are variables at the top of Index.html. They currently match your brown and beige website. Update them there if you change the invitation palette later.
+## Apply the parchment guestbook design to an existing deployment
+
+**Index.html contains both the public guestbook and the private dashboard. This design update affects only the public guestbook; the private dashboard is preserved.** It receives a guest name and message, saves it pending, and publishes it after your phone approval. It does not collect event selections, attendance, or guest counts. RSVP remains disabled.
+
+The website cannot style the contents of the Google iframe. To apply the parchment cards, calligraphic form heading, and linen input fields:
+
+1. Open your existing **Zaman & Nimra Wedding Wishes** Apps Script project.
+2. Open its **Index.html** file and replace its contents with [the updated Index.html](../backend/google-wishes/Index.html). Save.
+3. Choose **Deploy > Manage deployments > Edit (pencil) > New version > Deploy** on the existing wishes deployment.
+4. Refresh the invitation. The public /exec URL and your saved private moderation link stay the same.
+
+Do not rerun setup or replace Code.gs or appsscript.json for this visual update. No Sheet changes are needed. The public-only body.guestbook CSS changes the card, form, and page colours; the admin page and approval logic stay as before. Its palette matches the --guestbook-* tokens in styles/theme.css.
 
 ## JSON fallback
 

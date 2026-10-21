@@ -5,7 +5,7 @@ import { photoUploadUrl } from '../photo-upload-service.js';
 export function photoUploads(w) {
   const url = photoUploadUrl(w);
   return /* HTML */ `
-    <section class="section" id="photo-uploads">
+    <section class="section photo-uploads-section" id="photo-uploads">
       ${heading('Through your eyes', w.photos.title, w.photos.message)}
       <div class="photo-upload-card reveal">
         <span class="photo-upload-emblem" aria-hidden="true">${icon('camera')}</span>
