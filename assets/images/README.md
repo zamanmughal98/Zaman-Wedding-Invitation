@@ -5,3 +5,5 @@ Prompt: Front-facing portrait 2:3 closed wedding envelope, textured ivory cotton
 `zaman-nimra-monogram.png` is the transparent PNG logo supplied by the couple. Set `site.logo` in `config/wedding.js` to replace it across the header, envelope seal, footer, browser-tab icon, and optional RSVP seal. Set it to `null` to use text initials and the generic fallback tab icon. Its original colours and transparency are preserved.
 
 Architectural and botanical illustrations are original SVG code in `src/components/artwork.js`. Section ornaments and the fine paper grain are in `assets/ornaments/`; their colours and strength are controlled from the theme.
+
+`zaman-childhood.jpg`, `nimra-childhood.jpg`, and `zaman-nimra-childhood.jpg` are the three childhood photographs supplied by the couple on 22 October 2026. They are original JPEG copies, with no retouching. The individual photos fill the existing arched portraits (crop controlled by `couple.*.photoPosition`); the shared photo is shown uncropped in the gallery, with tap-to-enlarge viewing. Replace their paths and alt text in `config/wedding.js`.

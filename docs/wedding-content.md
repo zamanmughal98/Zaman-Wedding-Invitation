@@ -14,7 +14,7 @@ The printed reception card and Zaman's latest schedule are the sources for publi
 - Walima venue: **Royal Vista Event Complex, Attock City**
 - Printed contact: **Zaighum Mughal - 0349 0095926**
 
-Still to confirm: exact start times for the first three functions, any end times, clothing preferences, additional family wording, personal photos, and the friend's animation file.
+Still to confirm: exact start times for the first three functions, any end times, additional family wording, and the friend's animation file.
 
 The first three functions show evening/time to follow. Their calendar downloads include the confirmed venues and save the dates without inventing a start time. The countdown uses the confirmed Walima start. No fictional times, venue names, biographies, or story milestones are supplied.
 
@@ -22,4 +22,6 @@ The four event cards share engraved corner frames, paper grain, tonal shading, a
 
 The animation is an optional asset: set invitation.heroVideo and optionally heroVideoPoster in config/wedding.js. A personal photo remains an alternative through heroPhoto. The opening envelope is preserved.
 
-Optional sections remain in the project. Story is disabled until there is a real story to add; gallery has an honest empty state. Attendance replies and their navigation link are hidden for the close-family invitation. The couple cards use matching two-line names and portrait frames ready for childhood photos. Every section can be hidden or restored through configuration.
+Optional sections remain in the project. Story is disabled until there is a real story to add. The gallery now features the supplied shared childhood photograph under "Little us", with a full landscape frame and tap-to-enlarge viewing. Attendance replies and their navigation link are hidden for the close-family invitation. The couple cards use matching two-line names and portrait frames showing the supplied individual childhood photos. Portraits and their focal points are editable through couple.bride and couple.groom; the shared image and caption are in gallery.photos. The original JPEGs are copied unchanged into assets/images/, and no dates or childhood story have been invented. Every section can be hidden or restored through configuration.
+
+The dress section is guest-facing: optional green and neutral palettes for both Mehndi evenings, grey and neutral inspiration for Nikah & Barat, and warm brown inspiration for Walima. Guests may choose other colours; no personal or family wardrobe plans are published. Edit dressCode.looks in config/wedding.js; dates and event names come from events. Fabric sample colours use --fabric-* and --outfit-*-paper tokens in styles/theme.css. The spoken "Mangni" reference is treated as Mehndi in the existing schedule, pending any correction; no new engagement event is added.
