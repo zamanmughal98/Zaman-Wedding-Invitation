@@ -7,3 +7,5 @@ Prompt: Front-facing portrait 2:3 closed wedding envelope, textured ivory cotton
 Architectural and botanical illustrations are original SVG code in `src/components/artwork.js`. Section ornaments and the fine paper grain are in `assets/ornaments/`; their colours and strength are controlled from the theme.
 
 `zaman-childhood.jpg`, `nimra-childhood.jpg`, and `zaman-nimra-childhood.jpg` are the three childhood photographs supplied by the couple on 22 October 2026. They are original JPEG copies, with no retouching. The individual photos fill the existing arched portraits (crop controlled by `couple.*.photoPosition`); the shared photo is shown uncropped in the gallery, with tap-to-enlarge viewing. Replace their paths and alt text in `config/wedding.js`.
+
+The optional opening image uses `invitation.heroPhoto` and `heroPhotoPosition`. An animation uses `invitation.heroVideo` with an optional `heroVideoPoster`; place the video in `assets/videos/` and its poster in `assets/images/`. Gallery entries use `src`, `alt`, `caption`, and `position`. Missing personal photographs retain their initials or an illustrated fallback.

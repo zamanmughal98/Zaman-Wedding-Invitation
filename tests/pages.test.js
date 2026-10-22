@@ -66,8 +66,8 @@ for (const prefix of ['/', '/Zaman-Wedding-Invitation/']) {
             await load(dependency, asset);
       }
       if (asset.pathname.endsWith('.css')) {
-        for (const [, dependency] of source.matchAll(/@import\s+url\(['"]?([^'"\)]+)['"]?\)/g))
-          await load(dependency, asset);
+        for (const [, dependency] of source.matchAll(/\burl\(['"]?([^'"\)]+)['"]?\)/g))
+          if (!/^(https?:|data:|#)/.test(dependency)) await load(dependency, asset);
       }
     }
     try {

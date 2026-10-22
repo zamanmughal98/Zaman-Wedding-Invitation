@@ -1,0 +1,298 @@
+/* Matching keepsake portraits with configurable photographs and focal points. */
+.couple-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+.person {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+.person .portrait-arch {
+  width: 100%;
+  max-width: 184px;
+  aspect-ratio: 4 / 5;
+  margin: 0 auto 22px;
+  box-shadow: none;
+  border-color: var(--line);
+  background: var(--cream);
+  isolation: isolate;
+}
+.portrait-arch img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.portrait-arch::after {
+  z-index: 2;
+}
+.portrait-initial {
+  color: var(--ink-soft);
+  font-size: 65px;
+}
+.portrait-ornament {
+  z-index: 3;
+  width: 22px;
+  height: 22px;
+  left: calc(50% - 11px);
+  right: auto;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ivory);
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.person .eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+.person .person-name {
+  width: 100%;
+  min-height: 2.36em;
+  margin: 12px 0 0;
+  font-size: clamp(33px, 5vw, 43px);
+  line-height: 1.18;
+}
+.person-name span {
+  display: block;
+}
+.person-parents {
+  max-width: 18ch;
+  min-height: 3em;
+  margin: 16px auto 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.person-bio {
+  margin-top: 16px;
+}
+.event-list {
+  gap: 0;
+}
+.event-divider {
+  display: grid;
+  place-items: center;
+  height: 64px;
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+.event-divider .event-crest {
+  width: min(170px, 60%);
+  height: 30px;
+  margin: 0;
+  color: inherit;
+  opacity: 0.7;
+}
+.event-card {
+  --event-paper: var(--event-beige);
+  --event-ink: var(--ink);
+  --event-muted: var(--ink-soft);
+  --event-accent: var(--ink-soft);
+  --event-line: color-mix(in srgb, var(--event-ink) 22%, transparent);
+  text-align: center;
+  box-shadow: none;
+  color: var(--event-ink);
+  border-color: var(--event-line);
+  background: var(--event-paper);
+}
+.event-card::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  background: var(--event-accent);
+  opacity: 0.55;
+  mask: url('../assets/ornaments/event-frame.svg') center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+.event-card::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  bottom: -15px;
+  right: -65px;
+  width: 230px;
+  height: 320px;
+  background: var(--event-accent);
+  opacity: 0.04;
+  mask: url('../assets/ornaments/pavilion-arch.svg') center / contain no-repeat;
+  pointer-events: none;
+}
+.event-card:is(.tone-olive, .tone-brown)::after {
+  bottom: -28px;
+  right: auto;
+  left: -25px;
+  width: 190px;
+  height: 190px;
+  mask-image: url('../assets/ornaments/folded-corner.svg');
+}
+.event-card:is(.tone-olive, .tone-green, .tone-red, .tone-brown) {
+  background-image:
+    url('../assets/ornaments/paper-grain.svg'),
+    linear-gradient(145deg, rgb(0 0 0 / 10%), rgb(0 0 0 / 16%));
+  background-size:
+    180px 180px,
+    100% 100%;
+}
+.event-watermark {
+  position: absolute;
+  z-index: 0;
+  right: 20px;
+  bottom: 98px;
+  max-width: calc(100% - 40px);
+  font: 92px/1.7 var(--arabic);
+  color: var(--event-accent);
+  opacity: 0.025;
+  transform: rotate(-12deg);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.event-crest {
+  width: min(210px, 72%);
+  height: 34px;
+  margin: 0 auto 18px;
+  color: var(--event-accent);
+  opacity: 0.9;
+}
+
+.event-card.tone-sand {
+  --event-paper: var(--event-sand);
+}
+.event-card:is(.tone-olive, .tone-green, .tone-red, .tone-brown) {
+  --event-ink: var(--event-light-ink);
+  --event-muted: var(--event-light-muted);
+  --event-accent: var(--event-light-accent);
+  --event-line: color-mix(in srgb, var(--cream) 38%, transparent);
+}
+.event-card.tone-olive {
+  --event-paper: var(--event-olive);
+}
+.event-card.tone-green {
+  --event-paper: var(--event-green);
+}
+.event-card.tone-red {
+  --event-paper: var(--event-red);
+}
+.event-card.tone-brown {
+  --event-paper: var(--event-brown);
+}
+.event-card.tone-ivory {
+  --event-paper: var(--event-ivory);
+}
+.event-card .eyebrow {
+  color: var(--event-muted);
+}
+.event-content {
+  position: relative;
+  z-index: 1;
+  padding: 21px 31px 18px;
+}
+.event-topline {
+  padding-inline: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 36px;
+  margin-bottom: 4px;
+}
+.event-topline .event-number,
+.event-topline .event-urdu {
+  position: static;
+  color: var(--event-accent);
+}
+.event-topline .event-number {
+  font-size: 12px;
+}
+.event-topline .event-urdu {
+  font-size: 24px;
+}
+.event-content h3 {
+  margin-top: 7px;
+  font-size: 43px;
+}
+.event-description {
+  color: var(--event-muted);
+  font-size: 17px;
+  margin: 18px auto 23px;
+  max-width: 440px;
+}
+.event-details {
+  border-color: var(--event-line);
+  gap: 18px 12px;
+}
+.event-details dt {
+  color: var(--event-muted);
+  font-size: 9px;
+}
+.event-details dd {
+  font-size: 18px;
+}
+.event-address {
+  color: var(--event-muted);
+  display: block;
+  font-size: 16px;
+}
+.event-actions {
+  border-color: var(--event-line);
+  margin-top: 20px;
+  padding-top: 12px;
+}
+.event-actions .text-link {
+  color: var(--event-ink);
+  text-decoration-color: var(--event-line);
+  font-size: 11px;
+}
+.event-actions .text-link:hover {
+  color: var(--event-muted);
+}
+.event-actions .text-link:focus-visible {
+  outline: 2px solid var(--event-ink);
+  outline-offset: 4px;
+}
+.event-card .event-dress {
+  color: var(--event-muted);
+}
+@media print {
+  .section:not(.hero) {
+    padding-block: 30px;
+    background: white;
+  }
+  .ambient-background,
+  .section:not(.hero)::after,
+  .section::before,
+  .section + .section::before {
+    display: none;
+  }
+  .event-card:is(.tone-olive, .tone-green, .tone-red, .tone-brown) {
+    --event-paper: white;
+    --event-ink: var(--ink);
+    --event-muted: var(--ink-soft);
+    --event-accent: var(--ink-soft);
+    --event-line: var(--line);
+  }
+}
+.family-grid:has(.family-card:only-child) {
+  grid-template-columns: 1fr;
+}
+.family-card {
+  box-shadow: none;
+  background: transparent;
+  padding: 30px;
+}
+.family-card h3 {
+  font-family: var(--serif);
+  font-size: 29px;
+}
+.family-card:only-child .family-message {
+  max-width: 380px;
+  margin-inline: auto;
+}
+.family-card:only-child {
+  border-inline: 0;
+}

@@ -73,7 +73,6 @@ function fixture(t, { startOnOpen = true, webAudio = true, play } = {}) {
       src: '/assets/music/samjhawan-unplugged.mp3',
       volume: 0.12,
       startOnOpen,
-      ambientFallback: false,
     },
   });
   return { button, triggers, players, contexts, doc, notice };

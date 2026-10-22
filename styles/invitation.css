@@ -1,0 +1,149 @@
+.hero {
+  isolation: isolate;
+  overflow: clip;
+  padding: 23px 33px 30px;
+  background-color: var(--section-hero);
+  background-image:
+    url('../assets/ornaments/paper-grain.svg'),
+    radial-gradient(ellipse at 50% 15%, var(--cream), transparent 76%);
+}
+.hero-topline {
+  font-size: 9px;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+.hero-arch {
+  border-radius: 48% 48% 0 0 / 24% 24% 0 0;
+  background: var(--white);
+  min-height: 0;
+  border-color: var(--line);
+}
+.arch-border {
+  inset: 11px;
+  border-radius: inherit;
+}
+.hero-inner {
+  padding: 71px 35px 53px;
+}
+.hero .arabic {
+  color: var(--ink);
+  font-size: 29px;
+}
+.hero-hosts {
+  margin: 28px auto 9px;
+  max-width: 420px;
+  font-family: var(--sans);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.host-message {
+  max-width: 340px;
+  margin: auto;
+  font-family: var(--sans);
+  font-size: 10px;
+  text-transform: uppercase;
+  line-height: 1.9;
+  letter-spacing: 0.07em;
+}
+.hero h1 {
+  flex-direction: column;
+  gap: 2px;
+  margin: 27px auto 23px;
+  font-size: clamp(48px, 7vw, 67px);
+  line-height: 1.3;
+}
+.hero-and {
+  font-size: 35px;
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+.hero-date {
+  font-family: var(--serif);
+  font-size: 26px;
+  letter-spacing: 0.025em;
+  text-transform: none;
+  line-height: 1.45;
+  margin-top: 6px;
+}
+.hero-city {
+  margin-top: 5px;
+  color: var(--ink-soft);
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.hero-message {
+  max-width: 350px;
+  margin: 25px auto 0;
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.hero-verse {
+  margin-top: 26px;
+  font-size: 17px;
+}
+.hero-verse cite {
+  color: var(--ink-soft);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+.hero-sprig {
+  top: 8%;
+  width: 140px;
+  height: 230px;
+  opacity: 0.24;
+  z-index: 0;
+}
+.hero-sprig-left {
+  left: -48px;
+  transform: rotate(36deg);
+}
+.hero-sprig-right {
+  top: auto;
+  bottom: -20px;
+  right: -22px;
+  transform: rotate(194deg);
+  width: 130px;
+  height: 210px;
+}
+.couple-media {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 23px auto;
+}
+.couple-video,
+.couple-photograph {
+  display: block;
+  width: 100%;
+  max-height: 430px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+.video-toggle {
+  margin-top: 6px;
+  font-size: 11px;
+}
+.countdown-section {
+  background: color-mix(in srgb, var(--cream) 27%, var(--ivory));
+}
+.countdown-unit > span {
+  color: var(--ink);
+  font-size: 43px;
+}
+.countdown-unit small {
+  color: var(--ink-soft);
+  font-size: 9px;
+}
+.countdown-date {
+  color: var(--ink-soft);
+}
+.scratch-reveal {
+  border-color: var(--scratch-line);
+  background:
+    url('../assets/ornaments/paper-grain.svg'),
+    linear-gradient(145deg, var(--scratch-paper), var(--scratch-wash));
+}

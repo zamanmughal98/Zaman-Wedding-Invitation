@@ -10,18 +10,18 @@ Guests submit a name and wish directly in the embedded wall. Wishes stay pending
 
 Google stores names and wishes in your private Sheet. Notification emails use your own Apps Script account and may be limited by its mail quota. The queue still works if a notification fails. Never share your moderation key or put it in site config.
 
-The website's guestbook frame, heading, and surrounding spacing are styled in styles/stationery.css. These presentation changes do not require Google setup changes. The embedded form and private dashboard remain controlled by the existing Google app.
+The website's guestbook frame, heading, and surrounding spacing are styled in styles/guest-services.css. These presentation changes do not require Google setup changes. The embedded form and private dashboard remain controlled by the existing Google app.
 
 See the [Google setup and recovery guide](google-wishes-setup.md) when maintaining that app.
 
-## Attendance replies are hidden
+## Attendance replies are removed
 
-The attendance section and its navigation link have been removed from the close-family invitation. Its optional component remains available through the section configuration if it is needed again. Guests use the wishes wall without an attendance form.
+The attendance section, its browser code and its unused configuration have been removed. Guests use the wishes wall without an attendance form.
 
 ## Manual wishes fallback
 
 When wishes.googleScriptUrl is empty, wishes can be sent through email or WhatsApp and published manually in data/wishes.json. See [the JSON format](../data/README.md).
 
-Email opens the guest's email app with a prepared wish. WhatsApp uses the printed card's **0349 0095926 (Zaighum Mughal)**, retained in rsvp.contactPhone as **923490095926**. The guest must tap Send in either app. Opening the app does not prove delivery.
+Email opens the guest's email app with a prepared wish. WhatsApp uses the printed card's **0349 0095926 (Zaighum Mughal)**, retained in responses.whatsappPhone as **923490095926**. The guest must tap Send in either app. Opening the app does not prove delivery.
 
 The GitHub Pages files alone cannot store shared submissions. The Google app provides that storage and moderation; JSON remains a backup/export option.

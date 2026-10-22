@@ -4,9 +4,9 @@ import { envelope } from './components/envelope.js';
 import { hero, countdown, saveTheDate } from './components/hero.js';
 import { celebrations } from './components/celebrations.js';
 import { couple, families } from './components/people.js';
-import { story, gallery } from './components/memories.js';
+import { gallery } from './components/memories.js';
 import { photoUploads } from './components/photo-uploads.js';
-import { venue, dressCode, rsvp, wishes, footer } from './components/guest-details.js';
+import { venue, dressCode, wishes, footer } from './components/guest-details.js';
 
 const renderers = {
   home: hero,
@@ -15,11 +15,9 @@ const renderers = {
   couple,
   celebrations,
   families,
-  story,
   gallery,
   venue,
   'dress-code': dressCode,
-  rsvp,
   wishes,
   'photo-uploads': photoUploads,
 };
@@ -46,7 +44,7 @@ export function renderInvitation(w) {
             .filter((link) => enabled.has(link.section))
             .map(
               (link) => /* HTML */ `
-                <a href="#${e(link.section)}" ${link.section === 'rsvp' ? 'class="nav-rsvp"' : ''}>
+                <a href="#${e(link.section)}">
                   ${e(link.label)}
                 </a>
               `,

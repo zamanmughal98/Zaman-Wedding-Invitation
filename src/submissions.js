@@ -1,50 +1,27 @@
 import { coupleNames } from './utils.js';
 
-export function responseMessage(w, kind, entry) {
-  const lines = [
-    kind === 'wish'
-      ? 'A wedding wish for ' + coupleNames(w)
-      : 'Wedding attendance for ' + coupleNames(w),
-    'From: ' + entry.name,
-  ];
-  if (kind === 'rsvp') {
-    lines.push(
-      entry.attendance === 'yes'
-        ? 'Joyfully accepting for ' + entry.guests + ' guest(s).'
-        : 'Unable to attend, with love and duas.',
-    );
-    if (entry.events.length)
-      lines.push(
-        'Celebrations: ' +
-          entry.events
-            .map((id) => w.events.find((event) => event.id === id)?.name)
-            .filter(Boolean)
-            .join(', '),
-      );
-    if (entry.contact) lines.push('Contact: ' + entry.contact);
-  }
-  if (entry.message) lines.push(entry.message);
-  return lines.join('\n');
+export function wishMessage(w, entry) {
+  return ['A wedding wish for ' + coupleNames(w), 'From: ' + entry.name, entry.message]
+    .filter(Boolean)
+    .join('\n');
 }
 
-export function emailAppUrl(w, kind, entry) {
+export function emailAppUrl(w, entry) {
   const recipient = w.responses?.email;
   if (!recipient || /[\s?&#]/.test(recipient)) return '';
-  const subject =
-    coupleNames(w) + (kind === 'wish' ? ' | A wedding wish' : ' | Attendance response');
   return (
     'mailto:' +
     recipient +
     '?subject=' +
-    encodeURIComponent(subject) +
+    encodeURIComponent(coupleNames(w) + ' | A wedding wish') +
     '&body=' +
-    encodeURIComponent(responseMessage(w, kind, entry))
+    encodeURIComponent(wishMessage(w, entry))
   );
 }
 
-export function whatsappUrl(w, kind, entry) {
-  const phone = w.rsvp.contactPhone?.replace(/\D/g, '');
+export function whatsappUrl(w, entry) {
+  const phone = w.responses?.whatsappPhone?.replace(/\D/g, '');
   return phone
-    ? 'https://wa.me/' + phone + '?text=' + encodeURIComponent(responseMessage(w, kind, entry))
+    ? 'https://wa.me/' + phone + '?text=' + encodeURIComponent(wishMessage(w, entry))
     : '';
 }
