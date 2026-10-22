@@ -32,6 +32,27 @@
   --panel-light: #f0e3cf;
   --field-paper: #e4ceb0;
   --field-edge: #b89a78;
+  /* Cocoa scratch-off foil opens onto a light champagne date card. */
+  --scratch-cover: #624333;
+  --scratch-cover-shade: #39271f;
+  --scratch-cover-ink: #fff1d2;
+  --scratch-cover-accent: #ddc39b;
+  --scratch-paper: #fff1d2;
+  --scratch-wash: #eed8ae;
+  --scratch-line: #b99466;
+  /* Outfit fabric samples and their softly tinted stationery. */
+  --fabric-ivory: #e7dcc5;
+  --fabric-pistachio: #a5b370;
+  --fabric-green: #65805a;
+  --fabric-charcoal: #383b3d;
+  --fabric-grey: #a4a4a0;
+  --fabric-camel: #b38e65;
+  --fabric-brown: #86644b;
+  --fabric-chocolate: #4c3228;
+  --outfit-pistachio-paper: #e9e7d3;
+  --outfit-green-paper: #dfe5d8;
+  --outfit-charcoal-paper: #e5e2dd;
+  --outfit-brown-paper: #e7d5bd;
   --section-rule: color-mix(in srgb, var(--ink) 32%, var(--cream));
   /* Event stationery: olive Mehndi, green Mehndi, red Barat, brown Walima. */
   --event-olive: #5d633b;

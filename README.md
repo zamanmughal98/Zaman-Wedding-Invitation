@@ -24,6 +24,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Show, hide, or reorder sections | wedding.sections in the config |
 | Navigation links | wedding.navigation in the config |
 | Colours, fonts, spacing | styles/theme.css |
+| Guest outfit inspiration and event-linked palettes | dressCode.looks in config; --fabric-* and --outfit-*-paper tokens in styles/theme.css |
 | Individual event card colours | events[].tone in config; --event-* tokens in styles/theme.css |
 | Section backgrounds, accents, and spacing | --section-* tokens in styles/theme.css; treatment mapping in styles/stationery.css |
 | Shared logo (header, envelope, footer, browser tab, optional RSVP seal) | site.logo in config; image in assets/images/ |
@@ -37,7 +38,7 @@ Use npm run dev while editing: it restarts the preview server when imported file
 | Section HTML | src/components/ |
 | Browser interactions | src/features/ |
 
-Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. Attendance replies are also disabled for this close-family invitation; the RSVP link has been removed from navigation. The gallery has an empty state until photographs are added.
+Set a section's enabled value to false to hide it. Its code and content stay available. Navigation only includes enabled sections. The story is currently disabled because no personal story has been supplied. Attendance replies are also disabled for this close-family invitation; the RSVP link has been removed from navigation. The supplied individual childhood photos appear in the couple cards; the shared childhood photo is a full-width keepsake in the gallery and opens on tap. Change portraits through couple.bride.photo and couple.groom.photo, and shared photographs through gallery.photos in config/wedding.js.
 
 Event card tones are olive for Nimra's Mehndi, green for Zaman's Mehndi, red for Nikah & Barat, and brown for Walima. Each card has an engraved corner frame, paper texture, a decorative crest, and a subtle Urdu watermark. Surrounding sections use textured ivory, linen, and deeper parchment with pointed arch and folded-corner details. Flowing border flourishes continue from top to bottom, with ornamental bridges between the event cards and deeper parchment around the opening card. The guestbook uses warm parchment cards and a beige form; its embedded public styles are in backend/google-wishes/Index.html. The original calligraphic headings, bordered labels, and flourishes are left-aligned. Each section keeps its treatment when reordered.
 
@@ -116,9 +117,9 @@ The photo service is deployed separately from GitHub Pages. Its source and owner
 
 ## Sound and accessibility
 
-Music is off until an explicit tap. Add music.src for an MP3, or use the optional quiet ambient chimes. Disable it with music.enabled: false.
+The supplied Samjhawan Unplugged track starts on the first envelope/entry tap and loops softly. The header sound button pauses or resumes it; hiding or leaving the page pauses playback. It never starts on page load. Set music.src, volume (currently 0.12), and startOnOpen in config/wedding.js; set startOnOpen: false for sound-button-only playback, or music.enabled: false to remove music. A Web Audio gain controls the soft level; browsers without Web Audio use the media volume.
 
-The envelope appears on every page refresh and can also be replayed from the footer. Opening a direct section link skips it initially; refreshing that page shows the envelope again. Native scrolling, keyboard-accessible dialogs, an alternative date-reveal button, visible focus states, reduced motion, and print styles are included.
+The envelope appears on every page refresh and can also be replayed from the footer. Opening a direct section link skips it initially; refreshing that page shows the envelope again. The scratch-off card uses a dark cocoa cover with champagne lettering, revealing a light champagne date card. Its colours are controlled by --scratch-* tokens in styles/theme.css. Native scrolling, keyboard-accessible dialogs, an alternative date-reveal button, visible focus states, reduced motion, and print styles are included.
 
 ## GitHub Pages
 

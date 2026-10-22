@@ -95,9 +95,8 @@ export const wedding = {
       initial: 'N',
       parents: 'Daughter of Mr. & Mrs. Shafiq',
       bio: '',
-      // Add your childhood photograph here when it is ready.
-      photo: null,
-      photoAlt: 'Nimra as a child',
+      photo: '/assets/images/nimra-childhood.jpg',
+      photoAlt: 'Childhood portrait of Nimra Shafiq',
       photoPosition: 'center 30%',
       social: null,
     },
@@ -107,9 +106,8 @@ export const wedding = {
       initial: 'Z',
       parents: 'Son of Mr. & Mrs. Ishfaq Mughal',
       bio: '',
-      // Add your childhood photograph here when it is ready.
-      photo: null,
-      photoAlt: 'Zaman as a child',
+      photo: '/assets/images/zaman-childhood.jpg',
+      photoAlt: 'Childhood portrait of Zaman Mughal',
       photoPosition: 'center 30%',
       social: null,
     },
@@ -234,9 +232,16 @@ export const wedding = {
     milestones: [],
   },
   gallery: {
-    title: 'Moments of togetherness',
-    subtitle: 'A place for the memories we will make together.',
-    photos: [],
+    title: 'Little us',
+    subtitle: 'A little glimpse of us, before this new beginning.',
+    photos: [
+      {
+        src: '/assets/images/zaman-nimra-childhood.jpg',
+        alt: 'Zaman and Nimra sitting together as children',
+        caption: 'Zaman & Nimra · A childhood keepsake',
+        position: 'center',
+      },
+    ],
   },
   venue: {
     primaryEventId: 'walima',
@@ -244,8 +249,53 @@ export const wedding = {
   },
   dressCode: {
     title: 'Dressed for the occasion',
-    subtitle: 'Dress details will be shared with you soon.',
-    swatches: [],
+    subtitle: 'A few colour ideas for each evening. Pick a shade that feels like you.',
+    message:
+      'These palettes are a little inspiration, never a requirement. Come in what makes you feel festive.',
+    // Guest inspiration only. Personal and family outfit plans stay private.
+    looks: [
+      {
+        eventId: 'bride-mehndi',
+        tone: 'pistachio',
+        palette: [
+          { tone: 'pistachio', label: 'Fresh green' },
+          { tone: 'green', label: 'Sage green' },
+          { tone: 'ivory', label: 'Champagne' },
+        ],
+        suggestion: 'Fresh greens or warm neutrals, with a little festive detail.',
+      },
+      {
+        eventId: 'groom-mehndi',
+        tone: 'green',
+        palette: [
+          { tone: 'green', label: 'Green' },
+          { tone: 'pistachio', label: 'Soft olive' },
+          { tone: 'camel', label: 'Warm camel' },
+        ],
+        suggestion: 'Traditional festive wear in greens, olives, or a warm neutral you love.',
+      },
+      {
+        eventId: 'nikah-barat',
+        tone: 'charcoal',
+        palette: [
+          { tone: 'charcoal', label: 'Charcoal' },
+          { tone: 'grey', label: 'Grey' },
+          { tone: 'ivory', label: 'Champagne' },
+        ],
+        suggestion:
+          'Classic evening wear. Explore greys and neutrals, or make the palette your own.',
+      },
+      {
+        eventId: 'walima',
+        tone: 'brown',
+        palette: [
+          { tone: 'camel', label: 'Camel' },
+          { tone: 'brown', label: 'Cocoa' },
+          { tone: 'chocolate', label: 'Chocolate' },
+        ],
+        suggestion: 'Warm brown tones or a classic three-piece suit in a colour of your choice.',
+      },
+    ],
   },
   responses: {
     email: 'zamanbinishfaq+wedding@gmail.com',
@@ -274,9 +324,10 @@ export const wedding = {
   },
   music: {
     enabled: true,
-    src: null,
-    volume: 0.15,
-    ambientFallback: true,
+    src: '/assets/music/samjhawan-unplugged.mp3',
+    volume: 0.12,
+    startOnOpen: true,
+    ambientFallback: false,
   },
   contacts: [
     {

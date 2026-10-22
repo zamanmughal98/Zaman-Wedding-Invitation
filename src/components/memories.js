@@ -50,7 +50,7 @@ export function gallery(w) {
           )
           .join('')}
       </div>
-      <dialog class="lightbox" id="gallery-dialog" aria-labelledby="gallery-dialog-caption">
+      <dialog class="lightbox${w.gallery.photos.length === 1 ? ' gallery-single' : ''}" id="gallery-dialog" aria-labelledby="gallery-dialog-caption">
         <button
           class="dialog-close icon-button"
           type="button"
