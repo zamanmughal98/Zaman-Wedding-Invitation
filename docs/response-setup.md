@@ -1,6 +1,6 @@
 # Wishes and family replies
 
-Notification recipient: **zamanbinishfaq+wedding@gmail.com**.
+Notification recipient: **zamandata98+wedding@gmail.com** only. Existing Apps Script deployments must set **OWNER_EMAIL** to this exact address in **Project Settings > Script properties**; changing the repository default alone does not update the live setting.
 
 ## Wedding wishes: approval from your phone
 
