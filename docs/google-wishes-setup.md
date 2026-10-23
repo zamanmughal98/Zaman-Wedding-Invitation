@@ -6,7 +6,7 @@ After setup, the flow is:
 
 1. A guest submits a name and wish on the invitation.
 2. The wish is saved in your private Google Sheet with status pending.
-3. A moderation email arrives at **zamanbinishfaq+wedding@gmail.com**, when Google mail quota is available.
+3. A moderation email arrives only at **zamandata98+wedding@gmail.com**, when Google mail quota is available.
 4. Open the private link on your phone. Tap **Approve**, **Reject**, or **Hide from website**.
 5. The wall reads approved wishes automatically. Visitors see updates on refresh, when returning to the tab, or within about 30 seconds while it is open. No laptop, JSON editing, or GitHub redeploy is needed for individual decisions.
 
@@ -46,9 +46,28 @@ The Google Sheet sharing URL and the deployed web-app URL serve different purpos
 
 The notification helper defaults to the configured public deployment URL. It does not rely on Apps Script returning a production URL while the editor runs. If the public deployment URL changes, set **WEB_APP_URL** in Script properties to the new **/exec** URL and update **wishes.googleScriptUrl** in the website configuration. Only the public URL belongs in this setting; the private key is added by the server.
 
+## Change the notification recipient on an existing deployment
+
+In your existing wishes Apps Script project, open **Project Settings > Script properties > Edit script properties**. Set **OWNER_EMAIL** to exactly **zamandata98+wedding@gmail.com**, replacing the previous value, and save. This is the sole recipient for new-wish alerts and moderator-link emails.
+
+The recipient setting does not change the account that owns the script or sends mail. Existing deployments read it on each request, so this property-only change needs no code deployment or website rebuild. Updating the default in the repository or rerunning setup does not replace an existing OWNER_EMAIL value.
+
+To receive the current private moderation link at the new address, run **emailModeratorLink** from the Apps Script editor while signed in as the script owner. The existing moderation key and saved wishes are preserved.
+
+### Activate using the complete replacement file
+
+1. Sign in as the original script owner, **zamanbinishfaq@gmail.com**, and open the existing wishes Apps Script project.
+2. Replace all contents of **Code.gs** with [the complete updated file](../backend/google-wishes/Code.gs) and save. Keep the existing Index.html and appsscript.json.
+3. Select **activateWishNotifications** from the editor's function dropdown and click **Run**. Authorize if Google prompts. This explicitly replaces the saved OWNER_EMAIL with **zamandata98+wedding@gmail.com** and emails the existing private moderation link there. Existing wishes, the Sheet, the moderation key and daily limit are preserved.
+4. Check the **zamandata98@gmail.com** inbox on your phone, including Spam, for **Your private wedding wishes moderation page**.
+5. To publish the replacement code, use **Deploy > Manage deployments > Edit (pencil) > New version > Deploy** on the existing wishes web app. Keep its existing URL and access settings.
+6. Submit one clearly labelled test wish from the website. Confirm that the alert reaches the new inbox, open its link, approve the wish and refresh the public wall.
+
+Running the activation function changes the live recipient property immediately, even before step 5. Publishing step 5 makes the replacement code available to the existing public web app. No website rebuild is needed.
+
 ## Editor function names
 
-The function dropdown hides names ending in an underscore. Select **initializeWeddingWishes** for setup, **emailModeratorLink** for the private email, and **renewModeratorLink** to invalidate an exposed key. These visible commands check the active account against the account executing the script; anonymous visitors cannot use them. The updated manifest includes the account-email permission required for that check. Private helpers such as setup_ remain hidden.
+The function dropdown hides names ending in an underscore. Select **initializeWeddingWishes** for setup, **activateWishNotifications** to apply the recipient configured at the top of Code.gs and email the current link, **emailModeratorLink** to resend that link, and **renewModeratorLink** to invalidate an exposed key. These visible commands check the active account against the account executing the script; anonymous visitors cannot use them. The updated manifest includes the account-email permission required for that check. Private helpers such as setup_ remain hidden.
 
 ## Verify before sharing
 

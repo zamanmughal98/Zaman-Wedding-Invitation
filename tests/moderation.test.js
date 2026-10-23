@@ -180,12 +180,51 @@ test('visible editor commands initialize and email the link for an authorized ac
   assert.equal(backend.emails.length, 2);
 });
 
+test('notification activation replaces the old recipient and preserves existing wishes and keys', () => {
+  const backend = googleBackend({
+    bound: true,
+    initialProperties: { OWNER_EMAIL: 'zamanbinishfaq+wedding@gmail.com', DAILY_LIMIT: '75' },
+    initialTabs: { Notes: [['Keep this text']] },
+  });
+  backend.api.submitWish(wishInput());
+  const entry = backend.api.listModeration(backend.key)[0];
+  backend.api.moderateWish(backend.key, entry.id, 'approve', entry.revision);
+  const before = clone(backend.rows);
+  const key = backend.properties.get('MODERATOR_KEY');
+  const sheetId = backend.properties.get('SHEET_ID');
+  backend.emails.length = 0;
+
+  backend.api.activateWishNotifications();
+
+  assert.equal(backend.properties.get('OWNER_EMAIL'), 'zamandata98+wedding@gmail.com');
+  assert.equal(backend.properties.get('MODERATOR_KEY'), key);
+  assert.equal(backend.properties.get('SHEET_ID'), sheetId);
+  assert.equal(backend.properties.get('DAILY_LIMIT'), '75');
+  assert.deepEqual(clone(backend.rows), before);
+  assert.deepEqual(backend.tabs.get('Notes').rows, [['Keep this text']]);
+  assert.equal(backend.emails.length, 1);
+  assert.ok(backend.emails[0].body.includes('#key=' + key));
+  backend.api.submitWish(wishInput());
+  assert.equal(backend.emails.length, 2);
+  assert.ok(
+    backend.emails.every(
+      (mail) => mail.to === 'zamandata98+wedding@gmail.com' && !mail.cc && !mail.bcc,
+    ),
+  );
+  assert.equal(backend.api.getPublicWishes().length, 1);
+});
+
 test('anonymous or different web-app visitors cannot use the visible editor commands', () => {
   for (const activeEmail of ['', 'someone-else@example.test']) {
     const backend = googleBackend({ activeEmail });
     const before = clone(backend.rows);
     const key = backend.properties.get('MODERATOR_KEY');
-    for (const command of ['initializeWeddingWishes', 'emailModeratorLink', 'renewModeratorLink']) {
+    for (const command of [
+      'initializeWeddingWishes',
+      'emailModeratorLink',
+      'activateWishNotifications',
+      'renewModeratorLink',
+    ]) {
       assert.throws(() => backend.api[command](), /Apps Script editor/);
     }
     assert.deepEqual(clone(backend.rows), before);

@@ -5,17 +5,21 @@ import { initMusic } from '../src/features/music.js';
 function fixture(t, { startOnOpen = true, webAudio = true, play } = {}) {
   const players = [],
     contexts = [];
-  const button = new EventTarget();
-  button.disabled = false;
-  button.attributes = new Map();
-  button.setAttribute = (name, value) => button.attributes.set(name, value);
+  const buttons = Array.from({ length: 2 }, () => {
+    const control = new EventTarget();
+    control.disabled = false;
+    control.attributes = new Map();
+    control.setAttribute = (name, value) => control.attributes.set(name, value);
+    return control;
+  });
+  const button = buttons[0];
   const triggers = [new EventTarget(), new EventTarget()];
   const notice = { hidden: true, textContent: '' };
   const doc = new EventTarget();
   doc.hidden = false;
   doc.querySelector = (selector) =>
     selector === '[data-toggle-music]' ? button : selector === '.toast' ? notice : null;
-  doc.querySelectorAll = () => triggers;
+  doc.querySelectorAll = (selector) => (selector === '[data-toggle-music]' ? buttons : triggers);
   const win = new EventTarget();
   class Context {
     constructor() {
@@ -73,10 +77,9 @@ function fixture(t, { startOnOpen = true, webAudio = true, play } = {}) {
       src: '/assets/music/samjhawan-unplugged.mp3',
       volume: 0.12,
       startOnOpen,
-      ambientFallback: false,
     },
   });
-  return { button, triggers, players, contexts, doc, notice };
+  return { button, buttons, triggers, players, contexts, doc, notice };
 }
 const flush = async () => {
   for (let i = 0; i < 12; i++) await Promise.resolve();
@@ -118,6 +121,25 @@ test('sound-button-only configuration does not start music when entering', async
   tap(f.button);
   await flush();
   assert.equal(f.players[0].paused, false);
+});
+
+test('film and header sound controls share playback and mute state', async (t) => {
+  const f = fixture(t);
+  tap(f.buttons[1]);
+  await flush();
+  assert.equal(f.players.length, 1);
+  for (const control of f.buttons) {
+    assert.equal(control.attributes.get('aria-pressed'), 'true');
+    assert.equal(control.attributes.get('aria-label'), 'Mute background music');
+    assert.equal(control.disabled, false);
+  }
+  tap(f.buttons[0]);
+  await flush();
+  assert.equal(f.players[0].paused, true);
+  for (const control of f.buttons) assert.equal(control.attributes.get('aria-pressed'), 'false');
+  tap(f.triggers[0]);
+  await flush();
+  assert.equal(f.players[0].plays, 1, "a later seal tap must preserve the guest's mute");
 });
 
 test('failed playback leaves a usable sound button and a visible recovery message', async (t) => {

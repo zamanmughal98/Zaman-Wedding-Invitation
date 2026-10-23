@@ -8,7 +8,7 @@ import {
   initGallery,
   initSharedInteractions,
 } from './src/features/interactions.js';
-import { initRsvp, initWishes } from './src/features/responses.js';
+import { initWishes } from './src/features/responses.js';
 import { initCoupleMedia } from './src/features/media.js';
 import { initMusic } from './src/features/music.js';
 
@@ -20,7 +20,6 @@ initCountdown(wedding);
 initScratch(wedding);
 initGallery(wedding);
 initSharedInteractions(wedding);
-initRsvp(wedding);
 initWishes(wedding);
 initMusic(wedding);
 initCoupleMedia();

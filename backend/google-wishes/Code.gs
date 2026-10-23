@@ -3,6 +3,9 @@
  * Deploy this folder in YOUR Apps Script account; never publish the Sheet.
  * Functions ending in "_" are private to Apps Script.
  */
+// After changing this address, run activateWishNotifications from the editor.
+var WISH_NOTIFICATION_EMAIL_ = 'zamandata98+wedding@gmail.com';
+
 var WISH_HEADERS_ = [
   'ID',
   'Request ID',
@@ -23,6 +26,14 @@ function initializeWeddingWishes() {
 
 function emailModeratorLink() {
   requireScriptOwner_();
+  sendAdminLink_();
+}
+
+// Updates an existing installation and sends its current private moderation link.
+function activateWishNotifications() {
+  requireScriptOwner_();
+  setup_();
+  PropertiesService.getScriptProperties().setProperty('OWNER_EMAIL', WISH_NOTIFICATION_EMAIL_);
   sendAdminLink_();
 }
 
@@ -90,7 +101,7 @@ function setup_() {
     if (!properties.getProperty('MODERATOR_KEY'))
       properties.setProperty('MODERATOR_KEY', newKey_());
     if (!properties.getProperty('OWNER_EMAIL'))
-      properties.setProperty('OWNER_EMAIL', 'zamanbinishfaq+wedding@gmail.com');
+      properties.setProperty('OWNER_EMAIL', WISH_NOTIFICATION_EMAIL_);
     if (!properties.getProperty('DAILY_LIMIT')) properties.setProperty('DAILY_LIMIT', '100');
     // No key or private Sheet URL is printed to the execution log.
   });

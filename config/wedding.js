@@ -42,10 +42,6 @@ export const wedding = {
       enabled: true,
     },
     {
-      id: 'story',
-      enabled: false,
-    },
-    {
       id: 'gallery',
       enabled: true,
     },
@@ -56,10 +52,6 @@ export const wedding = {
     {
       id: 'dress-code',
       enabled: true,
-    },
-    {
-      id: 'rsvp',
-      enabled: false,
     },
     {
       id: 'photo-uploads',
@@ -138,6 +130,10 @@ export const wedding = {
   envelope: {
     enabled: true,
     image: '/assets/images/ivory-envelope.png',
+    film: {
+      src: '/assets/video/wedding-opening.mp4',
+      poster: '/assets/video/wedding-opening-poster.jpg',
+    },
   },
   countdown: {
     eyebrow: 'An evening to look forward to',
@@ -162,7 +158,6 @@ export const wedding = {
       mapsUrl: null,
       dressCode: '',
       tone: 'olive',
-      illustration: 'botanical',
     },
     {
       id: 'groom-mehndi',
@@ -179,7 +174,6 @@ export const wedding = {
       mapsUrl: null,
       dressCode: '',
       tone: 'green',
-      illustration: 'botanical',
     },
     {
       id: 'nikah-barat',
@@ -196,7 +190,6 @@ export const wedding = {
       mapsUrl: null,
       dressCode: '',
       tone: 'red',
-      illustration: 'botanical',
     },
     {
       id: 'walima',
@@ -214,7 +207,6 @@ export const wedding = {
       mapsUrl: null,
       dressCode: '',
       tone: 'brown',
-      illustration: 'botanical',
     },
   ],
   families: [
@@ -226,11 +218,6 @@ export const wedding = {
       members: [],
     },
   ],
-  story: {
-    title: 'Our story',
-    subtitle: '',
-    milestones: [],
-  },
   gallery: {
     title: 'Little us',
     subtitle: 'A little glimpse of us, before this new beginning.',
@@ -299,12 +286,7 @@ export const wedding = {
   },
   responses: {
     email: 'zamanbinishfaq+wedding@gmail.com',
-  },
-  rsvp: {
-    deadline: null,
-    maxGuests: 10,
-    contactPhone: '923490095926',
-    message: 'We would love to know if you can celebrate with us.',
+    whatsappPhone: '923490095926',
   },
   wishes: {
     enabled: true,
@@ -327,7 +309,6 @@ export const wedding = {
     src: '/assets/music/samjhawan-unplugged.mp3',
     volume: 0.12,
     startOnOpen: true,
-    ambientFallback: false,
   },
   contacts: [
     {

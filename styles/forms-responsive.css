@@ -1,0 +1,193 @@
+/* Shared fields and responsive adjustments. */
+
+.field > span {
+  font-size: 11px;
+}
+
+.form-status {
+  font-size: 16px;
+}
+
+.wish-dialog .local-note,
+.local-note {
+  font-size: 11px;
+}
+.wish-card {
+  text-align: left;
+  border-color: var(--guestbook-line);
+  background: linear-gradient(135deg, var(--guestbook-form), var(--guestbook-card));
+  box-shadow: none;
+}
+.wish-card p {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.site-footer {
+  background: var(--cream);
+}
+.footer-botanical {
+  opacity: 0.16;
+}
+.footer-names {
+  font-size: 54px;
+}
+.footer-contacts {
+  grid-template-columns: 1fr;
+}
+.footer-contacts p {
+  font-size: 21px;
+}
+.footer-contacts a {
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    padding-inline: 18px;
+    gap: 12px;
+  }
+  .site-header nav {
+    gap: 13px;
+  }
+  .site-header nav a {
+    font-size: 9px;
+  }
+  .hero {
+    padding-inline: 18px;
+  }
+  .hero-topline {
+    font-size: 8px;
+  }
+  .hero-inner {
+    padding: 58px 20px 40px;
+  }
+  .hero .arabic {
+    font-size: 25px;
+  }
+  .hero-hosts {
+    font-size: 18px;
+    max-width: 245px;
+    margin-top: 24px;
+  }
+  .host-message {
+    font-size: 8px;
+    max-width: 255px;
+  }
+  .hero h1 {
+    font-size: clamp(43px, 11vw, 58px);
+    gap: 8px;
+    margin: 26px 0;
+  }
+  .hero-and {
+    font-size: 28px;
+  }
+  .hero-date {
+    font-size: 24px;
+  }
+  .hero-sprig-left {
+    left: -56px;
+    width: 120px;
+  }
+  .hero-sprig-right {
+    right: -44px;
+    width: 120px;
+  }
+  .hero-message {
+    font-size: 16px;
+  }
+  .countdown-unit > span {
+    font-size: 35px;
+  }
+  .countdown-unit small {
+    font-size: 8px;
+  }
+  .event-content {
+    padding: 17px 22px;
+  }
+  .event-content h3 {
+    font-size: 37px;
+  }
+  .event-content .eyebrow {
+    font-size: 8px;
+  }
+  .event-description {
+    font-size: 16px;
+  }
+  .event-details {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .event-details dd {
+    font-size: 17px;
+  }
+  .event-details dt {
+    font-size: 8px;
+  }
+
+  .family-card h3 {
+    font-size: 25px;
+  }
+  .couple-grid {
+    gap: 16px;
+  }
+  .person {
+    padding: 22px 12px;
+  }
+  .person .portrait-arch {
+    margin-bottom: 20px;
+  }
+  .person .eyebrow {
+    font-size: 8px;
+  }
+  .person-parents {
+    font-size: 14px;
+  }
+  .footer-names {
+    font-size: 46px;
+  }
+}
+@media (max-width: 370px) {
+  .site-header {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .site-header nav {
+    gap: 10px;
+  }
+  .site-header nav a {
+    font-size: 8px;
+  }
+  .hero h1 {
+    font-size: 41px;
+  }
+  .hero-hosts {
+    font-size: 17px;
+  }
+  .hero .arabic {
+    font-size: 23px;
+  }
+}
+
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.submission-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 22px;
+}
+.submission-options + .local-note {
+  margin-top: 18px;
+}
+.field small {
+  font: inherit;
+}

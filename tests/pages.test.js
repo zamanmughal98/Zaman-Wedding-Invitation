@@ -30,6 +30,8 @@ async function staticHost(prefix) {
           '.html': 'text/html',
           '.svg': 'image/svg+xml',
           '.png': 'image/png',
+          '.jpg': 'image/jpeg',
+          '.mp4': 'video/mp4',
           '.json': 'application/json',
         }[path.extname(file)] || 'application/octet-stream';
       response.writeHead(200, { 'Content-Type': type });
@@ -66,8 +68,8 @@ for (const prefix of ['/', '/Zaman-Wedding-Invitation/']) {
             await load(dependency, asset);
       }
       if (asset.pathname.endsWith('.css')) {
-        for (const [, dependency] of source.matchAll(/@import\s+url\(['"]?([^'"\)]+)['"]?\)/g))
-          await load(dependency, asset);
+        for (const [, dependency] of source.matchAll(/\burl\(['"]?([^'"\)]+)['"]?\)/g))
+          if (!/^(https?:|data:|#)/.test(dependency)) await load(dependency, asset);
       }
     }
     try {
@@ -77,6 +79,8 @@ for (const prefix of ['/', '/Zaman-Wedding-Invitation/']) {
         if (!reference.startsWith('#') && !/^https?:/.test(reference)) await load(reference);
       }
       await load(assetUrl(wedding.wishes.publishedFile));
+      await load(assetUrl(wedding.envelope.film.src));
+      await load(assetUrl(wedding.envelope.film.poster));
       assert.ok([...seen].some((url) => url.endsWith('/data/wishes.json')));
       assert.ok([...seen].some((url) => url.endsWith('/styles/stationery.css')));
       assert.ok([...seen].some((url) => url.endsWith('/styles/theme.css')));
