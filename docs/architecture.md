@@ -21,6 +21,7 @@ This is a static invitation with no framework or runtime package dependencies. N
 | Wishes wall and manual fallback | components/wishes.js; features/wishes.js |
 | Footer | components/footer.js |
 | Background track | features/music.js; features/toast.js |
+| Guest language preference and in-place localization | features/language.js; localization.js |
 
 Paths in the table are relative to src/. Small entry modules such as components/guest-details.js and features/interactions.js re-export the active implementations, preserving existing imports without duplicating their code.
 
@@ -32,6 +33,7 @@ The two original stylesheet entry paths are retained:
 
 - style.css loads theme.css, base.css and responsive.css.
 - styles/stationery.css loads layout.css, invitation.css, people-events.css, memories-attire.css, forms-responsive.css and guest-services.css, in that order.
+- styles/language.css loads after those entry points and supplies the language controls and Urdu layout.
 
 All those files live under styles/. Base rules provide shared elements and layout; the invitation treatments override them deliberately. Preserve this order. Put palette changes in theme.css and section-specific adjustments in the named treatment file, rather than adding another override to an unrelated file.
 
@@ -40,6 +42,10 @@ The split preserves the original cascade. Retired RSVP/story selectors and confi
 ## Service boundaries
 
 backend/google-wishes/ is the source for the already deployed Google wishes app. It contains both the guest UI and private moderation UI. It is not part of the public dist/ directory. Local source changes do not automatically redeploy Apps Script.
+
+config/urdu.js and config/urdu-photos.js hold authored guest copy. src/localization.js translates interface text in place, excluding guest content. scripts/sync-guest-locales.mjs generates the two tracked GuestLocale.html deployment resources from those same sources. It can also regenerate the private photo bundle when its source is present, without modifying that source.
+
+The wishes backend keeps originals in Wishes and cached translations in the separate WishTranslations and WishTranslationsEnglish tabs. Source fingerprints invalidate stale translations after edits. Public APIs serve only approved records and retain the earlier response fields for already open guest pages; private moderation continues to use originals.
 
 .local/google-photos/ contains the photo/video service source and owner tools. .preview/google-photos/ contains generated deployment material. These are private, ignored maintenance files; keep them or back them up outside Git. They are not abandoned website code.
 

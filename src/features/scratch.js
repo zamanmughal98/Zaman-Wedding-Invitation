@@ -1,4 +1,5 @@
 import { formatDate } from '../utils.js';
+import { translateGuestText } from '../localization.js';
 
 export function initScratch(w) {
   const canvas = document.getElementById('scratch-canvas');
@@ -12,10 +13,18 @@ export function initScratch(w) {
     return;
   }
   let revealed = false,
+    painted = false,
     drawing = false,
     previous;
   function draw() {
     if (revealed) return;
+    let mask;
+    if (painted) {
+      mask = document.createElement('canvas');
+      mask.width = canvas.width;
+      mask.height = canvas.height;
+      mask.getContext('2d').drawImage(canvas, 0, 0);
+    }
     const width = card.clientWidth,
       height = card.clientHeight;
     canvas.width = width * 2;
@@ -23,6 +32,8 @@ export function initScratch(w) {
     context.setTransform(2, 0, 0, 2, 0, 0);
     context.globalCompositeOperation = 'source-over';
     const styles = getComputedStyle(document.documentElement);
+    const urdu = document.documentElement.lang === 'ur';
+    const t = (value) => translateGuestText(value, document.documentElement.lang);
     const cover = styles.getPropertyValue('--scratch-cover').trim();
     const shade = styles.getPropertyValue('--scratch-cover-shade').trim();
     const ink = styles.getPropertyValue('--scratch-cover-ink').trim();
@@ -41,11 +52,22 @@ export function initScratch(w) {
     context.font = '25px "Cormorant Garamond", Georgia, serif';
     context.fillText('✧', width / 2, 76);
     context.fillStyle = ink;
-    context.font = `${width < 330 ? 29 : 34}px "Great Vibes", cursive`;
-    context.fillText('A date written for us', width / 2, 122);
+    context.direction = urdu ? 'rtl' : 'ltr';
+    context.font = urdu
+      ? '23px "Noto Naskh Arabic", serif'
+      : `${width < 330 ? 29 : 34}px "Great Vibes", cursive`;
+    context.fillText(t('A date written for us'), width / 2, 122);
     context.fillStyle = accent;
-    context.font = '9px "Jost", sans-serif';
-    context.fillText('SCRATCH TO REVEAL OUR DATE', width / 2, 160);
+    context.font = urdu ? '16px "Noto Naskh Arabic", serif' : '9px "Jost", sans-serif';
+    context.fillText(t('SCRATCH TO REVEAL OUR DATE'), width / 2, 160);
+    if (mask) {
+      context.save();
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.globalCompositeOperation = 'destination-in';
+      context.drawImage(mask, 0, 0, canvas.width, canvas.height);
+      context.restore();
+    }
+    painted = true;
   }
   function reveal() {
     if (revealed) return;
@@ -97,6 +119,7 @@ export function initScratch(w) {
   canvas.addEventListener('pointercancel', finish);
   button.addEventListener('click', reveal);
   new ResizeObserver(draw).observe(card);
+  document.addEventListener('wedding:language', draw);
   document.fonts?.ready.then(draw);
   draw();
 }

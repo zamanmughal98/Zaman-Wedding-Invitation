@@ -6,6 +6,10 @@ const source = await readFile(
   new URL('../../backend/google-wishes/Code.gs', import.meta.url),
   'utf8',
 );
+const translations = await readFile(
+  new URL('../../backend/google-wishes/Translations.gs', import.meta.url),
+  'utf8',
+);
 
 /** Local stand-ins only: these never access Google or send email. */
 export function googleBackend({
@@ -19,10 +23,12 @@ export function googleBackend({
   effectiveEmail = 'owner@example.test',
   identityUnavailable = false,
   serviceUrl = 'https://script.google.com/macros/s/LOCAL_TEST_ONLY/exec',
+  translationResponse = () => ({ code: 200, text: 'اللہ آپ دونوں کو خوش رکھے۔' }),
 } = {}) {
   const properties = new Map(Object.entries(initialProperties));
   const tabs = new Map();
   const emails = [];
+  const translationRequests = [];
   const calls = { created: 0, opened: [], inserted: [] };
   let mailError = false;
   let lockAvailable = true;
@@ -83,6 +89,20 @@ export function googleBackend({
     },
   };
   const context = vm.createContext({
+    UrlFetchApp: {
+      fetch(url, options) {
+        translationRequests.push({ url, options });
+        const value = translationResponse(url, options);
+        return {
+          getResponseCode: () => value.code,
+          getContentText: () =>
+            value.body ||
+            JSON.stringify({
+              candidates: [{ finishReason: 'STOP', content: { parts: [{ text: value.text }] } }],
+            }),
+        };
+      },
+    },
     Session: {
       getActiveUser: () => ({
         getEmail() {
@@ -148,6 +168,7 @@ export function googleBackend({
     },
   });
   vm.runInContext(source, context, { filename: 'Code.gs' });
+  vm.runInContext(translations, context, { filename: 'Translations.gs' });
   if (initialize) {
     context.setup_();
     properties.set('MODERATOR_KEY', key);
@@ -157,6 +178,7 @@ export function googleBackend({
     properties,
     tabs,
     emails,
+    translationRequests,
     calls,
     key,
     get rows() {
