@@ -1,0 +1,218 @@
+.language-switch {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--section-linen);
+  padding: 3px;
+  direction: ltr;
+}
+.language-switch button {
+  min-height: 38px;
+  min-width: 46px;
+  border: 0;
+  border-radius: 20px;
+  padding: 5px 10px;
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  font:
+    12px/1.6 'Jost',
+    Arial,
+    sans-serif;
+}
+.language-switch button[lang='ur'] {
+  font:
+    17px/1.8 'Noto Naskh Arabic',
+    serif;
+}
+.language-switch button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--ivory);
+}
+.intro-language {
+  position: absolute;
+  inset: 16px 16px auto auto;
+  z-index: 5;
+}
+html[lang='ur'] {
+  --serif: 'Noto Naskh Arabic', Georgia, serif;
+  --sans: 'Noto Naskh Arabic', 'Segoe UI', sans-serif;
+  --script: 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', serif;
+}
+html[lang='ur'] body {
+  line-height: 1.95;
+}
+html[lang='ur']
+  :is(
+    .eyebrow,
+    .hero-date,
+    .hero-topline,
+    .site-header nav a,
+    .local-note,
+    .fabric-label,
+    .countdown-unit small,
+    .envelope-prompt
+  ) {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: max(14px, 0.9em);
+  line-height: 1.9;
+}
+html[lang='ur'] :is(h1, h2, h3) {
+  line-height: 1.95;
+}
+html[lang='ur'] .hero h1 {
+  font-size: clamp(36px, 7vw, 56px);
+  gap: 3px;
+}
+html[lang='ur'] .hero-and {
+  font-size: 23px;
+}
+html[lang='ur'] .hero-hosts {
+  font-size: 21px;
+  line-height: 2;
+}
+html[lang='ur'] .host-message {
+  font-size: 16px;
+  line-height: 2;
+  max-width: 32ch;
+  margin-inline: auto;
+}
+html[lang='ur'] .hero-city {
+  font-size: 18px;
+}
+html[lang='ur'] .hero-verse {
+  font-size: 22px;
+}
+html[lang='ur'] .hero-verse cite {
+  font-size: 15px;
+  line-height: 1.9;
+  letter-spacing: 0;
+}
+html[lang='ur'] .hero-inner {
+  padding-top: 84px;
+}
+html[lang='ur'] .section-heading {
+  text-align: start;
+  padding-left: 0;
+  padding-right: 18px;
+}
+html[lang='ur'] .section-heading h2 {
+  font-size: clamp(28px, 5vw, 39px);
+  max-width: 24ch;
+}
+html[lang='ur'] :is(.event-content h3, .person h3, .family-card h3) {
+  font-size: 31px;
+}
+html[lang='ur'] :is(.person-parents, .family-message, .section-subtitle, .event-description) {
+  font-size: 18px;
+  line-height: 2;
+}
+html[lang='ur'] .event-details {
+  text-align: start;
+}
+html[lang='ur'] :is(.wishes-keepsake, .wishes-keepsake-heading, .outfit-card, .field) {
+  text-align: start;
+}
+html[lang='ur'] .event-details dt {
+  letter-spacing: 0;
+  font-size: 14px;
+}
+html[lang='ur'] .event-details dd {
+  line-height: 1.9;
+}
+html[lang='ur'] .opening-film-title {
+  font-size: clamp(28px, 4vw, 43px);
+}
+html[lang='ur'] .footer-names {
+  font-size: 37px;
+  line-height: 2.2;
+}
+html[lang='ur'] :is(.text-link, .button, .intro-skip) {
+  letter-spacing: 0;
+  font-size: 16px;
+  line-height: 1.8;
+}
+html[lang='ur'] .scratch-date {
+  font-size: 30px;
+  line-height: 1.9;
+}
+html[lang='ur'] .scratch-reveal {
+  padding-block: 28px;
+}
+html[lang='ur'] .countdown {
+  direction: rtl;
+}
+html[lang='ur'] [data-time],
+html[lang='ur'] a[href^='tel:'] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+html[lang='ur'] a[href^='tel:'] {
+  display: inline-block;
+}
+/* Media pixels, the playback bar and calendar numerals keep their direction. */
+.opening-film-progress,
+.lightbox-controls {
+  direction: ltr;
+}
+@media (max-width: 600px) {
+  .section {
+    scroll-margin-top: 132px;
+  }
+  .site-header {
+    flex-wrap: wrap;
+    gap: 5px 12px;
+  }
+  .site-header nav {
+    order: 4;
+    flex-basis: 100%;
+    justify-content: center;
+    padding-bottom: 4px;
+  }
+  .site-header > .language-switch {
+    margin-inline-start: auto;
+  }
+  .site-header .music-button {
+    margin-inline-start: auto;
+  }
+  html[lang='ur'] .site-header nav a {
+    font-size: 15px;
+  }
+  html[lang='ur'] .hero-inner {
+    padding-inline: 16px;
+  }
+  html[lang='ur'] .hero h1 {
+    font-size: clamp(32px, 8vw, 43px);
+  }
+  html[lang='ur'] .opening-film-controls .text-link {
+    min-width: 60px;
+    font-size: 15px;
+  }
+  html[lang='ur'] .is-film .intro-skip {
+    font-size: 15px;
+    max-width: 44%;
+  }
+}
+@media (max-height: 600px) {
+  .intro-language {
+    top: 8px;
+    right: 10px;
+  }
+  .is-film .intro-language {
+    opacity: 0.9;
+  }
+  html[lang='ur'] .opening-film-heading {
+    inset-inline: 135px;
+  }
+  html[lang='ur'] .opening-film-title {
+    font-size: 25px;
+  }
+}
+@media print {
+  .language-switch {
+    display: none;
+  }
+}

@@ -277,6 +277,37 @@
         letter-spacing: 0.04em;
         color: var(--soft);
       }
+      .guestbook .wish-language-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 10px;
+      }
+      .guestbook .translation-note {
+        margin: 12px 0 0;
+      }
+      .guestbook .wish blockquote[lang='ur'] {
+        font-family: 'Noto Naskh Arabic', serif;
+        font-size: 20px;
+        line-height: 1.95;
+      }
+      .guestbook .wish blockquote[lang='en'] {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        line-height: 1.7;
+      }
+      .guestbook .wish-language-controls button {
+        min-height: 44px;
+        padding: 8px 14px;
+      }
+      .guestbook .wish-language-controls button[aria-pressed='true'] {
+        color: var(--paper);
+        background: var(--ink);
+        border-color: var(--ink);
+      }
+      .guestbook .wish-language-controls button[lang='ur'] {
+        font-family: 'Noto Naskh Arabic', serif;
+        font-size: 17px;
+      }
       .guestbook .toolbar {
         gap: 12px;
       }
@@ -464,12 +495,176 @@
         const article = document.createElement('article');
         article.className = 'wish';
         const message = document.createElement('blockquote');
+        if (!PAGE.admin) {
+          message.dataset.userContent = '';
+          message.dir = 'auto';
+        }
         message.textContent = entry.message;
         const name = document.createElement('p');
         name.className = 'byline';
+        if (!PAGE.admin) {
+          name.dataset.userContent = '';
+          name.dir = 'auto';
+        }
         name.textContent = '— ' + entry.name;
         article.append(message, name);
         return article;
+      }
+      const wishChoices = new Map();
+      function publicCard(entry) {
+        const article = card(entry);
+        if (!entry.id) return article;
+        const pageLanguage = PAGE.language === 'ur' ? 'ur' : 'en';
+        const ui = (english, urdu) => (pageLanguage === 'ur' ? urdu : english);
+        const versions = entry.sourceVersions;
+        let selected = wishChoices.get(entry.id) || pageLanguage;
+        const translations = { ...entry.translations };
+        const pending = new Map();
+        article.dataset.wishId = entry.id;
+        const quote = article.querySelector('blockquote');
+        const label = document.createElement('p');
+        label.className = 'note translation-note';
+        label.setAttribute('role', 'status');
+        const controls = document.createElement('div');
+        controls.className = 'wish-language-controls';
+        controls.dataset.noTranslate = '';
+        controls.setAttribute('role', 'group');
+        controls.setAttribute('aria-label', ui('Choose message language', 'پیغام کی زبان منتخب کریں'));
+        const buttons = new Map();
+        for (const [language, text] of [
+          ['original', ui('Original', 'اصل')],
+          ['en', 'English'],
+          ['ur', 'اردو'],
+        ]) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'secondary';
+          button.dataset.wishLanguage = language;
+          button.textContent = text;
+          button.lang = language === 'original' ? pageLanguage : language;
+          button.dir = button.lang === 'ur' ? 'rtl' : 'ltr';
+          button.addEventListener('click', () => {
+            void select(language);
+          });
+          buttons.set(language, button);
+          controls.append(button);
+        }
+        article.append(label, controls);
+        function showOriginal(note = ui('Original message', 'اصل پیغام')) {
+          quote.textContent = entry.message;
+          quote.dir = 'auto';
+          if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message)) quote.lang = 'ur';
+          else quote.removeAttribute('lang');
+          label.textContent = note;
+        }
+        function showTranslation(language) {
+          const value = translations[language];
+          if (!value || value.trim() === entry.message.trim()) return showOriginal();
+          quote.textContent = value;
+          quote.lang = language;
+          quote.dir = language === 'ur' ? 'rtl' : 'ltr';
+          label.textContent =
+            language === 'ur'
+              ? ui('Urdu translation', 'اردو ترجمہ')
+              : ui('English translation', 'انگریزی ترجمہ');
+        }
+        function remember() {
+          wishChoices.set(entry.id, selected);
+          buttons.forEach((button, language) =>
+            button.setAttribute('aria-pressed', String(language === selected)),
+          );
+        }
+        async function select(language) {
+          selected = language;
+          remember();
+          if (language === 'original') return showOriginal();
+          if (translations[language]) return showTranslation(language);
+          const unavailable = ui(
+            'Translation is unavailable right now. Original message shown.',
+            'فی الحال ترجمہ دستیاب نہیں۔ اصل پیغام دکھایا جا رہا ہے۔',
+          );
+          if (!versions[language]) return showOriginal(unavailable);
+          showOriginal(
+            ui(
+              'Translating… Original message shown for now.',
+              'ترجمہ کیا جا رہا ہے۔۔۔ فی الحال اصل پیغام دیکھیں۔',
+            ),
+          );
+          const button = buttons.get(language);
+          button.setAttribute('aria-busy', 'true');
+          try {
+            if (!pending.has(language))
+              pending.set(language, rpc('translatePublicWish', entry.id, versions[language], language));
+            const result = await pending.get(language);
+            if (!article.isConnected) return;
+            if (result.status === 'unavailable') {
+              article.remove();
+              wishChoices.delete(entry.id);
+              byId('public-empty').hidden = byId('public-list').children.length > 0;
+            } else if (result.status === 'changed') {
+              void loadPublic();
+            } else if (
+              result.status === 'ready' &&
+              result.sourceVersion === versions[language] &&
+              result.targetLanguage === language
+            ) {
+              translations[language] = result.translation;
+              if (selected === language) showTranslation(language);
+            } else if (selected === language) showOriginal(unavailable);
+          } catch {
+            if (article.isConnected && selected === language) showOriginal(unavailable);
+          } finally {
+            pending.delete(language);
+            button.removeAttribute('aria-busy');
+          }
+        }
+        remember();
+        if (selected !== 'original' && translations[selected]) showTranslation(selected);
+        else showOriginal();
+        article.translateWish = () => select(selected);
+        return article;
+      }
+      let wishObserver;
+      let translationQueue = [];
+      let translating = false;
+      async function drainTranslations() {
+        if (translating) return;
+        translating = true;
+        try {
+          while (translationQueue.length) {
+            const article = translationQueue.shift();
+            if (!article.isConnected || document.hidden) continue;
+            try {
+              await article.translateWish?.();
+            } catch {
+              /* Original stays readable. */
+            }
+          }
+        } finally {
+          translating = false;
+        }
+      }
+      function observePublicWishes() {
+        wishObserver?.disconnect();
+        translationQueue = [];
+        const articles = [...byId('public-list').children].filter((article) => article.translateWish);
+        if (!window.IntersectionObserver) {
+          translationQueue.push(...articles.slice(0, 3));
+          drainTranslations();
+          return;
+        }
+        wishObserver = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries)
+              if (entry.isIntersecting) {
+                wishObserver.unobserve(entry.target);
+                translationQueue.push(entry.target);
+              }
+            drainTranslations();
+          },
+          { root: byId('public-list') },
+        );
+        articles.forEach((article) => wishObserver.observe(article));
       }
       function newRequestId() {
         if (crypto.randomUUID) return crypto.randomUUID();
@@ -490,9 +685,15 @@
       async function loadPublic() {
         const request = ++publicRequest;
         try {
-          const wishes = await rpc('getPublicWishes');
+          const wishes = await rpc('getPublicWishes', PAGE.language || 'en');
           if (request !== publicRequest) return;
-          byId('public-list').replaceChildren(...wishes.map(card));
+          const list = byId('public-list');
+          const ids = new Set(wishes.map((entry) => entry.id));
+          for (const id of wishChoices.keys()) if (!ids.has(id)) wishChoices.delete(id);
+          const scroll = list.scrollTop;
+          list.replaceChildren(...wishes.map(publicCard));
+          list.scrollTop = scroll;
+          observePublicWishes();
           byId('public-empty').hidden = wishes.length > 0;
           status('public-status', '');
         } catch {
@@ -508,6 +709,8 @@
         document.body.classList.add('guestbook');
         byId('public-view').hidden = false;
         const form = byId('guest-form');
+        form.elements.name.dir = 'auto';
+        form.elements.message.dir = 'auto';
         const draftKey = 'zaman-nimra-wish-draft-v1';
         let requestId = newRequestId();
         try {
@@ -543,7 +746,7 @@
           event.preventDefault();
           for (const name of ['name', 'message']) {
             if (!form.elements[name].value.trim())
-              form.elements[name].setCustomValidity('Please fill in this field.');
+              form.elements[name].setCustomValidity(window.guestTranslate?.('Please fill in this field.') || 'Please fill in this field.');
           }
           if (!form.reportValidity()) return;
           saveDraft();
@@ -744,5 +947,8 @@
         if (!document.hidden && !PAGE.admin) loadPublic();
       });
     </script>
+    <? if (!JSON.parse(pageConfig).admin) { ?>
+      <?!= HtmlService.createHtmlOutputFromFile('GuestLocale').getContent() ?>
+    <? } ?>
   </body>
 </html>

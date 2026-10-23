@@ -11,6 +11,7 @@ npm start        # local preview at http://127.0.0.1:8642
 npm run dev      # restart the preview when imported JavaScript changes
 npm test         # invitation, calendars, music, moderation, links and project paths
 npm run build    # publishable website in dist/
+npm run sync:locales # regenerate the guest language resources for Apps Script
 ```
 
 Refresh the browser after editing. With npm start, restart the server after changing content or component modules. GitHub Pages serves the built static files; it does not run server.js.
@@ -30,12 +31,15 @@ Refresh the browser after editing. With npm start, restart the server after chan
 | Shared fields and mobile adjustments | styles/forms-responsive.css |
 | Guestbook, uploads and linen panels | styles/guest-services.css |
 | Base elements, accessibility and responsive defaults | styles/base.css and styles/responsive.css |
+| Authored Urdu text and right-to-left layout | config/urdu.js, config/urdu-photos.js and styles/language.css |
 | A section's HTML | its named module in src/components/ |
 | A browser interaction | its named module in src/features/ |
 
 The section registry is in src/render.js. Existing entry modules group imports; edit the named implementation file. See the [architecture guide](docs/architecture.md) for the module map and stylesheet order.
 
 The retired attendance and story sections have been removed. Every remaining section can be hidden or reordered through configuration; navigation includes enabled sections only. The gallery has an empty state when no photographs are configured.
+
+Guests can choose English or اردو on the envelope and in the header; `?lang=ur` opens Urdu directly. The browser remembers their choice. Approved wishes have independent Original / English / اردو controls, and editing the original invalidates its saved translations. See the [language and deployment guide](docs/urdu-setup.md).
 
 ## Content and media
 
@@ -57,10 +61,12 @@ The seal tap opens the supplied 10-second wedding film, then reveals the invitat
 
 The two Google services are separate from this static website:
 
-- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage and phone approval. Guests submit names and wishes; only approved wishes appear. The existing private dashboard and deployment remain unchanged. See the [wishes guide](docs/google-wishes-setup.md).
+- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage, phone approval and guest translations. Only approved wishes appear. Translation is generated on demand and cached by current message text and target language; the existing approval workflow and public deployment URL are preserved. See the [wishes guide](docs/google-wishes-setup.md) and [translation setup](docs/urdu-setup.md).
 - **Photos and videos:** photos.googleScriptUrl opens the private uploader. It supports photos up to 25 MiB and videos up to 1 GiB, organised by celebration and guest. Guests cannot browse others' files. Keep the uploader open until it finishes. Source and recovery tools remain in ignored .local/google-photos/. See the [upload guide](docs/google-photos-setup.md).
 
 Public configuration contains only public /exec URLs. Keep moderation keys, private Drive settings and service properties outside the repository.
+
+The two tracked GuestLocale.html files are generated deployment resources. Keep them with their source dictionaries and generator so the separate Google projects can be updated or recovered. `npm run sync:locales` also rebuilds the combined photo Code.gs when the private uploader source is available; it does not rewrite that source or deploy either Google service.
 
 When wishes.googleScriptUrl is empty, the email/WhatsApp and approved-JSON wishes fallback remains available. Email uses responses.email; WhatsApp uses responses.whatsappPhone. The guest must tap Send in the opened app. The manual wall is not merged with Google mode, so old JSON cannot restore a hidden wish. See [response maintenance](docs/response-setup.md) and [JSON backup format](data/README.md).
 

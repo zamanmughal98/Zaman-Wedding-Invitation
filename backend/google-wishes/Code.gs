@@ -128,7 +128,9 @@ function rotateModeratorKey_() {
 function doGet(e) {
   var admin = Boolean(e && e.parameter && e.parameter.view === 'admin');
   var page = HtmlService.createTemplateFromFile('Index');
-  page.pageConfig = JSON.stringify({ admin: admin, maxLength: 500 }).replace(/</g, '\\u003c');
+  var config = { admin: admin, maxLength: 500 };
+  if (!admin) config.language = e && e.parameter && e.parameter.lang === 'ur' ? 'ur' : 'en';
+  page.pageConfig = JSON.stringify(config).replace(/</g, '\\u003c');
   var output = page.evaluate().setTitle(admin ? 'Manage wedding wishes' : 'Wedding wishes');
   output.addMetaTag('viewport', 'width=device-width, initial-scale=1');
   // The guest widget can be embedded; moderation keeps the default frame protection.
@@ -136,7 +138,21 @@ function doGet(e) {
   return output;
 }
 
-function getPublicWishes() {
+function getPublicWishes(language) {
+  var translatedView = language === 'ur' || language === 'en';
+  var translations = { en: {}, ur: {} };
+  var translationModel = translatedView
+    ? PropertiesService.getScriptProperties().getProperty('WISH_TRANSLATION_MODEL') || ''
+    : '';
+  if (translatedView) {
+    ['en', 'ur'].forEach(function (target) {
+      try {
+        translations[target] = wishTranslations_(target);
+      } catch (error) {
+        /* Originals stay available if a translation store is unavailable. */
+      }
+    });
+  }
   return records_()
     .filter(function (entry) {
       return entry.status === 'approved';
@@ -144,7 +160,28 @@ function getPublicWishes() {
     .sort(newestFirst_)
     .slice(0, 200)
     .map(function (entry) {
-      return { name: entry.name, message: entry.message, createdAt: entry.createdAt };
+      var result = { name: entry.name, message: entry.message, createdAt: entry.createdAt };
+      if (translatedView) {
+        result.id = entry.id;
+        result.targetLanguage = language;
+        result.sourceVersions = {};
+        result.translations = {};
+        ['en', 'ur'].forEach(function (target) {
+          var version = wishSourceVersion_(entry.message, target, translationModel);
+          var saved = translations[target][entry.id];
+          result.sourceVersions[target] = version;
+          result.translations[target] =
+            saved && saved.version === version && saved.state === 'ready' ? saved.text : '';
+        });
+        // Urdu-script originals are already readable in Urdu, without a provider call.
+        if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message))
+          result.translations.ur = entry.message;
+        result.sourceVersion = result.sourceVersions[language];
+        result.translation = result.translations[language];
+        // Preserve compatibility with guests still using the earlier Urdu page.
+        if (language === 'ur') result.urdu = result.translation;
+      }
+      return result;
     });
 }
 
