@@ -4,7 +4,8 @@ import { toast } from './toast.js';
 
 // Play the supplied track after an invitation tap; the sound button always controls playback.
 export function initMusic(w) {
-  const button = document.querySelector('[data-toggle-music]');
+  const buttons = [...document.querySelectorAll('[data-toggle-music]')];
+  const button = buttons[0];
   if (!button) return;
   let audio,
     context,
@@ -19,9 +20,14 @@ export function initMusic(w) {
     Math.min(0.5, Number.isFinite(configuredVolume) ? configuredVolume : 0.15),
   );
   function update() {
-    button.innerHTML = icon(playing ? 'sound' : 'mute');
-    button.setAttribute('aria-pressed', String(playing));
-    button.setAttribute('aria-label', playing ? 'Mute background music' : 'Play background music');
+    buttons.forEach((control) => {
+      control.innerHTML = icon(playing ? 'sound' : 'mute');
+      control.setAttribute('aria-pressed', String(playing));
+      control.setAttribute(
+        'aria-label',
+        playing ? 'Mute background music' : 'Play background music',
+      );
+    });
   }
   function audioContext() {
     if (context && context.state !== 'closed') return context;
@@ -75,7 +81,9 @@ export function initMusic(w) {
   }
   async function setPlayback(shouldPlay) {
     if (button.disabled) return;
-    button.disabled = true;
+    buttons.forEach((control) => {
+      control.disabled = true;
+    });
     try {
       if (shouldPlay) await start();
       else await stop();
@@ -83,13 +91,17 @@ export function initMusic(w) {
       await stop();
       toast('Music could not start. Tap again or continue enjoying the invitation.');
     } finally {
-      button.disabled = false;
+      buttons.forEach((control) => {
+        control.disabled = false;
+      });
     }
   }
-  button.addEventListener('click', () => {
-    introStartAttempted = true;
-    void setPlayback(!playing);
-  });
+  buttons.forEach((control) =>
+    control.addEventListener('click', () => {
+      introStartAttempted = true;
+      void setPlayback(!playing);
+    }),
+  );
   if (w.music.startOnOpen) {
     document.querySelectorAll('[data-unseal], [data-open-invitation]').forEach((trigger) => {
       trigger.addEventListener('click', () => {

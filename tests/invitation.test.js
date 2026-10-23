@@ -102,3 +102,37 @@ test('the preview serves rendered content and assets, and excludes project docum
     await new Promise((resolve) => server.close(resolve));
   }
 });
+
+test('local video supports seeking, suffix requests and range errors', async () => {
+  const server = createPreviewServer();
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const url = `http://127.0.0.1:${server.address().port}/assets/video/wedding-opening.mp4`;
+  try {
+    const full = await fetch(url);
+    const bytes = Buffer.from(await full.arrayBuffer());
+    assert.equal(full.headers.get('content-type'), 'video/mp4');
+    assert.equal(full.headers.get('accept-ranges'), 'bytes');
+    for (const [range, start, end] of [
+      ['bytes=0-31', 0, 31],
+      ['bytes=-32', bytes.length - 32, bytes.length - 1],
+      [`bytes=${bytes.length - 16}-`, bytes.length - 16, bytes.length - 1],
+    ]) {
+      const response = await fetch(url, { headers: { Range: range } });
+      assert.equal(response.status, 206);
+      assert.equal(response.headers.get('content-range'), `bytes ${start}-${end}/${bytes.length}`);
+      assert.deepEqual(Buffer.from(await response.arrayBuffer()), bytes.subarray(start, end + 1));
+    }
+    const head = await fetch(url, { method: 'HEAD', headers: { Range: 'bytes=0-31' } });
+    assert.equal(head.status, 206);
+    assert.equal(head.headers.get('content-length'), '32');
+    assert.equal(await head.text(), '');
+    for (const range of ['bytes=999999999-', 'bytes=30-10', 'bytes=-0', 'bytes=oops']) {
+      const response = await fetch(url, { headers: { Range: range } });
+      assert.equal(response.status, 416);
+      assert.equal(response.headers.get('content-range'), `bytes */${bytes.length}`);
+      assert.equal(await response.text(), '');
+    }
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});

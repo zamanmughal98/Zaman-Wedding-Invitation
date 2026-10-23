@@ -130,6 +130,10 @@ export const wedding = {
   envelope: {
     enabled: true,
     image: '/assets/images/ivory-envelope.png',
+    film: {
+      src: '/assets/video/wedding-opening.mp4',
+      poster: '/assets/video/wedding-opening-poster.jpg',
+    },
   },
   countdown: {
     eyebrow: 'An evening to look forward to',
