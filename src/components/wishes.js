@@ -29,6 +29,7 @@ export function wishes(w) {
           <div class="wishes-widget-frame">
             <iframe
               class="wishes-widget"
+              data-guest-service
               src="${e(widget)}"
               title="Approved wedding wishes and a form to leave a wish"
               loading="lazy"
@@ -37,7 +38,7 @@ export function wishes(w) {
           </div>
           <div class="wishes-keepsake-footer">
             <p>Your words become part of our story.</p>
-            <a class="text-link" href="${e(widget)}" target="_blank" rel="noopener noreferrer">
+            <a class="text-link" data-guest-service href="${e(widget)}" target="_blank" rel="noopener noreferrer">
               Open the guestbook ${icon('arrow')}
             </a>
           </div>
@@ -69,11 +70,11 @@ export function wishes(w) {
           ${honeypot()}
           <label class="field">
             <span>Your name</span>
-            <input name="name" autocomplete="name" maxlength="100" required />
+            <input name="name" dir="auto" autocomplete="name" maxlength="100" required />
           </label>
           <label class="field">
             <span>Your wish</span>
-            <textarea name="message" rows="4" maxlength="${w.wishes.maxLength}" required></textarea>
+            <textarea name="message" dir="auto" rows="4" maxlength="${w.wishes.maxLength}" required></textarea>
           </label>
           <div class="submission-options">
             <button class="button button-primary" type="submit">

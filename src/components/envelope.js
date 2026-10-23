@@ -1,5 +1,5 @@
 import { assetUrl, coupleNames, escapeHtml as e } from '../utils.js';
-import { icon, monogram } from './shared.js';
+import { icon, monogram, languageSwitch } from './shared.js';
 
 export function envelope(w) {
   if (!w.envelope.enabled) return '';
@@ -7,6 +7,7 @@ export function envelope(w) {
   const poster = assetUrl(w.envelope.film?.poster);
   return /* HTML */ `
     <dialog class="envelope-intro" id="envelope-dialog" aria-labelledby="envelope-title">
+      ${languageSwitch('intro-language')}
       <h2 class="sr-only" id="envelope-title">An invitation to our wedding</h2>
       <div class="envelope-glow" aria-hidden="true"></div>
       <div class="envelope-cover" data-envelope-cover>

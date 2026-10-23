@@ -1,5 +1,6 @@
 import { assetUrl, escapeHtml as e, readStored, writeStored } from '../utils.js';
 import { emailAppUrl, whatsappUrl } from '../submissions.js';
+import { translateGuestText } from '../localization.js';
 
 function clearValidity(form) {
   form.addEventListener('input', (event) => event.target.setCustomValidity?.(''));
@@ -7,7 +8,9 @@ function clearValidity(form) {
 function requiredText(form, names) {
   for (const name of names) {
     if (!form.elements[name].value.trim())
-      form.elements[name].setCustomValidity('Please fill in this field.');
+      form.elements[name].setCustomValidity(
+        translateGuestText('Please fill in this field.', document.documentElement.lang),
+      );
   }
   return form.reportValidity();
 }
@@ -80,7 +83,7 @@ export async function initWishes(w) {
     list.innerHTML = approved
       .map(
         (wish) =>
-          `<article class="wish-card"><blockquote>“${e(wish.message.slice(0, w.wishes.maxLength))}”</blockquote><p>— ${e(wish.name.slice(0, 100))}</p></article>`,
+          `<article class="wish-card" data-user-content dir="auto"><blockquote>“${e(wish.message.slice(0, w.wishes.maxLength))}”</blockquote><p>— ${e(wish.name.slice(0, 100))}</p></article>`,
       )
       .join('');
     empty.hidden = approved.length > 0;

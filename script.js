@@ -11,10 +11,12 @@ import {
 import { initWishes } from './src/features/responses.js';
 import { initCoupleMedia } from './src/features/media.js';
 import { initMusic } from './src/features/music.js';
+import { initLanguage } from './src/features/language.js';
 
 // The local server and production build pre-render the same components.
 const app = document.getElementById('app');
 if (!app.querySelector('main')) app.innerHTML = renderInvitation(wedding);
+initLanguage(wedding);
 initNavigation();
 initCountdown(wedding);
 initScratch(wedding);

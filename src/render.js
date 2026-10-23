@@ -1,5 +1,5 @@
 import { escapeHtml as e } from './utils.js';
-import { icon, monogram } from './components/shared.js';
+import { icon, monogram, languageSwitch } from './components/shared.js';
 import { envelope } from './components/envelope.js';
 import { hero, countdown, saveTheDate } from './components/hero.js';
 import { celebrations } from './components/celebrations.js';
@@ -52,6 +52,7 @@ export function renderInvitation(w) {
             .join('')}
         </nav>
         ${w.music.enabled ? `<button class="icon-button music-button" type="button" data-toggle-music aria-label="Play background music" aria-pressed="false">${icon('mute')}</button>` : ''}
+        ${languageSwitch()}
         <div class="reading-progress" aria-hidden="true"><span></span></div>
       </header>
       <main id="main">
