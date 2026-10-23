@@ -1,4 +1,4 @@
-import { coupleNames, escapeHtml as e } from '../utils.js';
+import { assetUrl, coupleNames, escapeHtml as e } from '../utils.js';
 import { botanical } from './artwork.js';
 import { icon, monogram } from './shared.js';
 
@@ -17,6 +17,7 @@ export function footer(w) {
       <div class="footer-bottom">
         <span>Made with love. Shared with joy.</span>
         ${w.envelope.enabled ? `<button class="text-link" type="button" data-replay-envelope>${icon('replay')}Open the envelope again</button>` : ''}
+        ${w.envelope.enabled && assetUrl(w.envelope.film?.src) ? `<button class="text-link" type="button" data-replay-film>${icon('replay')}Replay our opening film</button>` : ''}
       </div>
     </footer>
   `;

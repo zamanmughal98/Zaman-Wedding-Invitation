@@ -51,6 +51,8 @@ The supplied Samjhawan track starts on the first envelope/entry tap and loops so
 
 The envelope appears on every refresh and can be replayed from the footer. Direct section links skip it initially. Scratch colours use --scratch-* tokens. Keyboard dialogs, a tap-to-reveal alternative, image fallbacks, reduced motion and print styles are retained.
 
+The seal tap opens the supplied 10-second wedding film, then reveals the invitation. Configure it with `envelope.film.src` and `poster`; remove `film` to go straight from the seal to the invitation. The silent, optimised MP4 fills the opening with softly fading edges and pause, skip and music controls. Every seal tap can play it again, including after refreshing in the same tab. Reduced motion skips automatic film playback, and blocked or slow playback falls back to the invitation. A footer link replays the film on request. See the [opening film notes](assets/video/README.md).
+
 ## Google wishes and private uploads
 
 The two Google services are separate from this static website:

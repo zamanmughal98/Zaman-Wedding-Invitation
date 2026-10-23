@@ -42,5 +42,5 @@ test('a supplied animation stays within the GitHub project and supports a pause 
   assert.match(html, /poster="\.\/assets\/photos\/poster.webp"/);
   assert.match(html, /muted loop playsinline/);
   assert.match(html, /data-toggle-video/);
-  assert.doesNotMatch(renderInvitation(wedding), /<video/);
+  assert.doesNotMatch(renderInvitation(wedding), /class="couple-video"/);
 });

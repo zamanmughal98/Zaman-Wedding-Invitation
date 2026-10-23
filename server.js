@@ -51,12 +51,46 @@ export function createPreviewServer() {
       }
       let data = await readFile(file);
       if (relative === 'index.html') data = Buffer.from(prepareDocument(data.toString('utf8')));
-      response.writeHead(200, {
+      const headers = {
         'Content-Type': types[extension],
-        'Content-Length': data.length,
         'X-Content-Type-Options': 'nosniff',
         'Cache-Control': 'no-cache',
-      });
+      };
+      let status = 200;
+      // Browsers request byte ranges to seek and replay local video and audio.
+      if (['.mp4', '.webm', '.mp3', '.ogg'].includes(extension)) {
+        headers['Accept-Ranges'] = 'bytes';
+        const range = request.headers.range;
+        if (range) {
+          const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+          const start = match?.[1]
+            ? Number(match[1])
+            : Math.max(0, data.length - Number(match?.[2]));
+          const end =
+            match?.[1] && match[2] ? Math.min(Number(match[2]), data.length - 1) : data.length - 1;
+          if (
+            !match ||
+            (!match[1] && !Number(match[2])) ||
+            !Number.isSafeInteger(start) ||
+            !Number.isSafeInteger(end) ||
+            start > end ||
+            start >= data.length
+          ) {
+            response.writeHead(416, {
+              ...headers,
+              'Content-Range': `bytes */${data.length}`,
+              'Content-Length': 0,
+            });
+            response.end();
+            return;
+          }
+          headers['Content-Range'] = `bytes ${start}-${end}/${data.length}`;
+          data = data.subarray(start, end + 1);
+          status = 206;
+        }
+      }
+      headers['Content-Length'] = data.length;
+      response.writeHead(status, headers);
       response.end(request.method === 'HEAD' ? undefined : data);
     } catch (error) {
       response.writeHead(error instanceof URIError ? 400 : 404);
