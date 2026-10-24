@@ -61,7 +61,7 @@ The seal tap opens the supplied 10-second wedding film, then reveals the invitat
 
 The two Google services are separate from this static website:
 
-- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage, phone approval and guest translations. Only approved wishes appear. Translation is generated on demand and cached by current message text and target language; the existing approval workflow and public deployment URL are preserved. See the [wishes guide](docs/google-wishes-setup.md) and [translation setup](docs/urdu-setup.md).
+- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage, phone approval, guest translations and shared reactions. Only approved wishes appear. Guests can change or remove their reaction; one exact-name wish can be pinned in the public JavaScript. Translation is generated on demand and cached by current message text and target language. See the [wishes guide](docs/google-wishes-setup.md) and [translation setup](docs/urdu-setup.md).
 - **Photos and videos:** photos.googleScriptUrl opens the private uploader. It supports photos up to 25 MiB and videos up to 1 GiB, organised by celebration and guest. Guests cannot browse others' files. Keep the uploader open until it finishes. Source and recovery tools remain in ignored .local/google-photos/. See the [upload guide](docs/google-photos-setup.md).
 
 Public configuration contains only public /exec URLs. Keep moderation keys, private Drive settings and service properties outside the repository.

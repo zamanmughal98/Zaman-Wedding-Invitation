@@ -8,7 +8,7 @@ Fixed copy is authored in `config/urdu.js` and `config/urdu-photos.js`, with rig
 
 1. Open the **existing wishes Apps Script project**, keeping its Sheet, Script Properties and deployment URL.
 2. Replace **Code.gs** and **Index.html** with the versions in `backend/google-wishes/`.
-3. Add a Script file named **Translations** and paste `Translations.gs`; add an HTML file named **GuestLocale** and paste `GuestLocale.html`.
+3. Add Script files named **Translations** and **Reactions**, and paste `Translations.gs` and `Reactions.gs` respectively; add an HTML file named **GuestLocale** and paste `GuestLocale.html`.
 4. Show `appsscript.json` in Project Settings and replace it with the supplied manifest. It adds `script.external_request` for the translation API; retain the existing Sheets, email and account scopes.
 5. In **Project Settings → Script Properties**, add:
 
@@ -30,7 +30,9 @@ Without an API key/model, both interfaces work and wishes remain readable in the
 
 ## Update an existing English/Urdu wishes installation
 
-The universal message controls affect only the public wishes module. Replace **Code.gs**, **Index.html** and **Translations.gs** in the existing **wishes** Apps Script project with their current versions in `backend/google-wishes/`. Save, then update the **existing deployment** using **Deploy → Manage deployments → Edit → New version → Deploy**. Keep your current key, model, manifest, GuestLocale file and other Script Properties. No initialization, new API key, photo-uploader update or website-code deployment is required for this addition.
+The universal message controls affect only the public wishes module. Replace **Code.gs**, **Index.html** and **Translations.gs** in the existing **wishes** Apps Script project with their current versions in `backend/google-wishes/`. Add a Script file named **Reactions** containing `Reactions.gs`, or replace it if already present. Save, then update the **existing deployment** using **Deploy → Manage deployments → Edit → New version → Deploy**. Keep your current key, model, manifest, GuestLocale file and other Script Properties. No initialization, new API key, photo-uploader update or website-code deployment is required for this addition.
+
+The public wall also supports shared reactions and one wish pinned by its exact author name. See [the reactions and pinning update steps](google-wishes-setup.md#add-shared-reactions-and-one-pinned-wish) for deployment and verification. These controls work in both interface languages.
 
 Test the public URL with `?view=wall&lang=en`. Check an English original: it should have all three controls and translate into Urdu when Urdu is chosen. Check Urdu and Roman Urdu originals in both languages. Then use `?view=wall&lang=ur` and verify an Urdu original can be viewed in English too. Choose Original while a translation loads, and confirm the late result does not replace that choice. Refresh wishes and confirm the selected message language stays selected. Translations are generated on demand and reused across visitors; originals stay available if the API cannot finish.
 

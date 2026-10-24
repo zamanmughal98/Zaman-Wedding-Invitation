@@ -283,6 +283,59 @@
         gap: 7px;
         margin-top: 10px;
       }
+      .guestbook .pinned-wish {
+        margin-bottom: 14px;
+        color: #765437;
+        font: 500 11px/1.5 'Jost', Arial, sans-serif;
+      }
+      .guestbook .wish.is-pinned {
+        border-color: #987555;
+      }
+      .guestbook .wish-reactions {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+      }
+      .guestbook .reaction-summary {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .guestbook .reaction-total {
+        margin: 0;
+        font: 12px/1.6 'Jost', Arial, sans-serif;
+        color: var(--soft);
+      }
+      .guestbook .reaction-picker {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 10px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        background: var(--wash);
+      }
+      .guestbook .reaction-picker [data-reaction] {
+        min-width: 0;
+        min-height: 44px;
+        padding: 6px;
+        font-size: 23px;
+        line-height: 1.2;
+      }
+      .guestbook .reaction-picker .reaction-remove {
+        grid-column: 1 / -1;
+      }
+      .guestbook .wish-reactions button[aria-pressed='true'],
+      .guestbook .reaction-toggle.has-reaction {
+        border-color: var(--ink);
+        background: #dbc09b;
+        color: var(--ink);
+      }
+      .guestbook .reaction-status {
+        margin: 8px 0 0;
+      }
       .guestbook .translation-note {
         margin: 12px 0 0;
       }
@@ -511,11 +564,211 @@
         return article;
       }
       const wishChoices = new Map();
-      function publicCard(entry) {
+      // Only one approved wish with this full author name is pinned.
+      const PINNED_WISH_NAME = 'Nimra Shafiq';
+      const REACTIONS = [
+        ['like', '👍', 'Like', 'پسند'],
+        ['love', '❤️', 'Love', 'محبت'],
+        ['care', '🥰', 'Care', 'اپنائیت'],
+        ['haha', '😂', 'Haha', 'ہنسی'],
+        ['wow', '😮', 'Wow', 'حیرت'],
+        ['sad', '😢', 'Sad', 'اداسی'],
+        ['angry', '😡', 'Angry', 'ناراضی'],
+      ];
+      const reactionStates = new Map();
+      let reactionSerial = 0;
+      let reactionToken = '';
+      const guestText = (english, urdu) => (PAGE.language === 'ur' ? urdu : english);
+      function browserReactionToken() {
+        if (reactionToken) return reactionToken;
+        const storageKey = 'wedding-wishes:reaction-visitor';
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(saved || ''))
+            reactionToken = saved;
+          else {
+            reactionToken = newRequestId();
+            localStorage.setItem(storageKey, reactionToken);
+          }
+        } catch {
+          // Storage can be blocked in an embedded guestbook. Keep this page usable.
+          reactionToken = newRequestId();
+        }
+        return reactionToken;
+      }
+      function publicWishElement(id) {
+        return [...byId('public-list').children].find((article) => article.dataset.wishId === id);
+      }
+      function updateReactionView(id) {
+        publicWishElement(id)?.updateReaction?.();
+      }
+      function focusReactionControl(id, choice = 'toggle') {
+        const article = publicWishElement(id);
+        if (!article) return;
+        let button = article.querySelector(
+          REACTIONS.some(([value]) => value === choice)
+            ? '[data-reaction="' + choice + '"]'
+            : '.reaction-' + choice,
+        );
+        if (!button || button.closest('[hidden]')) button = article.querySelector('.reaction-toggle');
+        if (button && !button.disabled) button.focus({ preventScroll: true });
+      }
+      async function saveReaction(id, selected) {
+        const state = reactionStates.get(id);
+        if (!state || state.busy) return;
+        const returnFocus =
+          document.activeElement.closest?.('[data-wish-id]')?.dataset.wishId === id &&
+          Boolean(document.activeElement.closest('.wish-reactions'));
+        state.busy = true;
+        state.error = false;
+        state.version = ++reactionSerial;
+        updateReactionView(id);
+        try {
+          const result = await rpc('setPublicWishReaction', id, browserReactionToken(), selected);
+          if (result.status === 'unavailable') {
+            reactionStates.delete(id);
+            publicWishElement(id)?.remove();
+            void loadPublic();
+            return;
+          }
+          if (result.status !== 'ready' || result.id !== id) throw new Error('Reaction unavailable');
+          state.counts = result.counts;
+          state.selected = result.selected;
+          state.open = false;
+        } catch {
+          state.error = true;
+        } finally {
+          state.busy = false;
+          state.version = ++reactionSerial;
+          updateReactionView(id);
+          if (returnFocus && document.activeElement === document.body)
+            focusReactionControl(id, state.open ? selected || 'remove' : 'toggle');
+        }
+      }
+      function addPublicReactions(article, entry) {
+        const state = reactionStates.get(entry.id);
+        if (!state) return;
+        const section = document.createElement('div');
+        section.className = 'wish-reactions';
+        section.dataset.noTranslate = '';
+        const summary = document.createElement('div');
+        summary.className = 'reaction-summary';
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'secondary reaction-toggle';
+        const total = document.createElement('p');
+        total.className = 'reaction-total';
+        summary.append(toggle, total);
+        const picker = document.createElement('div');
+        picker.id = 'reaction-picker-' + entry.id;
+        picker.className = 'reaction-picker';
+        picker.setAttribute('role', 'group');
+        picker.setAttribute('aria-label', guestText('Choose a reaction', 'اپنا تاثر منتخب کریں'));
+        toggle.setAttribute('aria-controls', picker.id);
+        const choices = new Map();
+        for (const [value, emoji, english, urdu] of REACTIONS) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'secondary';
+          button.dataset.reaction = value;
+          button.textContent = emoji;
+          button.addEventListener('click', () => {
+            void saveReaction(entry.id, state.selected === value ? '' : value);
+          });
+          choices.set(value, { button, label: guestText(english, urdu) });
+          picker.append(button);
+        }
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'secondary reaction-remove';
+        remove.textContent = guestText('Remove reaction', 'اپنا تاثر ہٹائیں');
+        remove.addEventListener('click', () => {
+          void saveReaction(entry.id, '');
+        });
+        picker.append(remove);
+        const note = document.createElement('p');
+        note.className = 'note reaction-status';
+        note.setAttribute('role', 'status');
+        section.append(summary, picker, note);
+        article.append(section);
+        function render() {
+          const choice = REACTIONS.find(([value]) => value === state.selected);
+          toggle.textContent = choice
+            ? choice[1] + ' ' + guestText(choice[2], choice[3])
+            : guestText('React', 'اپنا تاثر دیں');
+          toggle.classList.toggle('has-reaction', Boolean(choice));
+          toggle.setAttribute('aria-expanded', String(Boolean(state.open)));
+          toggle.disabled = state.busy;
+          section.setAttribute('aria-busy', String(state.busy));
+          picker.hidden = !state.open;
+          const active = REACTIONS.filter(([value]) => state.counts[value] > 0);
+          const count = active.reduce((sum, [value]) => sum + state.counts[value], 0);
+          const emojis = active.slice(0, 3).map(([, emoji]) => emoji).join(' ');
+          total.textContent = count
+            ? emojis + ' · ' + count
+            : guestText('Be the first to react', 'پہلا تاثر دیں');
+          const breakdown = active
+            .map(([value, , en, ur]) => guestText(en, ur) + ': ' + state.counts[value])
+            .join(', ');
+          total.setAttribute(
+            'aria-label',
+            count ? guestText('Reactions: ', 'تاثرات: ') + breakdown : total.textContent,
+          );
+          total.title = breakdown;
+          for (const [value, { button, label }] of choices) {
+            const selected = state.selected === value;
+            button.setAttribute('aria-pressed', String(selected));
+            button.setAttribute('aria-label', label + ' · ' + (state.counts[value] || 0));
+            button.title = label + ' · ' + (state.counts[value] || 0);
+            button.disabled = state.busy;
+          }
+          remove.hidden = !state.selected;
+          remove.disabled = state.busy;
+          note.hidden = !state.busy && !state.error;
+          note.classList.toggle('is-error', state.error);
+          note.textContent = state.busy
+            ? guestText('Saving reaction…', 'تاثر محفوظ کیا جا رہا ہے…')
+            : state.error
+              ? guestText(
+                  'Could not save your reaction. Please try again.',
+                  'تاثر محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔',
+                )
+              : '';
+        }
+        toggle.addEventListener('click', () => {
+          const open = !state.open;
+          for (const [id, other] of reactionStates) {
+            if (id === entry.id || !other.open) continue;
+            other.open = false;
+            updateReactionView(id);
+          }
+          state.open = open;
+          render();
+          if (open)
+            (choices.get(state.selected) || choices.get('like')).button.focus({ preventScroll: true });
+        });
+        picker.addEventListener('keydown', (event) => {
+          if (event.key !== 'Escape') return;
+          state.open = false;
+          render();
+          toggle.focus({ preventScroll: true });
+          event.stopPropagation();
+        });
+        article.updateReaction = render;
+        render();
+      }
+      function publicCard(entry, pinned = false) {
         const article = card(entry);
+        if (pinned) {
+          article.classList.add('is-pinned');
+          const badge = document.createElement('p');
+          badge.className = 'pinned-wish';
+          badge.dataset.noTranslate = '';
+          badge.textContent = guestText('📌 Pinned wish', '📌 نمایاں پیغام');
+          article.prepend(badge);
+        }
         if (!entry.id) return article;
         const pageLanguage = PAGE.language === 'ur' ? 'ur' : 'en';
-        const ui = (english, urdu) => (pageLanguage === 'ur' ? urdu : english);
         const versions = entry.sourceVersions;
         let selected = wishChoices.get(entry.id) || pageLanguage;
         const translations = { ...entry.translations };
@@ -529,10 +782,13 @@
         controls.className = 'wish-language-controls';
         controls.dataset.noTranslate = '';
         controls.setAttribute('role', 'group');
-        controls.setAttribute('aria-label', ui('Choose message language', 'پیغام کی زبان منتخب کریں'));
+        controls.setAttribute(
+          'aria-label',
+          guestText('Choose message language', 'پیغام کی زبان منتخب کریں'),
+        );
         const buttons = new Map();
         for (const [language, text] of [
-          ['original', ui('Original', 'اصل')],
+          ['original', guestText('Original', 'اصل')],
           ['en', 'English'],
           ['ur', 'اردو'],
         ]) {
@@ -549,8 +805,9 @@
           buttons.set(language, button);
           controls.append(button);
         }
+        addPublicReactions(article, entry);
         article.append(label, controls);
-        function showOriginal(note = ui('Original message', 'اصل پیغام')) {
+        function showOriginal(note = guestText('Original message', 'اصل پیغام')) {
           quote.textContent = entry.message;
           quote.dir = 'auto';
           if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message)) quote.lang = 'ur';
@@ -565,8 +822,8 @@
           quote.dir = language === 'ur' ? 'rtl' : 'ltr';
           label.textContent =
             language === 'ur'
-              ? ui('Urdu translation', 'اردو ترجمہ')
-              : ui('English translation', 'انگریزی ترجمہ');
+              ? guestText('Urdu translation', 'اردو ترجمہ')
+              : guestText('English translation', 'انگریزی ترجمہ');
         }
         function remember() {
           wishChoices.set(entry.id, selected);
@@ -579,13 +836,13 @@
           remember();
           if (language === 'original') return showOriginal();
           if (translations[language]) return showTranslation(language);
-          const unavailable = ui(
+          const unavailable = guestText(
             'Translation is unavailable right now. Original message shown.',
             'فی الحال ترجمہ دستیاب نہیں۔ اصل پیغام دکھایا جا رہا ہے۔',
           );
           if (!versions[language]) return showOriginal(unavailable);
           showOriginal(
-            ui(
+            guestText(
               'Translating… Original message shown for now.',
               'ترجمہ کیا جا رہا ہے۔۔۔ فی الحال اصل پیغام دیکھیں۔',
             ),
@@ -684,15 +941,39 @@
       }
       async function loadPublic() {
         const request = ++publicRequest;
+        const reactionRead = reactionSerial;
         try {
-          const wishes = await rpc('getPublicWishes', PAGE.language || 'en');
+          const wishes = await rpc('getPublicWishes', PAGE.language || 'en', browserReactionToken());
           if (request !== publicRequest) return;
           const list = byId('public-list');
           const ids = new Set(wishes.map((entry) => entry.id));
           for (const id of wishChoices.keys()) if (!ids.has(id)) wishChoices.delete(id);
+          for (const [id, state] of reactionStates)
+            if (!ids.has(id) && !state.busy) reactionStates.delete(id);
+          for (const entry of wishes) {
+            const current = reactionStates.get(entry.id);
+            if (!entry.reactions || current?.busy || current?.version > reactionRead) continue;
+            reactionStates.set(entry.id, {
+              ...entry.reactions,
+              open: current?.open || false,
+              busy: false,
+              error: false,
+              version: reactionRead,
+            });
+          }
+          const pinned = wishes.find((entry) => entry.name.trim() === PINNED_WISH_NAME);
+          const ordered = pinned ? [pinned, ...wishes.filter((entry) => entry !== pinned)] : wishes;
+          const focused = document.activeElement;
+          const focusedWish = focused.closest?.('.wish-reactions')
+            ? focused.closest('[data-wish-id]')?.dataset.wishId
+            : '';
+          const focusedChoice =
+            focused.dataset.reaction ||
+            (focused.classList.contains('reaction-remove') ? 'remove' : 'toggle');
           const scroll = list.scrollTop;
-          list.replaceChildren(...wishes.map(publicCard));
+          list.replaceChildren(...ordered.map((entry) => publicCard(entry, entry === pinned)));
           list.scrollTop = scroll;
+          if (focusedWish) focusReactionControl(focusedWish, focusedChoice);
           observePublicWishes();
           byId('public-empty').hidden = wishes.length > 0;
           status('public-status', '');

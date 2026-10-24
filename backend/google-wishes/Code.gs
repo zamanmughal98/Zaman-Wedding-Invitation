@@ -138,7 +138,7 @@ function doGet(e) {
   return output;
 }
 
-function getPublicWishes(language) {
+function getPublicWishes(language, browserToken) {
   var translatedView = language === 'ur' || language === 'en';
   var translations = { en: {}, ur: {} };
   var translationModel = translatedView
@@ -153,36 +153,45 @@ function getPublicWishes(language) {
       }
     });
   }
-  return records_()
+  var approved = records_()
     .filter(function (entry) {
       return entry.status === 'approved';
     })
     .sort(newestFirst_)
-    .slice(0, 200)
-    .map(function (entry) {
-      var result = { name: entry.name, message: entry.message, createdAt: entry.createdAt };
-      if (translatedView) {
-        result.id = entry.id;
-        result.targetLanguage = language;
-        result.sourceVersions = {};
-        result.translations = {};
-        ['en', 'ur'].forEach(function (target) {
-          var version = wishSourceVersion_(entry.message, target, translationModel);
-          var saved = translations[target][entry.id];
-          result.sourceVersions[target] = version;
-          result.translations[target] =
-            saved && saved.version === version && saved.state === 'ready' ? saved.text : '';
-        });
-        // Urdu-script originals are already readable in Urdu, without a provider call.
-        if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message))
-          result.translations.ur = entry.message;
-        result.sourceVersion = result.sourceVersions[language];
-        result.translation = result.translations[language];
-        // Preserve compatibility with guests still using the earlier Urdu page.
-        if (language === 'ur') result.urdu = result.translation;
-      }
-      return result;
-    });
+    .slice(0, 200);
+  var reactions = translatedView
+    ? getPublicReactionState_(
+        approved.map(function (entry) {
+          return entry.id;
+        }),
+        browserToken,
+      )
+    : {};
+  return approved.map(function (entry) {
+    var result = { name: entry.name, message: entry.message, createdAt: entry.createdAt };
+    if (translatedView) {
+      result.id = entry.id;
+      result.reactions = reactions[entry.id];
+      result.targetLanguage = language;
+      result.sourceVersions = {};
+      result.translations = {};
+      ['en', 'ur'].forEach(function (target) {
+        var version = wishSourceVersion_(entry.message, target, translationModel);
+        var saved = translations[target][entry.id];
+        result.sourceVersions[target] = version;
+        result.translations[target] =
+          saved && saved.version === version && saved.state === 'ready' ? saved.text : '';
+      });
+      // Urdu-script originals are already readable in Urdu, without a provider call.
+      if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message))
+        result.translations.ur = entry.message;
+      result.sourceVersion = result.sourceVersions[language];
+      result.translation = result.translations[language];
+      // Preserve compatibility with guests still using the earlier Urdu page.
+      if (language === 'ur') result.urdu = result.translation;
+    }
+    return result;
+  });
 }
 
 function submitWish(input) {

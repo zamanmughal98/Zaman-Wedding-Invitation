@@ -47,6 +47,8 @@ config/urdu.js and config/urdu-photos.js hold authored guest copy. src/localizat
 
 The wishes backend keeps originals in Wishes and cached translations in the separate WishTranslations and WishTranslationsEnglish tabs. Source fingerprints invalidate stale translations after edits. Public APIs serve only approved records and retain the earlier response fields for already open guest pages; private moderation continues to use originals.
 
+Reactions.gs stores shared reactions in the private WishReactions tab, created on the first reaction. A browser token identifies one changeable or removable choice per approved wish; no guest login is required. Public responses expose counts, without browser tokens or other visitors' individual choices. Clearing browser storage creates a new identity. Index.html pins only the newest approved full-name match for `PINNED_WISH_NAME = 'Nimra Shafiq'` within the latest 200 approved entries. The name check trims surrounding spaces and otherwise requires exact spelling and capitalization; moderation has no pin controls.
+
 .local/google-photos/ contains the photo/video service source and owner tools. .preview/google-photos/ contains generated deployment material. These are private, ignored maintenance files; keep them or back them up outside Git. They are not abandoned website code.
 
 The JSON wishes wall and email/WhatsApp links remain a supported fallback when the Google wishes URL is cleared. Keep this mode separate from the live Google wall so moderation cannot be bypassed by stale JSON.
