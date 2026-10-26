@@ -132,16 +132,18 @@ In **Code.gs**, `config.pinnedWishName = 'Nimra Shafiq'` pins one matching appro
 
 ## Load six wishes at a time with one website scroll
 
-The public wall starts with six wishes, including the pinned wish. They arrive with the Google document, together with available saved translations and shared reaction counts, so readable cards do not wait for another Apps Script call after the iframe starts. This browser's selected reactions refresh in the background. The reader opens the spreadsheet once per public request and shares that handle across the wishes, saved translations and reactions. It does not keep an approval cache: new documents and refreshes read current Sheet contents.
+The invitation renders its wish form locally while the separate Google guestbook starts. Its embedded Google view shows the approved wishes; the standalone Google page keeps its own form. A validated `hostForm=1` embed flag enables this arrangement, and submissions still use the same private Google storage and moderation flow.
+
+The Google document itself also performs no Sheet read before returning its HTML. It then requests six approved wishes, including the pinned wish, together with available saved translations, shared reaction counts and this browser's selected reactions. A slow wishes read therefore does not hold back the standalone form. The reader opens the spreadsheet once per public request and shares that handle across the wishes, saved translations and reactions. It does not keep an approval cache: refreshes read current Sheet contents.
 
 **See more wishes** fetches and appends the next six when clicked. Refresh updates the range already opened and reuses unchanged cards. Translation requests are limited to wishes entering the visible part of the page. Google still needs time to start its web app and read Sheets; moving the website from a local server to GitHub Pages does not remove that separate service delay.
 
-This update needs both the Google guestbook and the website:
+This update needs both the Google guestbook and the website. **Deploy Apps Script first, then publish the website** so the local form can use the matching submission bridge:
 
 1. In the existing **Wedding Wishes** Apps Script project, replace **Code.gs**, **Index.html**, **Translations.gs**, **Reactions.gs** and **GuestLocale.html** with their matching current versions in `backend/google-wishes/`. Add a missing Script or HTML file under its matching name. Keep Script Properties and the existing Sheet.
 2. Save and choose **Deploy > Manage deployments > Edit > New version > Deploy**, keeping the same public URL.
-3. Push the website changes through the normal GitHub Pages process. Its new resize listener allows the iframe to grow and shrink with wishes, translations and reaction pickers. Publishing only the Apps Script files cannot update that listener in the main website.
-4. Refresh the invitation. Confirm six wishes appear initially, **See more wishes** adds six, and scrolling continues through the whole website without an inner wishes scrollbar. Check English and Urdu, then change a reaction and refresh the wishes.
+3. After the Apps Script deployment completes, push the website changes through the normal GitHub Pages process. Its local form uses the new Google submission bridge, and its resize listener lets the wishes iframe grow and shrink with wishes, translations and reaction pickers. Publishing only the Apps Script files cannot update those website features.
+4. Refresh the invitation. Confirm the form appears immediately and accepts typing while wishes connect, six wishes appear initially, **See more wishes** adds six, and scrolling continues through the whole website without an inner wishes scrollbar. Check English and Urdu, then submit one labelled test wish and confirm it remains private until approval. Change a reaction and refresh the wishes.
 
 No setup function or new Script Property is required. The standalone guestbook also uses its normal page scroll. The manual JSON fallback renders six wishes at a time, although its static JSON file is downloaded together.
 

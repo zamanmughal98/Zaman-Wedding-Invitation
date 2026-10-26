@@ -230,6 +230,12 @@ export const urdu = {
   'Approved wedding wishes': 'اہلِ خانہ سے منظور شدہ پیغامات',
   'Shared after family approval': 'اہلِ خانہ کی منظوری کے بعد شائع ہوتے ہیں',
   'Refresh wishes': 'پیغامات دوبارہ دیکھیں',
+  'Loading wishes…': 'پیغامات کھولے جا رہے ہیں۔۔۔',
+  'The guestbook is taking longer to connect. You can keep writing your wish.':
+    'پیغامات کھلنے میں کچھ وقت لگ رہا ہے۔ آپ تب تک اپنی دعا لکھ سکتے ہیں۔',
+  'Connecting to send your wish…': 'آپ کا پیغام بھیجنے کے لیے رابطہ کیا جا رہا ہے۔۔۔',
+  'Your wish could not be sent. Please try again. Your wish is still in the form.':
+    'آپ کا پیغام نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔ آپ کا لکھا ہوا پیغام فارم میں محفوظ ہے۔',
   'See more wishes': 'مزید پیغامات دیکھیں',
   'Some features could not load. Please try again.': 'کچھ حصے نہیں کھل سکے۔ دوبارہ کوشش کریں۔',
   'Try again': 'دوبارہ کوشش کریں',

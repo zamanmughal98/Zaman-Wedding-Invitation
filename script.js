@@ -2,6 +2,7 @@ import { wedding } from './config/wedding.js';
 import { initEnvelope } from './src/features/invitation.js';
 import { initMusic } from './src/features/music.js';
 import { initLanguage } from './src/features/language.js';
+import { initWishesEmbed } from './src/features/wishes-embed.js';
 
 async function start() {
   const app = document.getElementById('app');
@@ -14,6 +15,7 @@ async function start() {
   initMusic(wedding);
   initEnvelope();
   initLanguage(wedding);
+  initWishesEmbed();
 
   let loading;
   let attempts = 0;

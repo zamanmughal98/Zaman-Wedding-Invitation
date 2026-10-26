@@ -108,7 +108,9 @@ test('embed configuration is public-only and validates its resize channel and or
   const b = fixture(0);
   const parameter = { embedChannel: randomUUID(), parentOrigin: 'https://example.test', lang: 'ur' };
   const config = JSON.parse(b.api.doGet({ parameter }).page.pageConfig);
-  assert.deepEqual(config.embed, { channel: parameter.embedChannel, parentOrigin: parameter.parentOrigin });
+  assert.deepEqual(config.embed, { channel: parameter.embedChannel, parentOrigin: parameter.parentOrigin, hostForm: false });
+  assert.equal(JSON.parse(b.api.doGet({ parameter: { ...parameter, hostForm: '1' } }).page.pageConfig).embed.hostForm, true);
+  assert.equal(JSON.parse(b.api.doGet({ parameter: { hostForm: '1' } }).page.pageConfig).embed, undefined);
   assert.equal(config.language, 'ur');
   assert.equal(JSON.parse(b.api.doGet({ parameter: { ...parameter, parentOrigin: '*' } }).page.pageConfig).embed, undefined);
   assert.equal(b.api.doGet({ parameter: { ...parameter, view: 'admin' } }).page.pageConfig,

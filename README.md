@@ -17,7 +17,7 @@ npm run sync:locales # regenerate the guest language resources for Apps Script
 
 Refresh the browser after editing. With npm start, restart the server after changing content or component modules. GitHub Pages serves the built static files; it does not run server.js.
 
-The build combines styles and emits minified JavaScript/CSS with hashed filenames. The envelope, music controls and language switch start first; the remaining interactions load after opening or skipping the intro. Responsive WebP images, lighter media, optional font loading and a deferred guestbook reduce the work needed upfront. See the [performance guide](docs/performance.md) for asset sizes, slow-connection behavior and verification.
+The build combines styles and emits minified JavaScript/CSS with hashed filenames. The envelope, music controls, language switch and local wish form start first; the remaining interactions load after opening or skipping the intro. Google wishes start in the background once the priority envelope images are ready. Responsive WebP images, lighter media and optional font loading reduce the work needed upfront. See the [performance guide](docs/performance.md) for asset sizes, slow-connection behavior and verification.
 
 ## Edit the invitation
 
@@ -64,7 +64,7 @@ The seal tap opens the supplied 10-second wedding film, then reveals the invitat
 
 The two Google services are separate from this static website:
 
-- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage, phone approval, guest translations and shared reactions. The first six approved wishes arrive with the Google page; **See more wishes** fetches the next six. Background refresh restores the browser's own reaction choices. The iframe expands with the content so the website has one scroll. Guests can change or remove their reaction; `pinnedWishName` in Code.gs selects the single exact-name pin. Translation is generated on demand and cached by current message text and target language. See the [wishes guide](docs/google-wishes-setup.md) and [translation setup](docs/urdu-setup.md).
+- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage, phone approval, guest translations and shared reactions. The website renders the form immediately and preserves drafts locally, while Google loads the approved wall in the background. The Google document returns without reading Sheets, then requests the first six approved wishes; **See more wishes** fetches the next six. The iframe expands with the content so the website has one scroll. Sending from the local form uses a restricted public-message bridge to the same moderated storage. Guests can change or remove their reaction; `pinnedWishName` in Code.gs selects the single exact-name pin. Translation is generated on demand and cached by current message text and target language. See the [wishes guide](docs/google-wishes-setup.md) and [translation setup](docs/urdu-setup.md).
 - **Photos and videos:** photos.googleScriptUrl opens the private uploader. It supports photos up to 25 MiB and videos up to 1 GiB, organised by celebration and guest. Guests cannot browse others' files. Keep the uploader open until it finishes. Source and recovery tools remain in ignored .local/google-photos/. See the [upload guide](docs/google-photos-setup.md).
 
 Public configuration contains only public /exec URLs. Keep moderation keys, private Drive settings and service properties outside the repository.

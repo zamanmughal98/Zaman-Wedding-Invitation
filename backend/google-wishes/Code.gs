@@ -137,20 +137,14 @@ function doGet(e) {
       /^[a-f0-9-]{36}$/i.test(params.embedChannel || '') &&
       /^https?:\/\/[a-z0-9.-]+(?::[0-9]{1,5})?$/i.test(params.parentOrigin || '')
     )
-      config.embed = { channel: params.embedChannel, parentOrigin: params.parentOrigin };
-    try {
-      // The first approved batch travels with the HTML, rather than waiting for
-      // another Apps Script round trip after Google's iframe has initialized.
-      // There is no visitor token here: only shared counts, never a visitor hash.
-      config.initialPage = getPublicWishesPage(config.language, undefined, {
-        limit: 6,
-        pinnedName: config.pinnedWishName,
-      });
-    } catch (error) {
-      // Keep the form and Refresh usable if initial storage access is interrupted.
-      console.warn('Initial approved wishes are unavailable; the guestbook can retry.');
-    }
+      config.embed = {
+        channel: params.embedChannel,
+        parentOrigin: params.parentOrigin,
+        hostForm: params.hostForm === '1',
+      };
   }
+  // Deliver the form before reading Sheets. Wishes load separately, so a slow
+  // storage request cannot delay the entire guestbook document.
   page.pageConfig = JSON.stringify(config).replace(/</g, '\\u003c');
   var output = page.evaluate().setTitle(admin ? 'Manage wedding wishes' : 'Wedding wishes');
   output.addMetaTag('viewport', 'width=device-width, initial-scale=1');

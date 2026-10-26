@@ -1162,7 +1162,7 @@
         byId('public-empty').hidden = wishes.length > 0;
         status('public-status', '');
       }
-      async function loadPublic(append = false, initialHydration = false) {
+      async function loadPublic(append = false) {
         if (publicLoading || (append && !publicHasMore)) return;
         publicLoading = true;
         updateMoreButton();
@@ -1178,7 +1178,7 @@
           applyPublicPage(page, append, reactionRead);
         } catch {
           if (request === publicRequest) {
-            if (!append && !initialHydration) {
+            if (!append) {
               // A failed refresh must not retain a wish that may have been hidden.
               wishObserver?.disconnect();
               byId('public-list').replaceChildren();
@@ -1195,6 +1195,46 @@
           updateMoreButton();
         }
       }
+      function initGuestSubmitBridge() {
+        if (PAGE.admin || !PAGE.embed?.hostForm || window.top === window) return;
+        const { channel, parentOrigin } = PAGE.embed;
+        const pending = new Set();
+        window.addEventListener('message', async (event) => {
+          const data = event.data;
+          if (event.source !== window.top || event.origin !== parentOrigin ||
+              data?.type !== 'wedding:wishes:submit' || data.channel !== channel ||
+              typeof data.requestId !== 'string' ||
+              !/^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(data.requestId)) return;
+          const input = data.payload;
+          if (!input || typeof input !== 'object' || Array.isArray(input) ||
+              typeof input.name !== 'string' || !input.name.trim() || input.name.length > 100 ||
+              typeof input.message !== 'string' || !input.message.trim() || input.message.length > 500 ||
+              typeof input.website !== 'string' || input.website.length > 200 ||
+              pending.has(data.requestId)) return;
+          pending.add(data.requestId);
+          let accepted = false;
+          try {
+            const result = await rpc('submitWish', {
+              requestId: data.requestId,
+              name: input.name.trim(),
+              message: input.message.trim(),
+              website: input.website,
+            });
+            accepted = result?.accepted === true;
+          } catch {
+            /* Never forward server errors or private setup details to the host page. */
+          } finally {
+            pending.delete(data.requestId);
+          }
+          window.top.postMessage({
+            type: 'wedding:wishes:submitted', channel, requestId: data.requestId, accepted,
+            error: accepted ? '' : guestText(
+              'Your wish could not be saved. Please try again.',
+              'آپ کا پیغام محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔',
+            ),
+          }, parentOrigin);
+        });
+      }
       function initGuestResize() {
         if (!PAGE.embed || window.top === window) return;
         const { channel, parentOrigin } = PAGE.embed;
@@ -1208,6 +1248,7 @@
           window.top.postMessage({
             type: 'wedding:wishes:resize', channel, height,
             viewportHeight: innerHeight, viewportWidth: innerWidth,
+            hostForm: Boolean(PAGE.embed.hostForm),
           }, parentOrigin);
         }
         window.addEventListener('message', (event) => {
@@ -1223,6 +1264,8 @@
       function initGuest() {
         document.body.classList.add('guestbook');
         byId('public-view').hidden = false;
+        if (PAGE.embed?.hostForm) document.querySelector('.form-panel').hidden = true;
+        initGuestSubmitBridge();
         initGuestResize();
         byId('more-public').addEventListener('click', () => { void loadPublic(true); });
         const form = byId('guest-form');
@@ -1297,13 +1340,9 @@
           }
         });
         byId('refresh-public').addEventListener('click', () => { void loadPublic(); });
-        if (PAGE.initialPage?.items) {
-          applyPublicPage(PAGE.initialPage);
-          delete PAGE.initialPage;
-          // Cards are already readable. Restore this browser's selected reaction
-          // in the background, without delaying the first batch on another RPC.
-          void loadPublic(false, true);
-        } else void loadPublic();
+        byId('public-empty').hidden = true;
+        status('public-status', guestText('Loading wishes…', 'پیغامات کھولے جا رہے ہیں…'));
+        void loadPublic();
       }
       function renderAdmin() {
         const counts = {

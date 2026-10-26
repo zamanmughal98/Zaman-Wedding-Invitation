@@ -1,6 +1,6 @@
 # Startup and slow connections
 
-The first screen prioritizes the envelope and its controls. The complete invitation is already rendered in the served HTML. Music gesture handlers, the opening flow and the language switch initialize first; navigation, countdown, scratch card, gallery, guestbook and other secondary interactions load after the seal or Skip is used. Direct section links start those interactions immediately.
+The first screen prioritizes the envelope and its controls. The complete invitation, including the real wish form, is already rendered in the served HTML. Music gesture handlers, the opening flow, the language switch and local wish drafts initialize first; navigation, countdown, scratch card, gallery and other secondary interactions load after the seal or Skip is used. Direct section links start those interactions immediately.
 
 If the secondary code cannot load, the bootstrap retries and shows **Try again** after three failed attempts. That button and an `online` event start a new retry budget. The rendered invitation remains available during recovery.
 
@@ -31,7 +31,9 @@ The film prewarms only when the browser reports a sufficiently fast 4G connectio
 
 Google font stylesheets load without blocking the opening controls. The page uses its local fallback fonts while those downloads finish. The larger Nastaliq calligraphy stylesheet is requested when Urdu is selected; the guest's language choice still updates the page immediately.
 
-The wishes iframe keeps its URL in `data-src` until it approaches the viewport and the intro has closed. Its selected language and resize channel are added before the first live request. Apps Script includes the first six approved wishes with the page configuration, so cards render without waiting for another request after Google's iframe starts. A background read updates the browser's selected reactions and current public data. Each public read reuses one spreadsheet handle for the wishes, saved translations and reaction counts. No provider translation is needed for this first read, and private or unapproved wishes never enter the page configuration.
+The real form renders with the website, independently of Google. Drafts restore locally, so visitors can write immediately even if Google is slow or unavailable. The wishes iframe starts in the background after the priority envelope images have loaded; it no longer waits for the visitor to reach the section or finish the opening. A compact loading message replaces the former empty 900px frame until the authenticated Google ready/resize message arrives.
+
+Apps Script returns its HTML without reading Sheets. It then separately requests six approved wishes with saved translations, shared counts and the browser's selected reactions. Each public read reuses one spreadsheet handle across those tabs. No provider translation is needed for this read. The local form submits through a narrowly scoped public bridge and clears its draft only after confirmed acceptance. Connection failures retain the draft and allow retry with the same request ID.
 
 **See more wishes** appends another six on demand. Refreshes update the range already opened and reuse unchanged cards. Public font stylesheets load without holding up the cards; Urdu fonts are requested only for the Urdu view. This reduces upfront work while preserving the single website scroll.
 
@@ -45,11 +47,11 @@ GitHub Pages serves the static invitation; both local preview and the published 
 
 esbuild runs only during the build. It combines the CSS, rewrites ornament URLs and emits minified JavaScript/CSS with hashed filenames under `dist/build/`. Secondary interactions use separate chunks. The published directory contains those bundles, public assets and data, without duplicate source module and stylesheet trees. The browser runs native JavaScript without a client framework. Local preview continues to serve the editable source modules and stylesheets.
 
-Publish the website changes through GitHub Pages. The wishes first-batch rendering, updated controls, pagination and automatic iframe height require the separate wishes Apps Script deployment; follow [the batch-loading setup](google-wishes-setup.md#load-six-wishes-at-a-time-with-one-website-scroll). Publishing the website does not publish Apps Script source.
+Update the existing wishes Apps Script deployment first, then publish the website changes through GitHub Pages. The local form bridge, updated controls, pagination and automatic iframe height require matching versions; follow [the batch-loading setup](google-wishes-setup.md#load-six-wishes-at-a-time-with-one-website-scroll). Publishing the website does not publish Apps Script source.
 
 ## Verification
 
-A cold-cache Chrome comparison used a 390 × 844 viewport at 2× pixel density, approximately 0.8 Mbps download speed, 200 ms latency and 4× CPU slowdown. Both builds were served with compressed text assets; external font requests were blocked in both measurements to isolate the website's own downloads.
+An earlier cold-cache Chrome comparison of the startup optimization used a 390 × 844 viewport at 2× pixel density, approximately 0.8 Mbps download speed, 200 ms latency and 4× CPU slowdown. Both builds were served with compressed text assets; external font requests were blocked in both measurements to isolate the website's own downloads.
 
 | Until envelope artwork, monogram and opening controls were ready | Previous build | Optimized build |
 | --- | ---: | ---: |
@@ -57,6 +59,8 @@ A cold-cache Chrome comparison used a 390 × 844 viewport at 2× pixel density, 
 | Transferred site data | 4.22 MB | 0.20 MB |
 
 These are controlled local measurements, rather than a guarantee for every device or network. Separate browser checks also held font requests indefinitely, stalled video, verified the film on data-saving connections and manual replay, and simulated a failed secondary-code download followed by successful automatic retry.
+
+The local wish-form checks additionally hold the complete Google document response and delay its wishes request. The form remains visible and editable, drafts survive refresh, and the wall occupies only a compact loading area. Nested-frame checks cover submission confirmation, failures, delayed replies and retries without duplicate saves.
 
 Measure the built website with the cache disabled and record the connection, viewport and CPU throttle used. Useful checks include the time until the envelope image and seal are ready, bytes transferred before the first tap, and the requests made before opening the invitation or reaching the guestbook.
 
