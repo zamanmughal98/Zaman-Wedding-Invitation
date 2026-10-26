@@ -5,6 +5,8 @@ export function envelope(w) {
   if (!w.envelope.enabled) return '';
   const film = assetUrl(w.envelope.film?.src);
   const poster = assetUrl(w.envelope.film?.poster);
+  const sources = (w.envelope.imageSources || [])
+    .map(({ src, width }) => `${assetUrl(src)} ${width}w`).join(', ');
   return /* HTML */ `
     <dialog class="envelope-intro" id="envelope-dialog" aria-labelledby="envelope-title">
       ${languageSwitch('intro-language')}
@@ -15,6 +17,7 @@ export function envelope(w) {
           <div class="envelope-paper">
             <img
               src="${e(assetUrl(w.envelope.image))}"
+              ${sources ? `srcset="${e(sources)}" sizes="${e(w.envelope.imageSizes)}"` : ''}
               alt="An ivory wedding envelope with embossed flowers and an antique gold border"
               width="1024"
               height="1536"
@@ -46,6 +49,7 @@ export function envelope(w) {
                   <video
                     data-opening-video
                     data-src="${e(film)}"
+                    ${w.envelope.film?.lightSrc ? `data-light-src="${e(assetUrl(w.envelope.film.lightSrc))}"` : ''}
                     data-poster="${e(poster)}"
                     muted
                     playsinline
@@ -64,7 +68,7 @@ export function envelope(w) {
                   <button class="text-link" type="button" data-toggle-film>Pause film</button>
                   ${w.music.enabled ? `<button class="icon-button opening-film-sound" type="button" data-toggle-music aria-label="Play background music" aria-pressed="false">${icon('mute')}</button>` : ''}
                 </div>
-                <p class="sr-only" role="status" data-film-status></p>
+                <p class="opening-film-status sr-only" role="status" data-film-status></p>
                 <div class="opening-film-progress" aria-hidden="true">
                   <span data-film-progress></span>
                 </div>

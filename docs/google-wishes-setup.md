@@ -16,7 +16,7 @@ Use the Google account you want to own the private Sheet and send notifications.
 
 1. Open the Google Sheet you created, then choose **Extensions > Apps Script**. This attaches the script to your existing Sheet. Name the project **Zaman & Nimra Wedding Wishes**. If you prefer a separate project, see the standalone option below.
 2. Replace **Code.gs** with the contents of [Code.gs](../backend/google-wishes/Code.gs).
-3. Use **+ > HTML**, name the file **Index**, and paste [Index.html](../backend/google-wishes/Index.html).
+3. Use **+ > HTML**, name the file **Index**, and paste [Index.html](../backend/google-wishes/Index.html). Add another HTML file named **GuestLocale** from `GuestLocale.html`, and Script files named **Translations** and **Reactions** from `Translations.gs` and `Reactions.gs`, all in `backend/google-wishes/`. For optional translation API configuration, see [the language setup guide](urdu-setup.md).
 4. Open **Project Settings** and enable **Show appsscript.json manifest file in editor**. Replace that file with [appsscript.json](../backend/google-wishes/appsscript.json), then save.
 5. In the editor's function selector, choose **initializeWeddingWishes** and click **Run**. Authorize the Sheet and email permissions for your own project. This adds a **Wishes** tab inside your existing Sheet and creates a private moderation key. Other tabs are preserved. Rerunning setup keeps existing wishes and the same key. If a Wishes tab already has unrelated columns, setup stops without replacing its data. Keep the Sheet private.
 6. Choose **Deploy > New deployment > Web app**. Set **Execute as: Me** and **Who has access: Anyone**. Deploy and copy the public URL ending in **/exec**. Anonymous access lets guests send wishes without Google sign-in; moderation still requires your separate private key.
@@ -116,5 +116,41 @@ Do not rerun setup or replace Code.gs or appsscript.json for this visual update.
 When googleScriptUrl is empty, the existing email/WhatsApp plus manually deployed data/wishes.json workflow remains available. When Google mode is enabled, the wall uses Google exclusively; it does not merge an old JSON file that could reintroduce a hidden wish.
 
 Backend source, private setup, and tests are not copied into the public dist folder. Only the public widget URL and website code are deployed to GitHub Pages.
+
+## Add shared reactions and one pinned wish
+
+For the existing wishes installation:
+
+1. Replace **Code.gs** and **Index.html** with the current files in `backend/google-wishes/`.
+2. Choose **+ > Script**, name it **Reactions**, and paste [Reactions.gs](../backend/google-wishes/Reactions.gs). Keep the existing Translations, GuestLocale, manifest and Script Properties.
+3. Save, then choose **Deploy > Manage deployments > Edit (pencil) > New version > Deploy** on the existing deployment. Keep its URL and access settings. No setup rerun or photo-uploader update is needed.
+4. Open the public wall in two browsers. Add a reaction in one and refresh wishes in the other to check the shared count. Change the reaction, then remove it, and check the count again.
+
+Guests can choose **Like, Love, Care, Haha, Wow, Sad or Angry** on any approved wish. Each browser has one changeable or removable reaction per wish, without signing in. The private **WishReactions** Sheet tab is created automatically on the first reaction. Counts are shared; browser tokens and other visitors' individual choices are not exposed. Clearing browser storage or using another browser creates a separate identity. If storage is blocked, the browser identity lasts only until that page reloads.
+
+In **Code.gs**, `config.pinnedWishName = 'Nimra Shafiq'` pins one matching approved wish at the top. The check trims surrounding spaces and requires that exact spelling and capitalization. If several match, only the newest matching approved wish is pinned. The first batch includes it even if it is older than the other wishes. The public JavaScript uses the same value, with the earlier name as a compatibility fallback. There are no pin controls in the moderation panel.
+
+## Load six wishes at a time with one website scroll
+
+The invitation renders its wish form locally while the separate Google guestbook starts. Its embedded Google view shows the approved wishes; the standalone Google page keeps its own form. A validated `hostForm=1` embed flag enables this arrangement, and submissions still use the same private Google storage and moderation flow.
+
+The Google document itself also performs no Sheet read before returning its HTML. It then requests six approved wishes, including the pinned wish, together with available saved translations, shared reaction counts and this browser's selected reactions. A slow wishes read therefore does not hold back the standalone form. The reader opens the spreadsheet once per public request and shares that handle across the wishes, saved translations and reactions. It does not keep an approval cache: refreshes read current Sheet contents.
+
+**See more wishes** fetches and appends the next six when clicked. Refresh updates the range already opened and reuses unchanged cards. Translation requests are limited to wishes entering the visible part of the page. Google still needs time to start its web app and read Sheets; moving the website from a local server to GitHub Pages does not remove that separate service delay.
+
+This update needs both the Google guestbook and the website. **Deploy Apps Script first, then publish the website** so the local form can use the matching submission bridge:
+
+1. In the existing **Wedding Wishes** Apps Script project, replace **Code.gs**, **Index.html**, **Translations.gs**, **Reactions.gs** and **GuestLocale.html** with their matching current versions in `backend/google-wishes/`. Add a missing Script or HTML file under its matching name. Keep Script Properties and the existing Sheet.
+2. Save and choose **Deploy > Manage deployments > Edit > New version > Deploy**, keeping the same public URL.
+3. After the Apps Script deployment completes, push the website changes through the normal GitHub Pages process. Its local form uses the new Google submission bridge, and its resize listener lets the wishes iframe grow and shrink with wishes, translations and reaction pickers. Publishing only the Apps Script files cannot update those website features.
+4. Refresh the invitation. Confirm the form appears immediately and accepts typing while wishes connect, six wishes appear initially, **See more wishes** adds six, and scrolling continues through the whole website without an inner wishes scrollbar. Check English and Urdu, then submit one labelled test wish and confirm it remains private until approval. Change a reaction and refresh the wishes.
+
+No setup function or new Script Property is required. The standalone guestbook also uses its normal page scroll. The manual JSON fallback renders six wishes at a time, although its static JSON file is downloaded together.
+
+## If wishes fail after an update
+
+An Apps Script error such as **`wishSourceVersion_ is not defined`** means **Translations.gs** is missing or does not match the deployed Code.gs. Replace it with the current file, then publish a **New version** of the existing deployment. Saving editor files alone does not publish them. Use the matching five-file set above when updating the complete guestbook; initialization is unnecessary.
+
+The current reader also supports plain-text edits to name/message cells and normalizes Google Sheet Date cells for pagination. Optional translation or reaction helper failures leave approved wishes readable in their original form. Reaction storage validation still protects writes; check the private Apps Script execution logs if reaction controls are unavailable.
 
 Technical references: [scripts attached to Sheets](https://developers.google.com/apps-script/guides/bound), [Apps Script web apps](https://developers.google.com/apps-script/guides/web), [client/server calls](https://developers.google.com/apps-script/guides/html/communication), and [URL fragments](https://developers.google.com/apps-script/guides/html/reference/url).

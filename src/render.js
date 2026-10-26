@@ -4,9 +4,12 @@ import { envelope } from './components/envelope.js';
 import { hero, countdown, saveTheDate } from './components/hero.js';
 import { celebrations } from './components/celebrations.js';
 import { couple, families } from './components/people.js';
-import { gallery } from './components/memories.js';
+import { gallery } from './components/gallery.js';
 import { photoUploads } from './components/photo-uploads.js';
-import { venue, dressCode, wishes, footer } from './components/guest-details.js';
+import { venue } from './components/venue.js';
+import { dressCode } from './components/dress-code.js';
+import { wishes } from './components/wishes.js';
+import { footer } from './components/footer.js';
 
 const renderers = {
   home: hero,

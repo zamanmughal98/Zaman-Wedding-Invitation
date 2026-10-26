@@ -43,7 +43,7 @@ export function monogram(w, className = '') {
 }
 
 export function languageSwitch(className = '') {
-  return `<div class="language-switch ${className}" role="group" aria-label="Choose language"><button type="button" data-language="en" data-no-translate lang="en" dir="ltr" aria-pressed="true">English</button><button type="button" data-language="ur" data-no-translate lang="ur" dir="rtl" aria-pressed="false">اردو</button></div>`;
+  return `<div class="language-switch ${className}" role="group" aria-label="Choose language"><button type="button" data-language="en" data-no-translate lang="en" dir="ltr" aria-pressed="true">English</button><span class="language-divider" aria-hidden="true">/</span><button type="button" data-language="ur" data-no-translate lang="ur" dir="rtl" aria-pressed="false">اردو</button></div>`;
 }
 
 export function heading(eyebrow, title, subtitle = '') {

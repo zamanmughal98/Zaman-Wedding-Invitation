@@ -4,9 +4,10 @@ A configurable Indo-Pak wedding invitation built with native HTML, CSS and JavaS
 
 ## Run and verify
 
-Requires Node.js 22 or newer. No dependency installation is needed.
+Requires Node.js 22 or newer. Run `npm ci` after cloning or updating the lockfile. esbuild is a build tool; the website uses native browser code without a client framework.
 
 ```sh
+npm ci           # install the locked build tool
 npm start        # local preview at http://127.0.0.1:8642
 npm run dev      # restart the preview when imported JavaScript changes
 npm test         # invitation, calendars, music, moderation, links and project paths
@@ -15,6 +16,8 @@ npm run sync:locales # regenerate the guest language resources for Apps Script
 ```
 
 Refresh the browser after editing. With npm start, restart the server after changing content or component modules. GitHub Pages serves the built static files; it does not run server.js.
+
+The build combines styles and emits minified JavaScript/CSS with hashed filenames. The envelope, music controls, language switch and local wish form start first; the remaining interactions load after opening or skipping the intro. Google wishes start in the background once the priority envelope images are ready. Responsive WebP images, lighter media and optional font loading reduce the work needed upfront. See the [performance guide](docs/performance.md) for asset sizes, slow-connection behavior and verification.
 
 ## Edit the invitation
 
@@ -35,11 +38,11 @@ Refresh the browser after editing. With npm start, restart the server after chan
 | A section's HTML | its named module in src/components/ |
 | A browser interaction | its named module in src/features/ |
 
-The section registry is in src/render.js. Existing entry modules group imports; edit the named implementation file. See the [architecture guide](docs/architecture.md) for the module map and stylesheet order.
+The section registry is in src/render.js and imports each named implementation directly. See the [architecture guide](docs/architecture.md) for the module map and stylesheet order.
 
 The retired attendance and story sections have been removed. Every remaining section can be hidden or reordered through configuration; navigation includes enabled sections only. The gallery has an empty state when no photographs are configured.
 
-Guests can choose English or اردو on the envelope and in the header; `?lang=ur` opens Urdu directly. The browser remembers their choice. Approved wishes have independent Original / English / اردو controls, and editing the original invalidates its saved translations. See the [language and deployment guide](docs/urdu-setup.md).
+Guests can choose English or اردو on the envelope and in the header; `?lang=ur` opens Urdu directly. The browser remembers their choice. Approved wishes always start on Original / اصل, including after page reloads or interface-language changes. Their independent English / اردو controls show translations on request, and editing the original invalidates its saved translations. See the [language and deployment guide](docs/urdu-setup.md).
 
 ## Content and media
 
@@ -55,13 +58,13 @@ The supplied Samjhawan track starts on the first envelope/entry tap and loops so
 
 The envelope appears on every refresh and can be replayed from the footer. Direct section links skip it initially. Scratch colours use --scratch-* tokens. Keyboard dialogs, a tap-to-reveal alternative, image fallbacks, reduced motion and print styles are retained.
 
-The seal tap opens the supplied 10-second wedding film, then reveals the invitation. Configure it with `envelope.film.src` and `poster`; remove `film` to go straight from the seal to the invitation. The silent, optimised MP4 fills the opening with softly fading edges and pause, skip and music controls. Every seal tap can play it again, including after refreshing in the same tab. Reduced motion skips automatic film playback, and blocked or slow playback falls back to the invitation. A footer link replays the film on request. See the [opening film notes](assets/video/README.md).
+The seal tap opens the supplied 10-second wedding film, then reveals the invitation. Configure it with `envelope.film.src`, `lightSrc` and `poster`; remove `film` to go straight from the seal to the invitation. Phones and slower connections use the lighter MP4. Loading and buffering keep the film visible with a short status message; a failed playback offers retry. Reduced motion removes the transition and zoom. Skip and the footer replay remain available. Prewarming happens only on a detected fast connection, and skipping cancels an unfinished video download. See the [opening film notes](assets/video/README.md) and [performance guide](docs/performance.md).
 
 ## Google wishes and private uploads
 
 The two Google services are separate from this static website:
 
-- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage, phone approval and guest translations. Only approved wishes appear. Translation is generated on demand and cached by current message text and target language; the existing approval workflow and public deployment URL are preserved. See the [wishes guide](docs/google-wishes-setup.md) and [translation setup](docs/urdu-setup.md).
+- **Wishes:** backend/google-wishes/ contains the source for Google Sheets storage, phone approval, guest translations and shared reactions. The website renders the form immediately and preserves drafts locally, while Google loads the approved wall in the background. The Google document returns without reading Sheets, then requests the first six approved wishes; **See more wishes** fetches the next six. The iframe expands with the content so the website has one scroll. Sending from the local form uses a restricted public-message bridge to the same moderated storage. Guests can change or remove their reaction; `pinnedWishName` in Code.gs selects the single exact-name pin. Translation is generated on demand and cached by current message text and target language. See the [wishes guide](docs/google-wishes-setup.md) and [translation setup](docs/urdu-setup.md).
 - **Photos and videos:** photos.googleScriptUrl opens the private uploader. It supports photos up to 25 MiB and videos up to 1 GiB, organised by celebration and guest. Guests cannot browse others' files. Keep the uploader open until it finishes. Source and recovery tools remain in ignored .local/google-photos/. See the [upload guide](docs/google-photos-setup.md).
 
 Public configuration contains only public /exec URLs. Keep moderation keys, private Drive settings and service properties outside the repository.
@@ -73,6 +76,8 @@ When wishes.googleScriptUrl is empty, the email/WhatsApp and approved-JSON wishe
 ## GitHub Pages
 
 The existing workflow tests and builds changes reaching main; pull requests run checks without publishing. In repository Settings > Pages, choose **GitHub Actions** as the build source.
+
+The workflow runs `npm ci` before checks and builds. Commit `package-lock.json`, the build helper and configured media variants with the source changes. The performance update is published through this website workflow. The wishes startup and control changes also need the separate [Apps Script deployment steps](docs/google-wishes-setup.md#load-six-wishes-at-a-time-with-one-website-scroll). Local preview and GitHub Pages both load wishes from that Google service; a website push alone does not update it.
 
 Published invitation: **https://zamanmughal98.github.io/Zaman-Wedding-Invitation/**
 

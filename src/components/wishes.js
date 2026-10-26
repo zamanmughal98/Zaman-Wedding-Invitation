@@ -26,15 +26,37 @@ export function wishes(w) {
               <p class="wishes-keepsake-title">Words we’ll treasure.</p>
             </div>
           </div>
-          <div class="wishes-widget-frame">
+          <div class="wishes-widget-frame is-loading" data-wishes-frame>
+            <div class="wishes-loading" data-wishes-loading role="status">
+              <p data-wishes-connection>Loading wishes…</p>
+              <button class="text-link" type="button" data-retry-wishes hidden>Try again</button>
+            </div>
             <iframe
               class="wishes-widget"
               data-guest-service
-              src="${e(widget)}"
+              data-src="${e(widget)}"
               title="Approved wedding wishes and a form to leave a wish"
               loading="lazy"
               referrerpolicy="no-referrer"
             ></iframe>
+          </div>
+          <div class="wishes-form-panel" data-google-wish-panel>
+            <h3>Leave a warm wish</h3>
+            ${flourish()}
+            <form data-google-wish-form>
+              ${honeypot()}
+              <label class="field">
+                <span>Your name</span>
+                <input name="name" dir="auto" autocomplete="name" maxlength="100" required />
+              </label>
+              <label class="field">
+                <span>Your wish or dua</span>
+                <textarea name="message" dir="auto" rows="4" maxlength="500" required></textarea>
+              </label>
+              <button class="button button-primary" type="submit" disabled>Send for approval</button>
+              <p class="form-status" data-google-wish-status role="status"></p>
+            </form>
+            <p class="local-note">Your name and wish are saved with Google and shared here only after the family approves them.</p>
           </div>
           <div class="wishes-keepsake-footer">
             <p>Your words become part of our story.</p>
@@ -50,6 +72,7 @@ export function wishes(w) {
       ${heading('Little notes. A lot of love.', 'A wall of warm wishes', w.wishes.message)}
       <div class="wishes-list" data-wishes-list></div>
       <p class="wishes-empty" data-wishes-empty>Your duas and warm wishes mean so much to us.</p>
+      <button class="button button-outline" type="button" data-more-wishes hidden>See more wishes</button>
       <button class="button button-outline" type="button" data-open-wish>
         ${icon('heart')}Leave a wish
       </button>

@@ -129,7 +129,22 @@ function doGet(e) {
   var admin = Boolean(e && e.parameter && e.parameter.view === 'admin');
   var page = HtmlService.createTemplateFromFile('Index');
   var config = { admin: admin, maxLength: 500 };
-  if (!admin) config.language = e && e.parameter && e.parameter.lang === 'ur' ? 'ur' : 'en';
+  if (!admin) {
+    var params = (e && e.parameter) || {};
+    config.language = params.lang === 'ur' ? 'ur' : 'en';
+    config.pinnedWishName = 'Nimra Shafiq';
+    if (
+      /^[a-f0-9-]{36}$/i.test(params.embedChannel || '') &&
+      /^https?:\/\/[a-z0-9.-]+(?::[0-9]{1,5})?$/i.test(params.parentOrigin || '')
+    )
+      config.embed = {
+        channel: params.embedChannel,
+        parentOrigin: params.parentOrigin,
+        hostForm: params.hostForm === '1',
+      };
+  }
+  // Deliver the form before reading Sheets. Wishes load separately, so a slow
+  // storage request cannot delay the entire guestbook document.
   page.pageConfig = JSON.stringify(config).replace(/</g, '\\u003c');
   var output = page.evaluate().setTitle(admin ? 'Manage wedding wishes' : 'Wedding wishes');
   output.addMetaTag('viewport', 'width=device-width, initial-scale=1');
@@ -138,34 +153,106 @@ function doGet(e) {
   return output;
 }
 
-function getPublicWishes(language) {
+function getPublicWishes(language, browserToken) {
+  var book = SpreadsheetApp.openById(settings_().sheetId);
+  return publicWishes_(
+    records_(book)
+      .filter(function (entry) { return entry.status === 'approved'; })
+      .sort(newestFirst_)
+      .slice(0, 200),
+    language,
+    browserToken,
+    book,
+  );
+}
+
+/** Only the requested batch receives translation and reaction metadata. */
+function getPublicWishesPage(language, browserToken, options) {
+  options = options || {};
+  var limit = options.limit === undefined ? 6 : options.limit;
+  if (!Number.isInteger(limit) || limit < 6 || limit > 10000)
+    throw new Error('Please reload the wishes and try again.');
+  var pinnedName = typeof options.pinnedName === 'string' ? options.pinnedName.trim() : '';
+  if (pinnedName.length > 100) throw new Error('Please reload the wishes and try again.');
+  var cursor = options.cursor;
+  if (
+    cursor && (
+      typeof cursor !== 'object' ||
+      typeof cursor.id !== 'string' ||
+      !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(cursor.id) ||
+      typeof cursor.createdAt !== 'string' ||
+      (cursor.createdAt !== '' &&
+        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(cursor.createdAt))
+    )
+  ) throw new Error('Please reload the wishes and try again.');
+  var book = SpreadsheetApp.openById(settings_().sheetId);
+  var approved = records_(book)
+    .filter(function (entry) { return entry.status === 'approved'; })
+    .sort(publicWishOrder_);
+  var pinned = pinnedName
+    ? approved.find(function (entry) { return entry.name.trim() === pinnedName; })
+    : null;
+  var remaining = approved.filter(function (entry) {
+    return (!pinned || entry.id !== pinned.id) && (!cursor || publicWishOrder_(entry, cursor) > 0);
+  });
+  var batch = !cursor && pinned ? [pinned] : [];
+  batch = batch.concat(remaining.slice(0, limit - batch.length));
+  var ordinary = batch.filter(function (entry) { return !pinned || entry.id !== pinned.id; });
+  var last = ordinary[ordinary.length - 1];
+  var hasMore = remaining.length > ordinary.length;
+  return {
+    items: publicWishes_(batch, language, browserToken, book),
+    hasMore: hasMore,
+    nextCursor: hasMore && last ? { id: last.id, createdAt: last.createdAt } : null,
+  };
+}
+
+function publicWishOrder_(a, b) {
+  return newestFirst_(a, b) || a.id.localeCompare(b.id);
+}
+
+function publicWishes_(approved, language, browserToken, book) {
   var translatedView = language === 'ur' || language === 'en';
+  var translationHelperReady = typeof wishSourceVersion_ === 'function';
   var translations = { en: {}, ur: {} };
   var translationModel = translatedView
     ? PropertiesService.getScriptProperties().getProperty('WISH_TRANSLATION_MODEL') || ''
     : '';
-  if (translatedView) {
+  if (translatedView && translationHelperReady) {
     ['en', 'ur'].forEach(function (target) {
       try {
-        translations[target] = wishTranslations_(target);
+        translations[target] = wishTranslations_(target, book);
       } catch (error) {
         /* Originals stay available if a translation store is unavailable. */
       }
     });
+  } else if (translatedView) {
+    console.warn('Public wish translation helpers are unavailable; original messages remain readable.');
   }
-  return records_()
-    .filter(function (entry) {
-      return entry.status === 'approved';
-    })
-    .sort(newestFirst_)
-    .slice(0, 200)
-    .map(function (entry) {
-      var result = { name: entry.name, message: entry.message, createdAt: entry.createdAt };
-      if (translatedView) {
-        result.id = entry.id;
-        result.targetLanguage = language;
-        result.sourceVersions = {};
-        result.translations = {};
+  var reactions = null;
+  if (translatedView) {
+    try {
+      reactions = getPublicReactionState_(
+        approved.map(function (entry) {
+          return entry.id;
+        }),
+        browserToken,
+        book,
+      );
+    } catch (error) {
+      // Reaction storage is optional; never hide approved wishes or expose store details.
+      console.warn('Public wish reactions are unavailable; approved wishes remain readable.');
+    }
+  }
+  return approved.map(function (entry) {
+    var result = { name: entry.name, message: entry.message, createdAt: entry.createdAt };
+    if (translatedView) {
+      result.id = entry.id;
+      if (reactions && reactions[entry.id]) result.reactions = reactions[entry.id];
+      result.targetLanguage = language;
+      result.sourceVersions = {};
+      result.translations = { en: '', ur: '' };
+      if (translationHelperReady) {
         ['en', 'ur'].forEach(function (target) {
           var version = wishSourceVersion_(entry.message, target, translationModel);
           var saved = translations[target][entry.id];
@@ -173,16 +260,17 @@ function getPublicWishes(language) {
           result.translations[target] =
             saved && saved.version === version && saved.state === 'ready' ? saved.text : '';
         });
-        // Urdu-script originals are already readable in Urdu, without a provider call.
-        if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message))
-          result.translations.ur = entry.message;
-        result.sourceVersion = result.sourceVersions[language];
-        result.translation = result.translations[language];
-        // Preserve compatibility with guests still using the earlier Urdu page.
-        if (language === 'ur') result.urdu = result.translation;
       }
-      return result;
-    });
+      // Urdu-script originals are already readable in Urdu, without a provider call.
+      if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message))
+        result.translations.ur = entry.message;
+      result.sourceVersion = result.sourceVersions[language] || '';
+      result.translation = result.translations[language];
+      // Preserve compatibility with guests still using the earlier Urdu page.
+      if (language === 'ur') result.urdu = result.translation;
+    }
+    return result;
+  });
 }
 
 function submitWish(input) {
@@ -322,32 +410,63 @@ function settings_() {
   return settings;
 }
 
-function sheet_() {
-  var sheet = SpreadsheetApp.openById(settings_().sheetId).getSheetByName('Wishes');
+function sheet_(book) {
+  var sheet = (book || SpreadsheetApp.openById(settings_().sheetId)).getSheetByName('Wishes');
   if (!sheet) throw new Error('The wishes sheet is unavailable. Please contact the family.');
   return sheet;
 }
 
-function records_() {
-  var sheet = sheet_();
-  if (sheet.getLastRow() < 2) return [];
+function records_(book) {
+  var sheet = sheet_(book);
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return [];
   return sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, WISH_HEADERS_.length)
+    .getRange(2, 1, lastRow - 1, WISH_HEADERS_.length)
     .getValues()
     .map(function (row, index) {
       return {
         rowNumber: index + 2,
-        id: String(row[0]),
-        requestId: String(row[1]),
-        createdAt: String(row[2]),
-        name: JSON.parse(String(row[3])),
-        message: JSON.parse(String(row[4])),
+        id: row[0] == null ? '' : String(row[0]),
+        requestId: row[1] == null ? '' : String(row[1]),
+        createdAt: wishStoredTimestamp_(row[2]),
+        name: wishStoredText_(row[3]),
+        message: wishStoredText_(row[4]),
         status: String(row[5]),
         revision: Number(row[6]),
-        updatedAt: String(row[7]),
+        updatedAt: wishStoredTimestamp_(row[7]),
         notification: String(row[8]),
       };
+    })
+    .filter(function (entry) {
+      // Cleared test rows and incomplete manual entries must not break every public wish.
+      return entry.id && entry.name.trim() && entry.message.trim();
     });
+}
+
+function wishStoredText_(value) {
+  var text = value == null ? '' : String(value);
+  try {
+    var decoded = JSON.parse(text);
+    if (typeof decoded === 'string') return decoded;
+  } catch (error) {
+    // Owners may edit the original text directly in Sheets without JSON quotes.
+  }
+  return text;
+}
+
+function wishStoredTimestamp_(value) {
+  var date;
+  if (Object.prototype.toString.call(value) === '[object Date]') {
+    date = new Date(value.getTime());
+  } else if (typeof value === 'string') {
+    var match = /^(\d{4}-\d{2}-\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,3})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/.exec(value);
+    if (!match) return '';
+    var day = new Date(match[1] + 'T00:00:00.000Z');
+    if (!Number.isFinite(day.getTime()) || day.toISOString().slice(0, 10) !== match[1]) return '';
+    date = new Date(value);
+  }
+  // Unknown dates stay explicitly empty and sort after dated entries; do not invent a time.
+  return date && Number.isFinite(date.getTime()) ? date.toISOString() : '';
 }
 
 function requireModerator_(candidate) {

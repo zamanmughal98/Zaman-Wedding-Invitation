@@ -18,6 +18,7 @@ const types = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.mp3': 'audio/mpeg',
+  '.m4a': 'audio/mp4',
   '.ogg': 'audio/ogg',
   '.woff2': 'font/woff2',
   '.ico': 'image/x-icon',
@@ -58,7 +59,7 @@ export function createPreviewServer() {
       };
       let status = 200;
       // Browsers request byte ranges to seek and replay local video and audio.
-      if (['.mp4', '.webm', '.mp3', '.ogg'].includes(extension)) {
+      if (['.mp4', '.webm', '.mp3', '.m4a', '.ogg'].includes(extension)) {
         headers['Accept-Ranges'] = 'bytes';
         const range = request.headers.range;
         if (range) {

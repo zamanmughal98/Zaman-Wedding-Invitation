@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { prepareDocument } from '../src/document.js';
 import { wedding } from '../config/wedding.js';
+import { bundleClient, bundledDocument } from './bundle-client.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const destination = path.join(root, 'dist');
@@ -53,16 +54,17 @@ const existing = await lstat(destination).catch((error) => {
 if (existing?.isSymbolicLink()) throw new Error('dist/ must not be a symbolic link.');
 await rm(destination, { recursive: true, force: true });
 await mkdir(destination, { recursive: true });
-for (const entry of ['style.css', 'script.js', 'src', 'config', 'styles', 'assets', 'data'])
+for (const entry of ['assets', 'data'])
   await cp(path.join(root, entry), path.join(destination, entry), {
     recursive: true,
     filter: (file) => !file.endsWith('.md'),
   });
+const { entries } = await bundleClient(destination);
 await writeFile(
   path.join(destination, 'index.html'),
-  prepareDocument(await readFile(path.join(root, 'index.html'), 'utf8'), {
+  bundledDocument(prepareDocument(await readFile(path.join(root, 'index.html'), 'utf8'), {
     siteUrl: process.env.SITE_URL || wedding.site.url,
-  }),
+  }), entries),
 );
 await writeFile(path.join(destination, '.nojekyll'), '');
 console.log('Built the personalised wedding invitation in dist/.');

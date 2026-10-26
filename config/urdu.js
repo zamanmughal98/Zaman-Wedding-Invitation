@@ -25,6 +25,12 @@ export const urdu = {
   'Pause opening film': 'شادی کی ویڈیو روکیں',
   'Opening film playing. You can skip to the invitation at any time.':
     'ویڈیو چل رہی ہے۔ آپ جب چاہیں دعوت نامہ دیکھ سکتے ہیں۔',
+  'The film is loading. You can skip to the invitation at any time.':
+    'ویڈیو لوڈ ہو رہی ہے۔ آپ چاہیں تو انتظار کیے بغیر دعوت نامہ دیکھ سکتے ہیں۔',
+  'The film is buffering. You can skip to the invitation at any time.':
+    'ویڈیو کچھ دیر میں دوبارہ چلنے لگے گی۔ آپ چاہیں تو ابھی دعوت نامہ دیکھ سکتے ہیں۔',
+  'The film could not play. Select Play film to try again, or skip to the invitation.':
+    'ویڈیو نہیں چل سکی۔ دوبارہ کوشش کے لیے ویڈیو چلائیں یا دعوت نامہ دیکھیں۔',
   'Film paused.': 'ویڈیو روک دی گئی ہے۔',
   'Film paused. Select Play film to continue.':
     'ویڈیو روک دی گئی ہے۔ دوبارہ دیکھنے کے لیے ویڈیو چلائیں۔',
@@ -224,6 +230,15 @@ export const urdu = {
   'Approved wedding wishes': 'اہلِ خانہ سے منظور شدہ پیغامات',
   'Shared after family approval': 'اہلِ خانہ کی منظوری کے بعد شائع ہوتے ہیں',
   'Refresh wishes': 'پیغامات دوبارہ دیکھیں',
+  'Loading wishes…': 'پیغامات کھولے جا رہے ہیں۔۔۔',
+  'The guestbook is taking longer to connect. You can keep writing your wish.':
+    'پیغامات کھلنے میں کچھ وقت لگ رہا ہے۔ آپ تب تک اپنی دعا لکھ سکتے ہیں۔',
+  'Connecting to send your wish…': 'آپ کا پیغام بھیجنے کے لیے رابطہ کیا جا رہا ہے۔۔۔',
+  'Your wish could not be sent. Please try again. Your wish is still in the form.':
+    'آپ کا پیغام نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔ آپ کا لکھا ہوا پیغام فارم میں محفوظ ہے۔',
+  'See more wishes': 'مزید پیغامات دیکھیں',
+  'Some features could not load. Please try again.': 'کچھ حصے نہیں کھل سکے۔ دوبارہ کوشش کریں۔',
+  'Try again': 'دوبارہ کوشش کریں',
   'Send for approval': 'منظوری کے لیے بھیجیں',
   'Your name and wish are saved with Google and shared here only after the family approves them.':
     'آپ کا نام اور پیغام گوگل پر محفوظ ہوں گے اور اہلِ خانہ کی منظوری کے بعد ہی یہاں دکھائے جائیں گے۔',

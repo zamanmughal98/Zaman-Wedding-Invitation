@@ -177,7 +177,9 @@ export function createGuestLocalizer(root, { language = 'en', extra = {} } = {})
   visit(root);
   return {
     setLanguage(value) {
-      language = languageFrom(value);
+      const next = languageFrom(value);
+      if (next === language) return;
+      language = next;
       root
         .querySelectorAll('input,textarea,select')
         .forEach((field) => field.setCustomValidity?.(''));

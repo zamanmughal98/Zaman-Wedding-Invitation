@@ -29,8 +29,8 @@ function wishSourceVersion_(message, language, model) {
     .join('');
 }
 
-function wishTranslationSheet_(create, language) {
-  var book = SpreadsheetApp.openById(settings_().sheetId);
+function wishTranslationSheet_(create, language, book) {
+  book = book || SpreadsheetApp.openById(settings_().sheetId);
   var name = language === 'en' ? 'WishTranslationsEnglish' : 'WishTranslations';
   var expectedHeaders = WISH_TRANSLATION_HEADERS_.slice();
   if (language === 'en') expectedHeaders[3] = 'English (JSON text)';
@@ -48,12 +48,13 @@ function wishTranslationSheet_(create, language) {
   return sheet;
 }
 
-function wishTranslations_(language) {
+function wishTranslations_(language, book) {
   var result = {};
-  var sheet = wishTranslationSheet_(false, language);
-  if (!sheet || sheet.getLastRow() < 2) return result;
+  var sheet = wishTranslationSheet_(false, language, book);
+  var lastRow = sheet ? sheet.getLastRow() : 0;
+  if (lastRow < 2) return result;
   sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, 5)
+    .getRange(2, 1, lastRow - 1, 5)
     .getValues()
     .forEach(function (row, index) {
       try {

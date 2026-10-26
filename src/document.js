@@ -17,6 +17,11 @@ export function prepareDocument(template, { siteUrl = wedding.site.url } = {}) {
   };
   return template
     .replace('<!-- invitation -->', renderInvitation(wedding))
+    .replace(/<link\b[^>]*\bdata-envelope-preload\b[^>]*>/i, () => {
+      const sources = (wedding.envelope.imageSources || [])
+        .map(({ src, width }) => `${assetUrl(src)} ${width}w`).join(', ');
+      return `<link rel="preload" href="${e(assetUrl(wedding.envelope.image))}" as="image" fetchpriority="high"${sources ? ` imagesrcset="${e(sources)}" imagesizes="${e(wedding.envelope.imageSizes)}"` : ''} />`;
+    })
     .replace(/<link\b[^>]*\brel=["']icon["'][^>]*>/i, () => `<link rel="icon" href="${e(logo)}" />`)
     .replace(/<title>.*?<\/title>/, `<title>${e(wedding.site.title)}</title>`)
     .replace(/<meta\b[^>]*>/gi, (tag) => {

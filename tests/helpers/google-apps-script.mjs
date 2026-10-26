@@ -10,6 +10,10 @@ const translations = await readFile(
   new URL('../../backend/google-wishes/Translations.gs', import.meta.url),
   'utf8',
 );
+const reactions = await readFile(
+  new URL('../../backend/google-wishes/Reactions.gs', import.meta.url),
+  'utf8',
+);
 
 /** Local stand-ins only: these never access Google or send email. */
 export function googleBackend({
@@ -169,6 +173,7 @@ export function googleBackend({
   });
   vm.runInContext(source, context, { filename: 'Code.gs' });
   vm.runInContext(translations, context, { filename: 'Translations.gs' });
+  vm.runInContext(reactions, context, { filename: 'Reactions.gs' });
   if (initialize) {
     context.setup_();
     properties.set('MODERATOR_KEY', key);
