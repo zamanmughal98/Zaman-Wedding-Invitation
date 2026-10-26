@@ -42,7 +42,7 @@ The section registry is in src/render.js and imports each named implementation d
 
 The retired attendance and story sections have been removed. Every remaining section can be hidden or reordered through configuration; navigation includes enabled sections only. The gallery has an empty state when no photographs are configured.
 
-Guests can choose English or اردو on the envelope and in the header; `?lang=ur` opens Urdu directly. The browser remembers their choice. Approved wishes have independent Original / English / اردو controls, and editing the original invalidates its saved translations. See the [language and deployment guide](docs/urdu-setup.md).
+Guests can choose English or اردو on the envelope and in the header; `?lang=ur` opens Urdu directly. The browser remembers their choice. Approved wishes always start on Original / اصل, including after page reloads or interface-language changes. Their independent English / اردو controls show translations on request, and editing the original invalidates its saved translations. See the [language and deployment guide](docs/urdu-setup.md).
 
 ## Content and media
 

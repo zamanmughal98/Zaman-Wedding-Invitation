@@ -901,8 +901,9 @@
         }
         if (!entry.id) return article;
         const pageLanguage = PAGE.language === 'ur' ? 'ur' : 'en';
-        const versions = entry.sourceVersions;
-        let selected = wishChoices.get(entry.id) || pageLanguage;
+        const versions = entry.sourceVersions || {};
+        // A new page always starts with the author's original, in either interface language.
+        let selected = wishChoices.get(entry.id) || 'original';
         const translations = { ...entry.translations };
         const pending = new Map();
         article.dataset.wishId = entry.id;
