@@ -1,0 +1,4 @@
+/* Production entry: esbuild flattens imports and rewrites ornament URLs. */
+@import url('../style.css');
+@import url('./stationery.css');
+@import url('./language.css');

@@ -18,15 +18,21 @@ export function initScratch(w) {
     previous;
   function draw() {
     if (revealed) return;
+    const width = card.clientWidth,
+      height = card.clientHeight;
+    // Hidden sections can report zero size during font loading or layout changes.
+    // Keep the existing bitmap so scratched progress survives until it is visible.
+    if (width <= 0 || height <= 0) {
+      drawing = false;
+      return;
+    }
     let mask;
-    if (painted) {
+    if (painted && canvas.width > 0 && canvas.height > 0) {
       mask = document.createElement('canvas');
       mask.width = canvas.width;
       mask.height = canvas.height;
       mask.getContext('2d').drawImage(canvas, 0, 0);
     }
-    const width = card.clientWidth,
-      height = card.clientHeight;
     canvas.width = width * 2;
     canvas.height = height * 2;
     context.setTransform(2, 0, 0, 2, 0, 0);
@@ -94,7 +100,7 @@ export function initScratch(w) {
     previous = next;
   }
   canvas.addEventListener('pointerdown', (event) => {
-    if (revealed) return;
+    if (revealed || !painted || canvas.width <= 0 || canvas.height <= 0) return;
     drawing = true;
     previous = point(event);
     canvas.setPointerCapture(event.pointerId);
@@ -106,6 +112,7 @@ export function initScratch(w) {
   function finish() {
     if (!drawing) return;
     drawing = false;
+    if (canvas.width <= 0 || canvas.height <= 0) return;
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
     let clear = 0,
       total = 0;
@@ -121,5 +128,6 @@ export function initScratch(w) {
   new ResizeObserver(draw).observe(card);
   document.addEventListener('wedding:language', draw);
   document.fonts?.ready.then(draw);
+  document.fonts?.addEventListener('loadingdone', draw);
   draw();
 }

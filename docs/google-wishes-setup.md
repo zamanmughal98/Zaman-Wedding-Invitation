@@ -128,6 +128,27 @@ For the existing wishes installation:
 
 Guests can choose **Like, Love, Care, Haha, Wow, Sad or Angry** on any approved wish. Each browser has one changeable or removable reaction per wish, without signing in. The private **WishReactions** Sheet tab is created automatically on the first reaction. Counts are shared; browser tokens and other visitors' individual choices are not exposed. Clearing browser storage or using another browser creates a separate identity. If storage is blocked, the browser identity lasts only until that page reloads.
 
-In **Index.html**, `PINNED_WISH_NAME = 'Nimra Shafiq'` pins one matching approved wish at the top. The check trims surrounding spaces and requires that exact spelling and capitalization. If several match, only the newest matching wish among the latest 200 approved wishes is pinned. Change this constant to choose another name; there are no pin controls in the moderation panel. Pinning takes effect after publishing the updated Apps Script deployment.
+In **Code.gs**, `config.pinnedWishName = 'Nimra Shafiq'` pins one matching approved wish at the top. The check trims surrounding spaces and requires that exact spelling and capitalization. If several match, only the newest matching approved wish is pinned. The first batch includes it even if it is older than the other wishes. The public JavaScript uses the same value, with the earlier name as a compatibility fallback. There are no pin controls in the moderation panel.
+
+## Load six wishes at a time with one website scroll
+
+The public wall starts with six wishes, including the pinned wish. They arrive with the Google document, together with available saved translations and shared reaction counts, so readable cards do not wait for another Apps Script call after the iframe starts. This browser's selected reactions refresh in the background. The reader opens the spreadsheet once per public request and shares that handle across the wishes, saved translations and reactions. It does not keep an approval cache: new documents and refreshes read current Sheet contents.
+
+**See more wishes** fetches and appends the next six when clicked. Refresh updates the range already opened and reuses unchanged cards. Translation requests are limited to wishes entering the visible part of the page. Google still needs time to start its web app and read Sheets; moving the website from a local server to GitHub Pages does not remove that separate service delay.
+
+This update needs both the Google guestbook and the website:
+
+1. In the existing **Wedding Wishes** Apps Script project, replace **Code.gs**, **Index.html**, **Translations.gs**, **Reactions.gs** and **GuestLocale.html** with their matching current versions in `backend/google-wishes/`. Add a missing Script or HTML file under its matching name. Keep Script Properties and the existing Sheet.
+2. Save and choose **Deploy > Manage deployments > Edit > New version > Deploy**, keeping the same public URL.
+3. Push the website changes through the normal GitHub Pages process. Its new resize listener allows the iframe to grow and shrink with wishes, translations and reaction pickers. Publishing only the Apps Script files cannot update that listener in the main website.
+4. Refresh the invitation. Confirm six wishes appear initially, **See more wishes** adds six, and scrolling continues through the whole website without an inner wishes scrollbar. Check English and Urdu, then change a reaction and refresh the wishes.
+
+No setup function or new Script Property is required. The standalone guestbook also uses its normal page scroll. The manual JSON fallback renders six wishes at a time, although its static JSON file is downloaded together.
+
+## If wishes fail after an update
+
+An Apps Script error such as **`wishSourceVersion_ is not defined`** means **Translations.gs** is missing or does not match the deployed Code.gs. Replace it with the current file, then publish a **New version** of the existing deployment. Saving editor files alone does not publish them. Use the matching five-file set above when updating the complete guestbook; initialization is unnecessary.
+
+The current reader also supports plain-text edits to name/message cells and normalizes Google Sheet Date cells for pagination. Optional translation or reaction helper failures leave approved wishes readable in their original form. Reaction storage validation still protects writes; check the private Apps Script execution logs if reaction controls are unavailable.
 
 Technical references: [scripts attached to Sheets](https://developers.google.com/apps-script/guides/bound), [Apps Script web apps](https://developers.google.com/apps-script/guides/web), [client/server calls](https://developers.google.com/apps-script/guides/html/communication), and [URL fragments](https://developers.google.com/apps-script/guides/html/reference/url).

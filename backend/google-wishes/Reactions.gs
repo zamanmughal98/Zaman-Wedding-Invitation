@@ -44,7 +44,7 @@ function setPublicWishReaction(wishId, browserToken, reaction) {
 }
 
 /** Called once by the approved public wall read; omitting a token gives counts only. */
-function getPublicReactionState_(approvedIds, browserToken) {
+function getPublicReactionState_(approvedIds, browserToken, book) {
   var visitor = wishReactionVisitor_(browserToken, false);
   var result = {};
   approvedIds.forEach(function (id) {
@@ -55,7 +55,7 @@ function getPublicReactionState_(approvedIds, browserToken) {
     result[id] = { counts: counts, selected: '' };
   });
   var effective = {};
-  wishReactionRows_(wishReactionSheet_(false)).forEach(function (entry) {
+  wishReactionRows_(wishReactionSheet_(false, book)).forEach(function (entry) {
     if (Object.prototype.hasOwnProperty.call(result, entry.id))
       effective[entry.id + ':' + entry.visitor] = entry;
   });
@@ -83,8 +83,8 @@ function wishReactionVisitor_(token, required) {
     .join('');
 }
 
-function wishReactionSheet_(create) {
-  var spreadsheet = SpreadsheetApp.openById(settings_().sheetId);
+function wishReactionSheet_(create, spreadsheet) {
+  spreadsheet = spreadsheet || SpreadsheetApp.openById(settings_().sheetId);
   var sheet = spreadsheet.getSheetByName('WishReactions');
   if (!sheet && !create) return null;
   if (!sheet) sheet = spreadsheet.insertSheet('WishReactions');
@@ -105,9 +105,10 @@ function wishReactionSheet_(create) {
 }
 
 function wishReactionRows_(sheet) {
-  if (!sheet || sheet.getLastRow() < 2) return [];
+  var lastRow = sheet ? sheet.getLastRow() : 0;
+  if (lastRow < 2) return [];
   return sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, WISH_REACTION_HEADERS_.length)
+    .getRange(2, 1, lastRow - 1, WISH_REACTION_HEADERS_.length)
     .getValues()
     .map(function (row, index) {
       return {

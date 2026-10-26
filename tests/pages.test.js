@@ -62,6 +62,7 @@ for (const prefix of ['/', '/Zaman-Wedding-Invitation/']) {
         assert.match(response.headers.get('content-type'), /javascript/);
         const imports = [
           ...source.matchAll(/\b(?:import|export)\s+(?:[^'";]*?\s+from\s+)?['"]([^'"]+)['"]/g),
+          ...source.matchAll(/\bimport\(\s*['"]([^'"]+)['"]\s*\)/g),
         ];
         for (const [, dependency] of imports)
           if (dependency.startsWith('.') || dependency.startsWith('/'))
@@ -86,7 +87,7 @@ for (const prefix of ['/', '/Zaman-Wedding-Invitation/']) {
       assert.ok([...seen].some((url) => url.endsWith('/styles/theme.css')));
       assert.ok([...seen].some((url) => url.endsWith('/config/wedding.js')));
       assert.ok([...seen].some((url) => url.endsWith('/src/features/music.js')));
-      assert.ok([...seen].some((url) => url.endsWith('/assets/images/ivory-envelope.png')));
+      assert.ok([...seen].some((url) => url.endsWith('/assets/images/ivory-envelope.webp')));
     } finally {
       await new Promise((resolve) => server.close(resolve));
     }

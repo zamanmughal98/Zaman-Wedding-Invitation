@@ -182,19 +182,6 @@
   .envelope-prompt {
     font-size: 10px;
   }
-  .envelope-letter {
-    padding: 24px 12px 20px;
-  }
-  .envelope-letter .arabic {
-    font-size: 23px;
-    margin-bottom: 11px;
-  }
-  .letter-date {
-    font-size: 14px;
-  }
-  .letter-verse {
-    font-size: 13px;
-  }
 }
 @media (max-width: 370px) {
   .site-header {
@@ -249,35 +236,6 @@
   }
   .envelope-caption .eyebrow {
     display: none;
-  }
-  .envelope-letter {
-    padding: 15px 10px;
-  }
-  .envelope-letter .arabic {
-    font-size: 20px;
-    margin-bottom: 7px;
-  }
-  .envelope-letter .eyebrow {
-    font-size: 5px;
-  }
-  .envelope-letter .flourish {
-    margin: 10px auto;
-  }
-  .letter-names {
-    font-size: 30px;
-    margin-top: 4px;
-  }
-  .letter-date {
-    font-size: 12px;
-  }
-  .letter-verse {
-    font-size: 12px;
-    margin: 7px 0 10px;
-  }
-  .envelope-letter .button {
-    font-size: 7px;
-    min-height: 36px;
-    padding-inline: 8px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

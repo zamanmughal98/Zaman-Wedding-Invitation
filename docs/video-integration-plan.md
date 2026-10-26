@@ -1,8 +1,8 @@
-# Wedding film integration plan
+# Wedding film integration
 
 Recommendation: use the film once as a short opening sequence, immediately after the guest taps the envelope's wax seal and before the main invitation appears.
 
-Implemented as a local trial on 23 October 2026. The film, skip/pause controls, shared music control and footer replay are now part of the source. This trial has not been deployed.
+The film, skip/pause controls, shared music control and footer replay are part of the source. See [the performance guide](performance.md#opening-film) for the current loading behavior and [the video notes](../assets/video/README.md) for the deployed asset formats.
 
 ## What happens in the video
 
@@ -48,11 +48,11 @@ Every seal tap can play the film again. Refreshing in the same tab, including wh
 
 ## Loading and accessibility
 
-Prepare the small film in the background after the priority envelope image has loaded. Guests should still be able to open the invitation immediately. For data-saving connections, defer the film request until the seal tap.
+Prepare the film in the background only on a reported fast connection after the priority envelope image has loaded. On other connections, defer the request until the seal tap. Phones and slower connections select the smaller MP4.
 
-If the film cannot start within 1.5 seconds, proceed to the invitation. A stalled or failed film must also leave the skip control working. Playback rejection is handled explicitly. Use inline playback on phones.
+Loading and buffering show a status message while keeping the film open. Failed playback offers retry. Skip stays usable throughout, and completing the film opens the invitation. Use inline playback on phones.
 
-For reduced-motion preferences, bypass the automatic opening film and reveal the invitation after the seal tap. Leave the replay link available for deliberate playback. Pause playback when the page is hidden.
+For reduced-motion preferences, remove the transition and zoom while allowing the seal tap to play the film. Pause playback when the page is hidden. Refresh and footer replay both allow another viewing.
 
 Browser behaviour references: [MDN video element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video) and [MDN autoplay guide](https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay).
 
@@ -62,7 +62,7 @@ The existing `invitation.heroVideo` setting is empty. Its renderer in `src/compo
 
 The film is implemented within the envelope flow in `src/components/envelope.js` and `src/features/invitation.js`, with its layout in `styles/opening-film.css`. Both music controls share playback state through `src/features/music.js`. Its source and poster are configured under `envelope.film`; the optional `heroVideo` remains separate. The main invitation and section order remain as configured.
 
-Local Chrome verification covers the seal-to-film transition, skip, pause, completion, repeat playback after refresh from another section, keyboard focus, direct section links, reduced motion, slow or failed loading, visibility handling, shared sound controls, denied storage and five viewport sizes. The 42 project tests also pass. Physical iPhone/Safari playback has not been checked.
+Local Chrome verification covers the seal-to-film transition, skip, pause, completion, repeat playback after refresh from another section, keyboard focus, direct section links, reduced motion, slow or failed loading, visibility handling, shared sound controls, denied storage and five viewport sizes. Project tests cover the same state transitions with controlled media events and time. Physical iPhone/Safari playback has not been checked.
 
 ## Prepared local review assets
 

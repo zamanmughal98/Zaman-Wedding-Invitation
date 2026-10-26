@@ -74,7 +74,7 @@ function fixture(t, { startOnOpen = true, webAudio = true, play } = {}) {
   }
   initMusic({
     music: {
-      src: '/assets/music/samjhawan-unplugged.mp3',
+      src: '/assets/music/samjhawan-unplugged-light.m4a',
       volume: 0.12,
       startOnOpen,
     },
@@ -93,7 +93,7 @@ test('music waits for the invitation tap, starts softly once, and respects a lat
   await flush();
   assert.equal(f.players.length, 1);
   const player = f.players[0];
-  assert.equal(player.src, './assets/music/samjhawan-unplugged.mp3');
+  assert.equal(player.src, './assets/music/samjhawan-unplugged-light.m4a');
   assert.equal(player.loop, true);
   assert.equal(f.contexts[0].master.gain.value, 0.12);
   assert.equal(f.button.attributes.get('aria-pressed'), 'true');

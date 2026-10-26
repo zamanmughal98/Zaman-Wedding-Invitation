@@ -30,9 +30,11 @@ Without an API key/model, both interfaces work and wishes remain readable in the
 
 ## Update an existing English/Urdu wishes installation
 
-The universal message controls affect only the public wishes module. Replace **Code.gs**, **Index.html** and **Translations.gs** in the existing **wishes** Apps Script project with their current versions in `backend/google-wishes/`. Add a Script file named **Reactions** containing `Reactions.gs`, or replace it if already present. Save, then update the **existing deployment** using **Deploy → Manage deployments → Edit → New version → Deploy**. Keep your current key, model, manifest, GuestLocale file and other Script Properties. No initialization, new API key, photo-uploader update or website-code deployment is required for this addition.
+The universal message controls affect only the public wishes module. Replace **Code.gs**, **Index.html**, **Translations.gs**, **Reactions.gs** and **GuestLocale.html** in the existing **wishes** Apps Script project with their matching current versions in `backend/google-wishes/`. Add any missing file with its matching Script or HTML type. Save, then update the **existing deployment** using **Deploy → Manage deployments → Edit → New version → Deploy**. Keep your current key, model, manifest and other Script Properties. No initialization or new API key is required.
 
 The public wall also supports shared reactions and one wish pinned by its exact author name. See [the reactions and pinning update steps](google-wishes-setup.md#add-shared-reactions-and-one-pinned-wish) for deployment and verification. These controls work in both interface languages.
+
+The current wall loads six wishes at a time and expands into the website's main scroll. Apply [the batch-loading update](google-wishes-setup.md#load-six-wishes-at-a-time-with-one-website-scroll), including the GitHub Pages website deployment, to activate the automatic iframe height in both languages.
 
 Test the public URL with `?view=wall&lang=en`. Check an English original: it should have all three controls and translate into Urdu when Urdu is chosen. Check Urdu and Roman Urdu originals in both languages. Then use `?view=wall&lang=ur` and verify an Urdu original can be viewed in English too. Choose Original while a translation loads, and confirm the late result does not replace that choice. Refresh wishes and confirm the selected message language stays selected. Translations are generated on demand and reused across visitors; originals stay available if the API cannot finish.
 

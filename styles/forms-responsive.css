@@ -191,3 +191,13 @@
 .field small {
   font: inherit;
 }
+/* Recovery stays readable when an intermittent connection interrupts page features. */
+.connection-retry {
+  padding: 20px;
+  text-align: center;
+  border-block: 1px solid var(--line);
+  background: var(--cream);
+}
+.connection-retry p {
+  margin-bottom: 12px;
+}

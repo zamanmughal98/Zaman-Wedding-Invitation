@@ -30,7 +30,7 @@ export function wishes(w) {
             <iframe
               class="wishes-widget"
               data-guest-service
-              src="${e(widget)}"
+              data-src="${e(widget)}"
               title="Approved wedding wishes and a form to leave a wish"
               loading="lazy"
               referrerpolicy="no-referrer"
@@ -50,6 +50,7 @@ export function wishes(w) {
       ${heading('Little notes. A lot of love.', 'A wall of warm wishes', w.wishes.message)}
       <div class="wishes-list" data-wishes-list></div>
       <p class="wishes-empty" data-wishes-empty>Your duas and warm wishes mean so much to us.</p>
+      <button class="button button-outline" type="button" data-more-wishes hidden>See more wishes</button>
       <button class="button button-outline" type="button" data-open-wish>
         ${icon('heart')}Leave a wish
       </button>

@@ -136,3 +136,18 @@ test('local video supports seeking, suffix requests and range errors', async () 
     await new Promise((resolve) => server.close(resolve));
   }
 });
+
+test('the lighter music streams with AAC MIME and byte-range support', async () => {
+  const server = createPreviewServer();
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const url = `http://127.0.0.1:${server.address().port}/assets/music/samjhawan-unplugged-light.m4a`;
+    const response = await fetch(url, { headers: { Range: 'bytes=0-31' } });
+    assert.equal(response.status, 206);
+    assert.equal(response.headers.get('content-type'), 'audio/mp4');
+    assert.equal(response.headers.get('accept-ranges'), 'bytes');
+    assert.equal((await response.arrayBuffer()).byteLength, 32);
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});

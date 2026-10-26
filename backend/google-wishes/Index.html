@@ -7,6 +7,8 @@
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&amp;family=Great+Vibes&amp;family=Jost:wght@400;500&amp;display=swap"
+      media="print"
+      onload="this.media='all'"
     />
     <style>
       :root {
@@ -136,11 +138,16 @@
         margin: 18px 0 0;
       }
       .public-list {
-        max-height: 265px;
-        overflow-y: auto;
-        overscroll-behavior: contain;
         padding: 2px;
         margin-bottom: 22px;
+      }
+      html.embedded-guestbook,
+      html.embedded-guestbook body {
+        overflow: hidden;
+      }
+      .public-more {
+        display: block;
+        margin: 0 auto 24px;
       }
       .public-list:empty {
         display: none;
@@ -222,7 +229,7 @@
       }
       /* Public guestbook only. Moderation layout and all service behaviour are preserved. */
       body.guestbook {
-        min-height: 100vh;
+        min-height: 0;
         font-family: 'Cormorant Garamond', Georgia, serif;
         --paper: #e9dcc7;
         --card: #e3ceb0;
@@ -237,27 +244,18 @@
       .guestbook main {
         padding: 18px 12px 24px;
       }
-      .guestbook .public-list {
-        padding: 3px;
-        scrollbar-color: #a48768 var(--paper);
-        scrollbar-width: thin;
-      }
-      .guestbook .public-list:focus-visible {
-        outline: 2px solid var(--soft);
-        outline-offset: 2px;
-      }
       .guestbook .wish {
         position: relative;
-        padding: 30px 23px 22px;
-        border-left: 3px solid #987555;
-        background: linear-gradient(145deg, var(--wash), var(--card));
-        box-shadow: 0 8px 18px -18px #4c3228;
+        padding: 26px 22px 12px;
+        border: 1px solid var(--line);
+        background: rgb(255 253 248 / 24%);
+        box-shadow: none;
       }
       .guestbook .wish::before {
         content: '“';
         position: absolute;
-        top: 0;
-        right: 16px;
+        top: 5px;
+        inset-inline-end: 16px;
         color: #ad8a64;
         font:
           52px/1 Georgia,
@@ -271,17 +269,26 @@
         margin-bottom: 18px;
       }
       .guestbook .wish .byline {
-        border-top: 1px solid var(--line);
-        padding-top: 12px;
+        padding-top: 0;
         font-size: 11px;
         letter-spacing: 0.04em;
         color: var(--soft);
       }
+      .guestbook .wish-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0 16px;
+        margin-top: 16px;
+        padding-top: 3px;
+        border-top: 1px solid var(--line);
+      }
       .guestbook .wish-language-controls {
         display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-        margin-top: 10px;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
       }
       .guestbook .pinned-wish {
         margin-bottom: 14px;
@@ -292,30 +299,45 @@
         border-color: #987555;
       }
       .guestbook .wish-reactions {
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid var(--line);
+        margin-inline-start: auto;
+        min-width: 0;
+      }
+      .guestbook .wish-reactions.is-open,
+      .guestbook .wish-reactions.has-status {
+        flex-basis: 100%;
       }
       .guestbook .reaction-summary {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 8px;
+        justify-content: flex-end;
+        gap: 12px;
       }
       .guestbook .reaction-total {
         margin: 0;
-        font: 12px/1.6 'Jost', Arial, sans-serif;
+        font: 11px/1.6 'Jost', Arial, sans-serif;
         color: var(--soft);
+      }
+      .guestbook .reaction-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 44px;
+        padding: 6px 0;
+      }
+      .guestbook .reaction-icon {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
       }
       .guestbook .reaction-picker {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
-        margin-top: 10px;
-        padding: 8px;
-        border: 1px solid var(--line);
-        background: var(--wash);
+        gap: 4px;
+        margin-top: 4px;
+        padding: 10px 0 2px;
+        border-top: 1px solid var(--line);
       }
       .guestbook .reaction-picker [data-reaction] {
         min-width: 0;
@@ -323,21 +345,37 @@
         padding: 6px;
         font-size: 23px;
         line-height: 1.2;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: transparent;
       }
       .guestbook .reaction-picker .reaction-remove {
         grid-column: 1 / -1;
       }
       .guestbook .wish-reactions button[aria-pressed='true'],
       .guestbook .reaction-toggle.has-reaction {
-        border-color: var(--ink);
-        background: #dbc09b;
+        background: transparent;
         color: var(--ink);
+      }
+      .guestbook .wish-reactions .reaction-picker button[aria-pressed='true'] {
+        border-color: #987555;
+        background: rgb(255 253 248 / 35%);
       }
       .guestbook .reaction-status {
         margin: 8px 0 0;
       }
       .guestbook .translation-note {
-        margin: 12px 0 0;
+        margin: 10px 0 0;
+      }
+      .guestbook .translation-note.is-subtle {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
       }
       .guestbook .wish blockquote[lang='ur'] {
         font-family: 'Noto Naskh Arabic', serif;
@@ -350,16 +388,29 @@
       }
       .guestbook .wish-language-controls button {
         min-height: 44px;
-        padding: 8px 14px;
+        min-width: 44px;
+        padding: 8px 0;
+        font-size: 11px;
+        line-height: 1.5;
+        border: 0;
+        border-radius: 0;
+        color: var(--soft);
+        background: transparent;
+        text-underline-offset: 5px;
       }
       .guestbook .wish-language-controls button[aria-pressed='true'] {
-        color: var(--paper);
-        background: var(--ink);
-        border-color: var(--ink);
+        color: var(--ink);
+        background: transparent;
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
       }
       .guestbook .wish-language-controls button[lang='ur'] {
         font-family: 'Noto Naskh Arabic', serif;
         font-size: 17px;
+      }
+      .guestbook .wish-actions .wish-language-controls button[lang='en'] {
+        font-family: 'Jost', Arial, sans-serif !important;
+        font-size: 11px;
       }
       .guestbook .toolbar {
         gap: 12px;
@@ -371,6 +422,36 @@
         background: var(--wash);
         border-color: #ab8d6e;
         font-size: 11px;
+      }
+      .guestbook .wish-actions button.secondary,
+      .guestbook .toolbar button.secondary {
+        background: transparent;
+        color: var(--soft);
+      }
+      .guestbook .wish-actions .reaction-toggle,
+      .guestbook .wish-actions .reaction-remove,
+      .guestbook .toolbar button.secondary {
+        border: 0;
+      }
+      .guestbook .wish-actions .reaction-remove {
+        padding: 6px;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .guestbook .wish-actions button:hover,
+      .guestbook .toolbar button.secondary:hover {
+        color: var(--ink);
+      }
+      .guestbook .wish-actions .wish-language-controls button[aria-pressed='true'] {
+        color: var(--ink);
+      }
+      .guestbook .reaction-picker [data-reaction]:hover {
+        background: rgb(255 253 248 / 35%);
+      }
+      .guestbook .public-more {
+        min-width: 190px;
+        padding: 12px 20px;
+        background: transparent;
       }
       .guestbook .form-panel {
         position: relative;
@@ -427,6 +508,20 @@
         .guestbook .form-panel {
           padding: 28px;
         }
+        .guestbook .reaction-picker {
+          grid-template-columns: repeat(7, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 360px) {
+        .guestbook .wish {
+          padding-inline: 16px;
+        }
+        .guestbook .wish-actions {
+          column-gap: 8px;
+        }
+        .guestbook .wish-language-controls {
+          gap: 8px;
+        }
       }
     </style>
   </head>
@@ -436,10 +531,12 @@
         class="public-list"
         id="public-list"
         role="region"
-        tabindex="0"
         aria-label="Approved wedding wishes"
       ></div>
       <p class="note" id="public-empty">Your duas and warm wishes mean so much to us.</p>
+      <button type="button" class="secondary public-more" id="more-public" data-no-translate hidden>
+        See more wishes
+      </button>
       <div class="toolbar">
         <span class="note">Shared after family approval</span>
         <button type="button" class="secondary" id="refresh-public">Refresh wishes</button>
@@ -564,8 +661,13 @@
         return article;
       }
       const wishChoices = new Map();
+      const WISH_BATCH_SIZE = 6;
+      let publicItems = [];
+      let publicCursor = null;
+      let publicHasMore = false;
+      let publicLoading = false;
       // Only one approved wish with this full author name is pinned.
-      const PINNED_WISH_NAME = 'Nimra Shafiq';
+      const PINNED_WISH_NAME = PAGE.pinnedWishName || 'Nimra Shafiq';
       const REACTIONS = [
         ['like', '👍', 'Like', 'پسند'],
         ['love', '❤️', 'Love', 'محبت'],
@@ -599,6 +701,17 @@
       function publicWishElement(id) {
         return [...byId('public-list').children].find((article) => article.dataset.wishId === id);
       }
+      function removePublicWish(id) {
+        publicItems = publicItems.filter((entry) => entry.id !== id);
+        wishChoices.delete(id);
+        reactionStates.delete(id);
+        const article = publicWishElement(id);
+        if (article) {
+          wishObserver?.unobserve(article);
+          article.remove();
+        }
+        byId('public-empty').hidden = publicItems.length > 0;
+      }
       function updateReactionView(id) {
         publicWishElement(id)?.updateReaction?.();
       }
@@ -626,8 +739,7 @@
         try {
           const result = await rpc('setPublicWishReaction', id, browserReactionToken(), selected);
           if (result.status === 'unavailable') {
-            reactionStates.delete(id);
-            publicWishElement(id)?.remove();
+            removePublicWish(id);
             void loadPublic();
             return;
           }
@@ -641,11 +753,15 @@
           state.busy = false;
           state.version = ++reactionSerial;
           updateReactionView(id);
-          if (returnFocus && document.activeElement === document.body)
+          const focused = document.activeElement;
+          if (returnFocus && (
+            focused === document.body ||
+            focused.closest?.('.wish-reactions')?.closest('[data-wish-id]')?.dataset.wishId === id
+          ))
             focusReactionControl(id, state.open ? selected || 'remove' : 'toggle');
         }
       }
-      function addPublicReactions(article, entry) {
+      function addPublicReactions(article, entry, actions) {
         const state = reactionStates.get(entry.id);
         if (!state) return;
         const section = document.createElement('div');
@@ -690,16 +806,31 @@
         note.className = 'note reaction-status';
         note.setAttribute('role', 'status');
         section.append(summary, picker, note);
-        article.append(section);
+        actions.append(section);
         function render() {
           const choice = REACTIONS.find(([value]) => value === state.selected);
-          toggle.textContent = choice
-            ? choice[1] + ' ' + guestText(choice[2], choice[3])
-            : guestText('React', 'اپنا تاثر دیں');
+          toggle.replaceChildren();
+          if (choice) toggle.append(document.createTextNode(choice[1]));
+          else {
+            const heart = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            heart.setAttribute('class', 'reaction-icon');
+            heart.setAttribute('viewBox', '0 0 24 24');
+            heart.setAttribute('fill', 'none');
+            heart.setAttribute('stroke', 'currentColor');
+            heart.setAttribute('stroke-width', '1.5');
+            heart.setAttribute('aria-hidden', 'true');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z');
+            heart.append(path);
+            toggle.append(heart);
+          }
+          toggle.append(document.createTextNode(guestText(choice?.[2] || 'React', choice?.[3] || 'اپنا تاثر دیں')));
           toggle.classList.toggle('has-reaction', Boolean(choice));
           toggle.setAttribute('aria-expanded', String(Boolean(state.open)));
           toggle.disabled = state.busy;
           section.setAttribute('aria-busy', String(state.busy));
+          section.classList.toggle('is-open', Boolean(state.open));
+          section.classList.toggle('has-status', Boolean(state.busy || state.error));
           picker.hidden = !state.open;
           const active = REACTIONS.filter(([value]) => state.counts[value] > 0);
           const count = active.reduce((sum, [value]) => sum + state.counts[value], 0);
@@ -707,6 +838,7 @@
           total.textContent = count
             ? emojis + ' · ' + count
             : guestText('Be the first to react', 'پہلا تاثر دیں');
+          total.hidden = !count;
           const breakdown = active
             .map(([value, , en, ur]) => guestText(en, ur) + ': ' + state.counts[value])
             .join(', ');
@@ -776,7 +908,7 @@
         article.dataset.wishId = entry.id;
         const quote = article.querySelector('blockquote');
         const label = document.createElement('p');
-        label.className = 'note translation-note';
+        label.className = 'note translation-note is-subtle';
         label.setAttribute('role', 'status');
         const controls = document.createElement('div');
         controls.className = 'wish-language-controls';
@@ -805,14 +937,18 @@
           buttons.set(language, button);
           controls.append(button);
         }
-        addPublicReactions(article, entry);
-        article.append(label, controls);
-        function showOriginal(note = guestText('Original message', 'اصل پیغام')) {
+        const actions = document.createElement('div');
+        actions.className = 'wish-actions';
+        actions.append(controls);
+        addPublicReactions(article, entry, actions);
+        article.append(label, actions);
+        function showOriginal(note = guestText('Original message', 'اصل پیغام'), showNote = false) {
           quote.textContent = entry.message;
           quote.dir = 'auto';
           if (/[\u0600-\u06ff]/.test(entry.message) && !/[a-zA-Z]/.test(entry.message)) quote.lang = 'ur';
           else quote.removeAttribute('lang');
           label.textContent = note;
+          label.classList.toggle('is-subtle', !showNote);
         }
         function showTranslation(language) {
           const value = translations[language];
@@ -824,6 +960,7 @@
             language === 'ur'
               ? guestText('Urdu translation', 'اردو ترجمہ')
               : guestText('English translation', 'انگریزی ترجمہ');
+          label.classList.add('is-subtle');
         }
         function remember() {
           wishChoices.set(entry.id, selected);
@@ -840,12 +977,13 @@
             'Translation is unavailable right now. Original message shown.',
             'فی الحال ترجمہ دستیاب نہیں۔ اصل پیغام دکھایا جا رہا ہے۔',
           );
-          if (!versions[language]) return showOriginal(unavailable);
+          if (!versions[language]) return showOriginal(unavailable, true);
           showOriginal(
             guestText(
               'Translating… Original message shown for now.',
               'ترجمہ کیا جا رہا ہے۔۔۔ فی الحال اصل پیغام دیکھیں۔',
             ),
+            true,
           );
           const button = buttons.get(language);
           button.setAttribute('aria-busy', 'true');
@@ -855,9 +993,7 @@
             const result = await pending.get(language);
             if (!article.isConnected) return;
             if (result.status === 'unavailable') {
-              article.remove();
-              wishChoices.delete(entry.id);
-              byId('public-empty').hidden = byId('public-list').children.length > 0;
+              removePublicWish(entry.id);
             } else if (result.status === 'changed') {
               void loadPublic();
             } else if (
@@ -867,9 +1003,9 @@
             ) {
               translations[language] = result.translation;
               if (selected === language) showTranslation(language);
-            } else if (selected === language) showOriginal(unavailable);
+            } else if (selected === language) showOriginal(unavailable, true);
           } catch {
-            if (article.isConnected && selected === language) showOriginal(unavailable);
+            if (article.isConnected && selected === language) showOriginal(unavailable, true);
           } finally {
             pending.delete(language);
             button.removeAttribute('aria-busy');
@@ -879,6 +1015,11 @@
         if (selected !== 'original' && translations[selected]) showTranslation(selected);
         else showOriginal();
         article.translateWish = () => select(selected);
+        article.updatePublicWish = (next) => {
+          for (const language of ['en', 'ur'])
+            if (next.translations[language]) translations[language] = next.translations[language];
+          if (selected !== 'original' && translations[selected]) showTranslation(selected);
+        };
         return article;
       }
       let wishObserver;
@@ -902,15 +1043,16 @@
         }
       }
       function observePublicWishes() {
-        wishObserver?.disconnect();
-        translationQueue = [];
-        const articles = [...byId('public-list').children].filter((article) => article.translateWish);
+        const articles = [...byId('public-list').children].filter(
+          (article) => article.translateWish && !article.translationObserved,
+        );
+        articles.forEach((article) => { article.translationObserved = true; });
         if (!window.IntersectionObserver) {
           translationQueue.push(...articles.slice(0, 3));
           drainTranslations();
           return;
         }
-        wishObserver = new IntersectionObserver(
+        wishObserver ||= new IntersectionObserver(
           (entries) => {
             for (const entry of entries)
               if (entry.isIntersecting) {
@@ -919,7 +1061,7 @@
               }
             drainTranslations();
           },
-          { root: byId('public-list') },
+          { root: null },
         );
         articles.forEach((article) => wishObserver.observe(article));
       }
@@ -939,56 +1081,150 @@
           hex.slice(20)
         );
       }
-      async function loadPublic() {
+      function updateMoreButton() {
+        const button = byId('more-public');
+        button.hidden = !publicHasMore;
+        button.disabled = publicLoading;
+        button.textContent = publicLoading
+          ? guestText('Loading wishes…', 'پیغامات کھولے جا رہے ہیں…')
+          : guestText('See more wishes', 'مزید پیغامات دیکھیں');
+        byId('refresh-public').disabled = publicLoading;
+      }
+      function applyPublicPage(page, append = false, reactionRead = reactionSerial) {
+        const oldIds = new Set(publicItems.map((entry) => entry.id));
+        const wishes = append
+          ? [...publicItems, ...page.items.filter((entry) => !oldIds.has(entry.id))]
+          : page.items;
+        publicItems = wishes;
+        publicCursor = page.nextCursor;
+        publicHasMore = page.hasMore;
+        const list = byId('public-list');
+        const ids = new Set(wishes.map((entry) => entry.id));
+        for (const id of wishChoices.keys()) if (!ids.has(id)) wishChoices.delete(id);
+        for (const [id, state] of reactionStates)
+          if (!ids.has(id) && !state.busy) reactionStates.delete(id);
+        for (const entry of (append ? page.items : wishes)) {
+          const current = reactionStates.get(entry.id);
+          if (!entry.reactions) {
+            reactionStates.delete(entry.id);
+            continue;
+          }
+          if (current?.busy || current?.version > reactionRead) continue;
+          if (current) Object.assign(current, entry.reactions, { version: reactionRead });
+          else reactionStates.set(entry.id, {
+            ...entry.reactions, open: false, busy: false, error: false, version: reactionRead,
+          });
+        }
+        const pinned = wishes.find((entry) => entry.name.trim() === PINNED_WISH_NAME);
+        const ordered = pinned ? [pinned, ...wishes.filter((entry) => entry !== pinned)] : wishes;
+        const focused = document.activeElement;
+        const focusedWish = focused.closest?.('.wish-reactions')
+          ? focused.closest('[data-wish-id]')?.dataset.wishId
+          : '';
+        const focusedChoice =
+          focused.dataset.reaction ||
+          (focused.classList.contains('reaction-remove') ? 'remove' : 'toggle');
+        for (const article of [...list.children]) {
+          if (ids.has(article.dataset.wishId)) continue;
+          wishObserver?.unobserve(article);
+          article.remove();
+        }
+        ordered.forEach((entry, index) => {
+          const version = JSON.stringify([
+            entry.name, entry.message, entry.sourceVersions, entry === pinned, Boolean(entry.reactions),
+          ]);
+          let article = publicWishElement(entry.id);
+          if (article && article.publicVersion !== version) {
+            wishObserver?.unobserve(article);
+            article.remove();
+            article = null;
+          }
+          if (!article) {
+            article = publicCard(entry, entry === pinned);
+            article.publicVersion = version;
+          } else {
+            article.updateReaction?.();
+            article.updatePublicWish?.(entry);
+          }
+          if (list.children[index] !== article) list.insertBefore(article, list.children[index] || null);
+        });
+        if (focusedWish && document.activeElement === document.body)
+          focusReactionControl(focusedWish, focusedChoice);
+        if (append) {
+          const firstNew = ordered.find((entry) => !oldIds.has(entry.id));
+          const article = firstNew && publicWishElement(firstNew.id);
+          if (article) {
+            article.tabIndex = -1;
+            article.focus({ preventScroll: true });
+          }
+        }
+        observePublicWishes();
+        byId('public-empty').hidden = wishes.length > 0;
+        status('public-status', '');
+      }
+      async function loadPublic(append = false, initialHydration = false) {
+        if (publicLoading || (append && !publicHasMore)) return;
+        publicLoading = true;
+        updateMoreButton();
         const request = ++publicRequest;
         const reactionRead = reactionSerial;
         try {
-          const wishes = await rpc('getPublicWishes', PAGE.language || 'en', browserReactionToken());
+          const page = await rpc('getPublicWishesPage', PAGE.language || 'en', browserReactionToken(), {
+            cursor: append ? publicCursor : null,
+            limit: append ? WISH_BATCH_SIZE : Math.max(WISH_BATCH_SIZE, publicItems.length),
+            pinnedName: PINNED_WISH_NAME,
+          });
           if (request !== publicRequest) return;
-          const list = byId('public-list');
-          const ids = new Set(wishes.map((entry) => entry.id));
-          for (const id of wishChoices.keys()) if (!ids.has(id)) wishChoices.delete(id);
-          for (const [id, state] of reactionStates)
-            if (!ids.has(id) && !state.busy) reactionStates.delete(id);
-          for (const entry of wishes) {
-            const current = reactionStates.get(entry.id);
-            if (!entry.reactions || current?.busy || current?.version > reactionRead) continue;
-            reactionStates.set(entry.id, {
-              ...entry.reactions,
-              open: current?.open || false,
-              busy: false,
-              error: false,
-              version: reactionRead,
-            });
-          }
-          const pinned = wishes.find((entry) => entry.name.trim() === PINNED_WISH_NAME);
-          const ordered = pinned ? [pinned, ...wishes.filter((entry) => entry !== pinned)] : wishes;
-          const focused = document.activeElement;
-          const focusedWish = focused.closest?.('.wish-reactions')
-            ? focused.closest('[data-wish-id]')?.dataset.wishId
-            : '';
-          const focusedChoice =
-            focused.dataset.reaction ||
-            (focused.classList.contains('reaction-remove') ? 'remove' : 'toggle');
-          const scroll = list.scrollTop;
-          list.replaceChildren(...ordered.map((entry) => publicCard(entry, entry === pinned)));
-          list.scrollTop = scroll;
-          if (focusedWish) focusReactionControl(focusedWish, focusedChoice);
-          observePublicWishes();
-          byId('public-empty').hidden = wishes.length > 0;
-          status('public-status', '');
+          applyPublicPage(page, append, reactionRead);
         } catch {
           if (request === publicRequest) {
-            // Clear a stale copy rather than keep displaying a wish that may have been hidden.
-            byId('public-list').replaceChildren();
-            byId('public-empty').hidden = true;
-            status('public-status', 'Wishes could not load. Tap Refresh to try again.', true);
+            if (!append && !initialHydration) {
+              // A failed refresh must not retain a wish that may have been hidden.
+              wishObserver?.disconnect();
+              byId('public-list').replaceChildren();
+              publicItems = [];
+              publicHasMore = false;
+              byId('public-empty').hidden = true;
+            }
+            status('public-status', append
+              ? guestText('More wishes could not load. Please try again.', 'مزید پیغامات نہیں کھل سکے۔ دوبارہ کوشش کریں۔')
+              : 'Wishes could not load. Tap Refresh to try again.', true);
           }
+        } finally {
+          publicLoading = false;
+          updateMoreButton();
         }
+      }
+      function initGuestResize() {
+        if (!PAGE.embed || window.top === window) return;
+        const { channel, parentOrigin } = PAGE.embed;
+        let lastHeight = 0;
+        let lastWidth = 0;
+        function sendHeight() {
+          const height = Math.ceil(byId('public-view').getBoundingClientRect().height) + 8;
+          if (height === lastHeight && innerWidth === lastWidth) return;
+          lastHeight = height;
+          lastWidth = innerWidth;
+          window.top.postMessage({
+            type: 'wedding:wishes:resize', channel, height,
+            viewportHeight: innerHeight, viewportWidth: innerWidth,
+          }, parentOrigin);
+        }
+        window.addEventListener('message', (event) => {
+          if (event.source === window.top && event.origin === parentOrigin &&
+              event.data?.type === 'wedding:wishes:resize-ack' && event.data.channel === channel)
+            document.documentElement.classList.add('embedded-guestbook');
+        });
+        new ResizeObserver(sendHeight).observe(byId('public-view'));
+        document.fonts?.ready.then(sendHeight);
+        window.addEventListener('resize', sendHeight);
+        sendHeight();
       }
       function initGuest() {
         document.body.classList.add('guestbook');
         byId('public-view').hidden = false;
+        initGuestResize();
+        byId('more-public').addEventListener('click', () => { void loadPublic(true); });
         const form = byId('guest-form');
         form.elements.name.dir = 'auto';
         form.elements.message.dir = 'auto';
@@ -1060,8 +1296,14 @@
             form.removeAttribute('aria-busy');
           }
         });
-        byId('refresh-public').addEventListener('click', loadPublic);
-        loadPublic();
+        byId('refresh-public').addEventListener('click', () => { void loadPublic(); });
+        if (PAGE.initialPage?.items) {
+          applyPublicPage(PAGE.initialPage);
+          delete PAGE.initialPage;
+          // Cards are already readable. Restore this browser's selected reaction
+          // in the background, without delaying the first batch on another RPC.
+          void loadPublic(false, true);
+        } else void loadPublic();
       }
       function renderAdmin() {
         const counts = {

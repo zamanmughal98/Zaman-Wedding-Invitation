@@ -10,7 +10,7 @@ export const wedding = {
       'Join Zaman Mughal and Nimra Shafiq for their wedding celebrations, 12–15 November 2026. Walima: Sunday, 15 November, 7:00 PM, Royal Vista Event Complex, Attock City.',
     url: 'https://zamanmughal98.github.io/Zaman-Wedding-Invitation/',
     previewImage: '/assets/images/ivory-envelope.png',
-    logo: '/assets/images/zaman-nimra-monogram.png',
+    logo: '/assets/images/zaman-nimra-monogram.webp',
     language: 'en',
     locale: 'en-GB',
     timeZone: 'Asia/Karachi',
@@ -112,7 +112,6 @@ export const wedding = {
     hosts: 'Mr. & Mrs. Ishfaq Mughal',
     hostMessage: 'Request the honour of your presence at the wedding celebrations of their beloved',
     arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-    transliteration: 'In the name of Allah, the Most Gracious, the Most Merciful',
     verse: 'And We created you in pairs',
     verseSource: 'Surah An-Naba · 78:8',
     greeting: 'With love, blessings & your duas',
@@ -129,9 +128,16 @@ export const wedding = {
   },
   envelope: {
     enabled: true,
-    image: '/assets/images/ivory-envelope.png',
+    image: '/assets/images/ivory-envelope.webp',
+    imageSources: [
+      { src: '/assets/images/ivory-envelope-512.webp', width: 512 },
+      { src: '/assets/images/ivory-envelope-768.webp', width: 768 },
+      { src: '/assets/images/ivory-envelope.webp', width: 1024 },
+    ],
+    imageSizes: 'min(86vw, 440px)',
     film: {
       src: '/assets/video/wedding-opening.mp4',
+      lightSrc: '/assets/video/wedding-opening-light.mp4',
       poster: '/assets/video/wedding-opening-poster.jpg',
     },
   },
@@ -306,7 +312,7 @@ export const wedding = {
   },
   music: {
     enabled: true,
-    src: '/assets/music/samjhawan-unplugged.mp3',
+    src: '/assets/music/samjhawan-unplugged-light.m4a',
     volume: 0.12,
     startOnOpen: true,
   },

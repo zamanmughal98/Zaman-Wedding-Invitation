@@ -1,13 +1,14 @@
 # Architecture and maintenance
 
-This is a static invitation with no framework or runtime package dependencies. Node is used for local preview, tests and the static build. Google Apps Script supplies the separately deployed wishes and upload services.
+This is a static invitation with no framework or runtime package dependencies. Node is used for local preview, tests and the static build. esbuild is a locked development dependency used to bundle the published assets. Google Apps Script supplies the separately deployed wishes and upload services.
 
 ## Page assembly
 
 1. config/wedding.js is the public content and configuration.
 2. src/render.js maps enabled section IDs to render functions.
 3. src/document.js prepares the same rendered HTML and share metadata for server.js and scripts/build.mjs.
-4. script.js adds browser interactions to that HTML; it renders the page itself when opening unbuilt source on a static host.
+4. script.js initializes music gesture handlers, the envelope and guest language controls first. It dynamically imports the renderer only when pre-rendered HTML is absent.
+5. Opening or skipping the intro loads features/page.js for navigation, countdown, scratch card, gallery, shared controls, wishes and optional couple media. Direct section links load these interactions immediately. Failed secondary-code loads retry, then provide a **Try again** control after three failed attempts; reconnection starts a new retry budget.
 
 | Area | Implementation |
 | --- | --- |
@@ -22,22 +23,28 @@ This is a static invitation with no framework or runtime package dependencies. N
 | Footer | components/footer.js |
 | Background track | features/music.js; features/toast.js |
 | Guest language preference and in-place localization | features/language.js; localization.js |
+| Optional Urdu calligraphy stylesheet | features/fonts.js |
+| Deferred secondary interactions | features/page.js |
 
-Paths in the table are relative to src/. Small entry modules such as components/guest-details.js and features/interactions.js re-export the active implementations, preserving existing imports without duplicating their code.
+Paths in the table are relative to src/. The section registry and interaction initializer import the named implementations directly.
 
 src/utils.js holds shared escaping, safe URLs, dates, local drafts and calendar formatting. src/submissions.js builds manual wish email/WhatsApp links. The two *-service.js helpers validate public Google deployment URLs. SVG artwork is code in components/artwork.js; decorative masks and paper grain are assets/ornaments/.
 
 ## CSS order
 
-The two original stylesheet entry paths are retained:
+Local preview retains the source stylesheet entries:
 
 - style.css loads theme.css, base.css and responsive.css.
-- styles/stationery.css loads layout.css, invitation.css, people-events.css, memories-attire.css, forms-responsive.css and guest-services.css, in that order.
+- styles/stationery.css loads layout.css, invitation.css, people-events.css, memories-attire.css, forms-responsive.css, guest-services.css and opening-film.css, in that order.
 - styles/language.css loads after those entry points and supplies the language controls and Urdu layout.
 
 All those files live under styles/. Base rules provide shared elements and layout; the invitation treatments override them deliberately. Preserve this order. Put palette changes in theme.css and section-specific adjustments in the named treatment file, rather than adding another override to an unrelated file.
 
 The split preserves the original cascade. Retired RSVP/story selectors and confirmed unused illustration/swatch selectors were removed; differing declarations that provide intentional overrides or browser fallbacks were retained.
+
+styles/site.css combines those entries for production. scripts/bundle-client.mjs uses esbuild to flatten the CSS imports, rewrite ornament URLs, minify code and emit hashed entries and dynamic chunks under dist/build/. scripts/build.mjs replaces the source entry links in the rendered document with those bundle paths. Only the bundles, public assets and data are copied to dist/; the original module and stylesheet trees stay in the repository for development. Runtime media paths remain relative to the document, and chunk/ornament paths remain relative to their bundles, preserving GitHub Pages repository prefixes.
+
+Google font stylesheets load without blocking the opening controls. features/fonts.js requests the Nastaliq stylesheet when Urdu is selected. The localizer preserves source text and avoids rescanning the entire page when the selected language has not changed. See [performance.md](performance.md) for media variants and startup behavior.
 
 ## Service boundaries
 
@@ -47,7 +54,11 @@ config/urdu.js and config/urdu-photos.js hold authored guest copy. src/localizat
 
 The wishes backend keeps originals in Wishes and cached translations in the separate WishTranslations and WishTranslationsEnglish tabs. Source fingerprints invalidate stale translations after edits. Public APIs serve only approved records and retain the earlier response fields for already open guest pages; private moderation continues to use originals.
 
-Reactions.gs stores shared reactions in the private WishReactions tab, created on the first reaction. A browser token identifies one changeable or removable choice per approved wish; no guest login is required. Public responses expose counts, without browser tokens or other visitors' individual choices. Clearing browser storage creates a new identity. Index.html pins only the newest approved full-name match for `PINNED_WISH_NAME = 'Nimra Shafiq'` within the latest 200 approved entries. The name check trims surrounding spaces and otherwise requires exact spelling and capitalization; moderation has no pin controls.
+Reactions.gs stores shared reactions in the private WishReactions tab, created on the first reaction. A browser token identifies one changeable or removable choice per approved wish; no guest login is required. Public responses expose counts, without browser tokens or other visitors' individual choices. Clearing browser storage creates a new identity. Code.gs supplies `pinnedWishName = 'Nimra Shafiq'` to Index.html so both the initial page and subsequent requests select the same newest approved full-name match. The name check trims surrounding spaces and otherwise requires exact spelling and capitalization; moderation has no pin controls.
+
+getPublicWishesPage serves six wishes initially and another six per explicit request, using a created-at/ID cursor. The public doGet includes that first approved batch in its escaped page configuration, without a visitor token, so the frame can paint cards before a follow-up RPC returns. A background read restores this browser's selected reactions and current public data. The spreadsheet handle is shared within each read, without caching approval state between requests. Only the requested range receives translation and reaction metadata. Refreshes request the already opened range and reconcile cards by ID instead of rebuilding the wall. Visible cards alone enter the translation queue. The legacy getPublicWishes response remains available for older clients.
+
+features/wishes-embed.js holds the public guestbook URL in data-src until its iframe is near the viewport and the intro has closed. It then loads the selected language once, verifies a random resize channel and the Google service origin, and applies height updates. Index.html measures its public content with ResizeObserver and sends those changes through the Google iframe wrapper to the top website. This removes fixed-height nested scrolling while supporting translation, reaction-picker and language changes. The earlier pagination/resize feature requires both the website and Apps Script deployment; the additional deferred loading runs in the website. The native JSON fallback appends six cards per click.
 
 .local/google-photos/ contains the photo/video service source and owner tools. .preview/google-photos/ contains generated deployment material. These are private, ignored maintenance files; keep them or back them up outside Git. They are not abandoned website code.
 
@@ -55,7 +66,7 @@ The JSON wishes wall and email/WhatsApp links remain a supported fallback when t
 
 ## Testing and changes
 
-Run npm test and npm run build after functional changes. The project-path checks traverse the JavaScript and CSS import graphs at both / and /Zaman-Wedding-Invitation/, including CSS assets. Moderation tests use local stand-ins and never send email or modify Google data.
+Run npm ci to install the locked build tool, then npm test and npm run build after functional changes. The project-path checks traverse the JavaScript and CSS import graphs at both / and /Zaman-Wedding-Invitation/, including CSS assets. Moderation tests use local stand-ins and never send email or modify Google data. Use the built output when measuring production startup so bundled request counts are represented.
 
 For a new page section, add its renderer to src/render.js and its ID/content to config/wedding.js; add navigation only if needed. For an additional event, dates and names belong in events, while optional guest palette entries reference that event's ID.
 

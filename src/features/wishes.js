@@ -1,6 +1,7 @@
 import { assetUrl, escapeHtml as e, readStored, writeStored } from '../utils.js';
 import { emailAppUrl, whatsappUrl } from '../submissions.js';
 import { translateGuestText } from '../localization.js';
+import { initWishesEmbed } from './wishes-embed.js';
 
 function clearValidity(form) {
   form.addEventListener('input', (event) => event.target.setCustomValidity?.(''));
@@ -20,6 +21,7 @@ function setStatus(element, message, error = false) {
 }
 
 export async function initWishes(w) {
+  initWishesEmbed();
   const dialog = document.getElementById('wish-dialog');
   if (!dialog) return;
   const list = document.querySelector('[data-wishes-list]');
@@ -80,12 +82,22 @@ export async function initWishes(w) {
         item.name.trim() &&
         item.message.trim(),
     );
-    list.innerHTML = approved
-      .map(
-        (wish) =>
-          `<article class="wish-card" data-user-content dir="auto"><blockquote>“${e(wish.message.slice(0, w.wishes.maxLength))}”</blockquote><p>— ${e(wish.name.slice(0, 100))}</p></article>`,
-      )
-      .join('');
+    let shown = 0;
+    const more = document.querySelector('[data-more-wishes]');
+    function appendWishes() {
+      const batch = approved.slice(shown, shown + 6);
+      list.insertAdjacentHTML(
+        'beforeend',
+        batch.map(
+          (wish) =>
+            `<article class="wish-card" data-user-content dir="auto"><blockquote>“${e(wish.message.slice(0, w.wishes.maxLength))}”</blockquote><p>— ${e(wish.name.slice(0, 100))}</p></article>`,
+        ).join(''),
+      );
+      shown += batch.length;
+      more.hidden = shown >= approved.length;
+    }
+    more.addEventListener('click', appendWishes);
+    appendWishes();
     empty.hidden = approved.length > 0;
   } catch {
     empty.textContent = 'The wishes wall could not load. You can still send us a wish.';

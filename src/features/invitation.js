@@ -12,12 +12,12 @@ export function initEnvelope() {
   const progress = dialog.querySelector('[data-film-progress]');
   let phase = 'closed';
   let version = 0;
-  let transitionTimer, loadingTimer, stallTimer, closingTimer;
+  let transitionTimer, closingTimer;
   let returnFocus;
 
-  function clearPlaybackTimers() {
-    clearTimeout(loadingTimer);
-    clearTimeout(stallTimer);
+  function setStatus(message, visible = false) {
+    status.textContent = message;
+    status.classList.toggle('sr-only', !visible);
   }
   function updatePlayback() {
     if (!toggle) return;
@@ -28,7 +28,10 @@ export function initEnvelope() {
     if (!video || video.hasAttribute('src')) return;
     video.preload = 'auto';
     if (video.dataset.poster) video.poster = video.dataset.poster;
-    video.src = video.dataset.src;
+    const connection = navigator.connection;
+    const useLight = window.matchMedia('(max-width: 700px)').matches ||
+      connection?.saveData || (connection?.downlink > 0 && connection.downlink < 3);
+    video.src = (useLight && video.dataset.lightSrc) || video.dataset.src;
     video.load();
   }
   function warmFilm() {
@@ -37,7 +40,8 @@ export function initEnvelope() {
       phase !== 'envelope' ||
       reduced.matches ||
       connection?.saveData ||
-      /(^|-)2g$/.test(connection?.effectiveType || '')
+      connection?.effectiveType !== '4g' ||
+      (connection.downlink > 0 && connection.downlink < 3) || connection.rtt > 300
     )
       return;
     prepareFilm();
@@ -47,7 +51,7 @@ export function initEnvelope() {
     phase = 'leaving';
     version++;
     clearTimeout(transitionTimer);
-    clearPlaybackTimers();
+    const releaseFilm = video && !video.ended;
     video?.pause();
     if (!returnFocus) window.scrollTo({ top: 0, behavior: 'instant' });
     dialog.classList.add('is-leaving');
@@ -55,6 +59,11 @@ export function initEnvelope() {
       () => {
         phase = 'closed';
         dialog.close();
+        if (releaseFilm) {
+          video.preload = 'none';
+          video.removeAttribute('src');
+          video.load();
+        }
         const target =
           returnFocus || document.getElementById('hero-title') || document.getElementById('main');
         if (target) {
@@ -68,19 +77,18 @@ export function initEnvelope() {
   async function play() {
     if (phase !== 'film' || document.hidden) return;
     const attempt = ++version;
-    clearPlaybackTimers();
+    if (video.error) {
+      video.removeAttribute('src');
+      prepareFilm();
+    }
     toggle.disabled = true;
-    // A slow or blocked film must never gate the invitation.
-    loadingTimer = setTimeout(() => {
-      if (phase === 'film' && attempt === version) enter();
-    }, 1500);
+    setStatus('The film is loading. You can skip to the invitation at any time.', true);
     try {
       await video.play();
       if (attempt !== version || phase !== 'film') return;
-      clearTimeout(loadingTimer);
-      status.textContent = 'Opening film playing. You can skip to the invitation at any time.';
+      setStatus('Opening film playing. You can skip to the invitation at any time.');
     } catch {
-      if (attempt === version && phase === 'film') enter();
+      if (attempt === version && phase === 'film') playbackFailed();
     } finally {
       if (attempt === version) {
         toggle.disabled = false;
@@ -88,9 +96,16 @@ export function initEnvelope() {
       }
     }
   }
+  function playbackFailed() {
+    version++;
+    video.pause();
+    toggle.disabled = false;
+    updatePlayback();
+    setStatus('The film could not play. Select Play film to try again, or skip to the invitation.', true);
+  }
   function startFilm(manual = false) {
     if (phase !== 'envelope') return;
-    if (!video || (!manual && reduced.matches)) {
+    if (!video) {
       enter();
       return;
     }
@@ -123,7 +138,6 @@ export function initEnvelope() {
     version++;
     clearTimeout(transitionTimer);
     clearTimeout(closingTimer);
-    clearPlaybackTimers();
     video?.pause();
     phase = 'envelope';
     returnFocus = trigger;
@@ -136,7 +150,7 @@ export function initEnvelope() {
       film.hidden = true;
       film.inert = true;
       toggle.disabled = false;
-      status.textContent = '';
+      setStatus('');
     }
     if (!dialog.open) dialog.showModal();
     seal.focus({ preventScroll: true });
@@ -165,7 +179,7 @@ export function initEnvelope() {
       // Keep both people visible as they approach; move closer after they meet on phones.
       film.style.setProperty(
         '--film-zoom',
-        String(Math.min(1, Math.max(0, (video.currentTime - 4.5) / 1.4))),
+        String(reduced.matches ? 0 : Math.min(1, Math.max(0, (video.currentTime - 4.5) / 1.4))),
       );
       if (progress && Number.isFinite(video.duration) && video.duration > 0) {
         progress.style.transform = `scaleX(${Math.min(1, video.currentTime / video.duration)})`;
@@ -175,40 +189,38 @@ export function initEnvelope() {
       if (video.paused) void play();
       else {
         version++;
-        clearPlaybackTimers();
         video.pause();
-        status.textContent = 'Film paused.';
+        setStatus('Film paused.');
       }
     });
     video.addEventListener('play', updatePlayback);
     video.addEventListener('pause', updatePlayback);
     video.addEventListener('playing', () => {
-      clearPlaybackTimers();
+      if (phase !== 'film' || document.hidden) return;
       toggle.disabled = false;
+      setStatus('Opening film playing. You can skip to the invitation at any time.');
     });
     video.addEventListener('waiting', () => {
       if (phase !== 'film' || video.paused || document.hidden) return;
-      clearTimeout(stallTimer);
-      stallTimer = setTimeout(enter, 4000);
+      setStatus('The film is buffering. You can skip to the invitation at any time.', true);
     });
     video.addEventListener('ended', enter);
     video.addEventListener('error', () => {
-      if (phase === 'film' || phase === 'transition') enter();
+      if (phase === 'film') playbackFailed();
     });
     const pauseWhenHidden = () => {
       if (phase !== 'film') return;
       version++;
-      clearPlaybackTimers();
       video.pause();
       toggle.disabled = false;
-      status.textContent = 'Film paused. Select Play film to continue.';
+      setStatus('Film paused. Select Play film to continue.');
     };
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) pauseWhenHidden();
     });
     window.addEventListener('pagehide', pauseWhenHidden);
     reduced.addEventListener('change', () => {
-      if (reduced.matches && ['film', 'transition'].includes(phase)) enter();
+      if (reduced.matches) pauseWhenHidden();
     });
   }
   // Refreshing still presents the envelope, while direct section links skip the intro.

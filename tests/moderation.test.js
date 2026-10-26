@@ -106,6 +106,9 @@ test('the live widget uses only a public deployment URL and never the static JSO
   const html = renderInvitation(content);
   assert.match(html, /<iframe\b[^>]*class="wishes-widget"/);
   assert.match(html, /EXAMPLE_PUBLIC_ID\/exec\?view=wall/);
+  const frame = html.match(/<iframe\b[^>]*>/)[0];
+  assert.match(frame, /data-src="https:\/\/script\.google\.com\//);
+  assert.doesNotMatch(frame, /\ssrc=/);
   assert.doesNotMatch(html, /data-wishes-list|id="wish-dialog"/);
   const fallback = structuredClone(wedding);
   fallback.wishes.googleScriptUrl = '';
