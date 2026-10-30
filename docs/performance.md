@@ -65,3 +65,13 @@ The local wish-form checks additionally hold the complete Google document respon
 Measure the built website with the cache disabled and record the connection, viewport and CPU throttle used. Useful checks include the time until the envelope image and seal are ready, bytes transferred before the first tap, and the requests made before opening the invitation or reaching the guestbook.
 
 Also check blocked font requests, delayed or blocked video, an early seal tap with music, Urdu switching, reduced motion, manual replay, direct section links, interrupted secondary-code loading and wish drafts. Actual opening times depend on the connection and device; the media sizes above are file measurements.
+
+## Guest photo and video upload speed
+
+The separate photo service sends original bytes directly to Drive, pipelines authorization and confirmation, and adapts video chunks from 8 MiB up to a 32 MiB ceiling. Four bounded file lifecycles share two byte-transfer slots and two prioritized control slots. Fresh permission and parent checks are read in parallel, known folder locations avoid repeated searches, and unique file IDs are reserved in small durable batches. The legacy relay and older client responses remain supported.
+
+A hidden tab no longer intentionally pauses the queue while the browser keeps it running. Actual suspension, offline recovery and manual pause remain distinct; browser closure or phone suspension can still interrupt uploads. Screen-awake and browser-tab locking retain their existing roles.
+
+See [upload performance and recovery](upload-performance.md) for the architecture, real nine-MiB baseline, request-count comparisons and validation. The current live test measured about 29 seconds on the previous deployment and confirmed direct transfer without relay fallback. Live improvement must be measured after deploying the updated photo service; local synthetic timings do not establish real Google throughput.
+
+Generate and deploy the combined photo Code.gs using [the photo setup guide](google-photos-setup.md#update-the-google-uploader). Saving editor changes or pushing GitHub does not update the photo web app. Existing scopes, public URL, folders, ledger and the separate wishes deployment are retained.
