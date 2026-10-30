@@ -76,6 +76,8 @@ The date-based option uses Asia/Karachi. On 12-15 November 2026 it selects that 
 
 Keep the wedding parent folder **Restricted**. Grant selected people **Viewer** access in Drive when needed. Sharing a parent folder also shares its contents and future uploads. The uploader refuses public or domain-wide destinations.
 
+Deleting test event or guest folders is supported. Later fresh uploads discard stale folder hints and create a new private path when needed; folders and photos in Trash are not restored. An unfinished upload whose destination was deleted pauses automatic recovery and needs an explicit Upload/Continue action to restart from the original file. Completed receipts are retained. The main configured wedding folder must remain available; restoring that main folder is an owner action.
+
 The separate **Private photo upload records** spreadsheet is a recovery ledger. Keep it private and preserve its JSON cells and **Uploads** tab.
 
 ## Update the Google uploader
@@ -85,7 +87,7 @@ The service source, HTML templates, bundled hashing helper, manifest, generator,
 1. Check and generate the bundle from the project root:
 
    ```sh
-   node --test --experimental-test-isolation=none .local/google-photos/checks/check-backend.mjs .local/google-photos/checks/check-direct.mjs .local/google-photos/checks/check-throughput.mjs .local/google-photos/checks/check-adaptive.mjs .local/google-photos/checks/check-background.mjs
+   node --test --experimental-test-isolation=none .local/google-photos/checks/check-backend.mjs .local/google-photos/checks/check-direct.mjs .local/google-photos/checks/check-throughput.mjs .local/google-photos/checks/check-adaptive.mjs .local/google-photos/checks/check-background.mjs .local/google-photos/checks/check-deleted-folders.mjs
    node .local/google-photos/prepare.mjs
    ```
 
