@@ -32,6 +32,8 @@ Known event/guest folder IDs avoid repeated folder searches. They are location h
 
 Independent root/event/guest permission checks and final-file metadata reads use one `UrlFetchApp.fetchAll` batch. This reduces sequential waiting while retaining each individual check. File-byte requests are not included in that batch.
 
+Deleted event/guest folder IDs are discarded as stale hints, and name lookups skip folders in Trash. A new upload creates a fresh private path without restoring or moving old content. For an unfinished job, a deleted destination cannot be recreated automatically: an explicit Upload/Continue request rotates its reserved Drive file ID, clears its old session/offset, preserves the original guest/event/day, and restarts under the same authorized guest receipt and quota reservation. Completed jobs stay completed. Root deletion, public sharing, ownership changes and unexpected parent changes remain blocked.
+
 Drive file IDs are pre-generated in groups of 25. The existing script lock protects a durable `PHOTO_FILE_ID_POOL` property; an ID is removed before being assigned to a job. A retry keeps its saved ID. A failed reservation aborts admission. A best-effort cache is not used for unique-ID allocation. Event-location properties are also internal state and need no manual setup.
 
 Settings, the spreadsheet handle and the OAuth token are reused only within one execution. Account tokens, private destination IDs and other guests' sessions never reach the guest. A guest receives only the current file's scoped upload session. These session URLs are not saved in browser recovery records or explicitly logged by application code.
